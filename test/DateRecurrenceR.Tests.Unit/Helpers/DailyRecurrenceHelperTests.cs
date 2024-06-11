@@ -26,7 +26,7 @@ public sealed class DailyRecurrenceHelperTests
     {
         // Arrange
         var beginDate = DateOnly.MinValue;
-        var fromDate = new DateOnly(1,1,2);
+        var fromDate = new DateOnly(1, 1, 2);
         const int interval = 1;
 
         // Act

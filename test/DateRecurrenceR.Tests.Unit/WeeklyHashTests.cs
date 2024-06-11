@@ -1,4 +1,3 @@
-using DateRecurrenceR.Collections;
 using DateRecurrenceR.Internals;
 using FluentAssertions;
 
@@ -51,7 +50,7 @@ public sealed class WeeklyHashTests
         sut[DayOfWeek.Friday].Should().Be(6);
         sut[DayOfWeek.Saturday].Should().Be(7);
     }
-    
+
     [Fact]
     public void WeeklyHash_ShouldThrowsException_When_Get_Value()
     {
@@ -59,12 +58,12 @@ public sealed class WeeklyHashTests
         var sut = new WeeklyHash();
 
         // Act
-        var action = () => sut[(DayOfWeek)7];
+        var action = () => sut[(DayOfWeek) 7];
 
         // Assert
         action.Should().Throw<ArgumentOutOfRangeException>();
-    }    
-    
+    }
+
     [Fact]
     public void WeeklyHash_ShouldThrowsException_When_Set_Value()
     {
@@ -72,7 +71,7 @@ public sealed class WeeklyHashTests
         var sut = new WeeklyHash();
 
         // Act
-        var action = () => sut[(DayOfWeek)7] = 0;
+        var action = () => sut[(DayOfWeek) 7] = 0;
 
         // Assert
         action.Should().Throw<ArgumentOutOfRangeException>();

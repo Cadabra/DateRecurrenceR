@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using DateRecurrenceR.Collections;
 using DateRecurrenceR.Helpers;
 
@@ -7,8 +5,7 @@ namespace DateRecurrenceR;
 
 public partial struct Recurrence
 {
-    public static IEnumerator<DateOnly> YearlyByDayOfMonth(
-        DateOnly beginDate,
+    public static IEnumerator<DateOnly> YearlyByDayOfMonth(DateOnly beginDate,
         DateOnly fromDate,
         int takeCount,
         int month,
@@ -23,10 +20,7 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart)
-        {
-            return EmptyEnumerator;
-        }
+        if (!canStart) return EmptyEnumerator;
 
         return new YearlyEnumeratorLimitByCount(
             startDate.Year,
@@ -34,11 +28,13 @@ public partial struct Recurrence
             interval,
             GetNextDate);
 
-        DateOnly GetNextDate(int year) => DateHelper.GetDateByDayOfMonth(year, month, day);
+        DateOnly GetNextDate(int year)
+        {
+            return DateHelper.GetDateByDayOfMonth(year, month, day);
+        }
     }
 
-    public static IEnumerator<DateOnly> YearlyByDayOfWeek(
-        DateOnly beginDate,
+    public static IEnumerator<DateOnly> YearlyByDayOfWeek(DateOnly beginDate,
         DateOnly fromDate,
         int takeCount,
         int month,
@@ -54,10 +50,7 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart)
-        {
-            return EmptyEnumerator;
-        }
+        if (!canStart) return EmptyEnumerator;
 
         return new YearlyEnumeratorLimitByCount(
             startDate.Year,
@@ -65,11 +58,13 @@ public partial struct Recurrence
             interval,
             GetNextDate);
 
-        DateOnly GetNextDate(int year) => DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, numberOfWeek);
+        DateOnly GetNextDate(int year)
+        {
+            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, numberOfWeek);
+        }
     }
 
-    public static IEnumerator<DateOnly> YearlyByDayOfYear(
-        DateOnly beginDate,
+    public static IEnumerator<DateOnly> YearlyByDayOfYear(DateOnly beginDate,
         DateOnly fromDate,
         int takeCount,
         int dayOfYear,
@@ -82,10 +77,7 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart)
-        {
-            return EmptyEnumerator;
-        }
+        if (!canStart) return EmptyEnumerator;
 
         return new YearlyEnumeratorLimitByCount(
             startDate.Year,
@@ -93,11 +85,14 @@ public partial struct Recurrence
             interval,
             GetNextDate);
 
-        DateOnly GetNextDate(int year) => DateHelper.GetDateByDayOfYear(year, dayOfYear);
+        DateOnly GetNextDate(int year)
+        {
+            return DateHelper.GetDateByDayOfYear(year, dayOfYear);
+        }
     }
 
     /// <summary>
-    /// Represents a recurrence in which each date falls on a specific day of the month every year.
+    ///     Represents a recurrence in which each date falls on a specific day of the month every year.
     /// </summary>
     /// <param name="beginDate">The date of recurrence begins</param>
     /// <param name="endDate">The date of recurrence ends</param>
@@ -106,9 +101,11 @@ public partial struct Recurrence
     /// <param name="month"></param>
     /// <param name="day"></param>
     /// <param name="interval">The interval between occurrences, 1 by default</param>
-    /// <returns>The <see cref="IEnumerable{T}"/> of type <see cref="DateOnly"/> of intersection ranges <c>[beginDate, endDate]</c> and <c>[fromDate, toDate]</c></returns>
-    public static IEnumerator<DateOnly> YearlyByDayOfMonth(
-        DateOnly beginDate,
+    /// <returns>
+    ///     The <see cref="IEnumerable{T}" /> of type <see cref="DateOnly" /> of intersection ranges
+    ///     <c>[beginDate, endDate]</c> and <c>[fromDate, toDate]</c>
+    /// </returns>
+    public static IEnumerator<DateOnly> YearlyByDayOfMonth(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
@@ -124,10 +121,7 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart)
-        {
-            return EmptyEnumerator;
-        }
+        if (!canStart) return EmptyEnumerator;
 
         var stopDate = DateOnlyMin(toDate, endDate);
 
@@ -137,11 +131,14 @@ public partial struct Recurrence
             interval,
             GetNextDate);
 
-        DateOnly GetNextDate(int year) => DateHelper.GetDateByDayOfMonth(year, month, day);
+        DateOnly GetNextDate(int year)
+        {
+            return DateHelper.GetDateByDayOfMonth(year, month, day);
+        }
     }
 
     /// <summary>
-    /// Represents a recurrence in which each date falls on a specific week day of month every year.
+    ///     Represents a recurrence in which each date falls on a specific week day of month every year.
     /// </summary>
     /// <param name="beginDate">The date of recurrence begins</param>
     /// <param name="endDate">The date of recurrence ends</param>
@@ -151,9 +148,11 @@ public partial struct Recurrence
     /// <param name="dayOfWeek"></param>
     /// <param name="numberOfWeek"></param>
     /// <param name="interval">The interval between occurrences, 1 by default</param>
-    /// <returns>The <see cref="IEnumerator{T}"/> of type <see cref="DateOnly"/> of intersection ranges <c>[beginDate, endDate]</c> and <c>[fromDate, toDate]</c></returns>
-    public static IEnumerator<DateOnly> YearlyByDayOfWeek(
-        DateOnly beginDate,
+    /// <returns>
+    ///     The <see cref="IEnumerator{T}" /> of type <see cref="DateOnly" /> of intersection ranges
+    ///     <c>[beginDate, endDate]</c> and <c>[fromDate, toDate]</c>
+    /// </returns>
+    public static IEnumerator<DateOnly> YearlyByDayOfWeek(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
@@ -170,10 +169,7 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart)
-        {
-            return EmptyEnumerator;
-        }
+        if (!canStart) return EmptyEnumerator;
 
         var stopDate = DateOnlyMin(toDate, endDate);
 
@@ -183,11 +179,14 @@ public partial struct Recurrence
             interval,
             GetNextDate);
 
-        DateOnly GetNextDate(int year) => DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, numberOfWeek);
+        DateOnly GetNextDate(int year)
+        {
+            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, numberOfWeek);
+        }
     }
 
     /// <summary>
-    /// Represents a recurrence in which each date falls on a specific day of year every year.
+    ///     Represents a recurrence in which each date falls on a specific day of year every year.
     /// </summary>
     /// <param name="beginDate">The date of recurrence begins</param>
     /// <param name="endDate">The date of recurrence ends</param>
@@ -195,9 +194,11 @@ public partial struct Recurrence
     /// <param name="toDate">The date of specific range ends</param>
     /// <param name="dayOfYear">The day of the year when each occurrence happens</param>
     /// <param name="interval">The interval between occurrences, 1 by default</param>
-    /// <returns>The <see cref="IEnumerator{T}"/> of type <see cref="DateOnly"/> of intersection ranges <c>[beginDate, endDate]</c> and <c>[fromDate, toDate]</c></returns>
-    public static IEnumerator<DateOnly> YearlyByDayOfYear(
-        DateOnly beginDate,
+    /// <returns>
+    ///     The <see cref="IEnumerator{T}" /> of type <see cref="DateOnly" /> of intersection ranges
+    ///     <c>[beginDate, endDate]</c> and <c>[fromDate, toDate]</c>
+    /// </returns>
+    public static IEnumerator<DateOnly> YearlyByDayOfYear(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
@@ -211,10 +212,7 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart)
-        {
-            return EmptyEnumerator;
-        }
+        if (!canStart) return EmptyEnumerator;
 
         var stopDate = DateOnlyMin(toDate, endDate);
 
@@ -224,6 +222,9 @@ public partial struct Recurrence
             interval,
             GetNextDate);
 
-        DateOnly GetNextDate(int year) => DateHelper.GetDateByDayOfYear(year, dayOfYear);
+        DateOnly GetNextDate(int year)
+        {
+            return DateHelper.GetDateByDayOfYear(year, dayOfYear);
+        }
     }
 }

@@ -21,7 +21,7 @@ public class MonthlyRecurrenceHelperTests
         //Assert
         canStart.Should().BeTrue();
     }
-    
+
     [Fact]
     public void Method_TryGetStartDate_returns_False_when_FromDate_eq_BeginDate_and_result_is_outOfRange()
     {
@@ -42,7 +42,7 @@ public class MonthlyRecurrenceHelperTests
         //Assert
         canStart.Should().BeFalse();
     }
-    
+
     [Fact]
     public void Method_TryGetStartDate_returns_False_when_FromDate_gt_BeginDate_and_result_is_outOfRange()
     {

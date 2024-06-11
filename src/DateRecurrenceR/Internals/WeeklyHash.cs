@@ -1,5 +1,3 @@
-using System;
-
 namespace DateRecurrenceR.Internals;
 
 internal struct WeeklyHash

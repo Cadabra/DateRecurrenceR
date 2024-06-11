@@ -1,11 +1,8 @@
-using System;
-
 namespace DateRecurrenceR.Helpers;
 
 internal struct YearlyRecurrenceHelper
 {
-    public static bool TryGetStartDate(
-        DateOnly beginDate,
+    public static bool TryGetStartDate(DateOnly beginDate,
         DateOnly fromDate,
         int dayOfYear,
         int interval,
@@ -14,10 +11,7 @@ internal struct YearlyRecurrenceHelper
         var deltaToStartYear = fromDate.Year - beginDate.Year;
         var yearsDiff = deltaToStartYear / interval * interval;
 
-        if (deltaToStartYear % interval > 0 || fromDate.DayOfYear > dayOfYear)
-        {
-            yearsDiff += interval;
-        }
+        if (deltaToStartYear % interval > 0 || fromDate.DayOfYear > dayOfYear) yearsDiff += interval;
 
         if (DateOutOfRangeByYear(beginDate, yearsDiff))
         {
@@ -31,7 +25,7 @@ internal struct YearlyRecurrenceHelper
 
         return true;
     }
-    
+
     private static bool DateOutOfRangeByYear(DateOnly beginDate, int addYear)
     {
         return DateOnly.MaxValue.Year - beginDate.Year < addYear;

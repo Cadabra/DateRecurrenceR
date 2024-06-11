@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using DateRecurrenceR.Internals;
 
@@ -6,9 +5,9 @@ namespace DateRecurrenceR.Collections;
 
 internal sealed class YearlyEnumeratorLimitByDate : IEnumerator<DateOnly>
 {
-    private readonly DateOnly _stopDate;
-    private readonly int _interval;
     private readonly GetNextDateDelegate _getNextDate;
+    private readonly int _interval;
+    private readonly DateOnly _stopDate;
     private bool _canMoveNext = true;
     private int _iterator;
 
@@ -31,13 +30,9 @@ internal sealed class YearlyEnumeratorLimitByDate : IEnumerator<DateOnly>
         }
 
         if (DateOnly.MaxValue.Year - _iterator < _interval)
-        {
             _canMoveNext = false;
-        }
         else
-        {
             _iterator += _interval;
-        }
 
         return true;
     }

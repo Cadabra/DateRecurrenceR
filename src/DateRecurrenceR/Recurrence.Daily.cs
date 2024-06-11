@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using DateRecurrenceR.Collections;
 using DateRecurrenceR.Helpers;
 
@@ -7,8 +5,7 @@ namespace DateRecurrenceR;
 
 public partial struct Recurrence
 {
-    public static IEnumerator<DateOnly> GetDailyEnumerator(
-        DateOnly beginDate,
+    public static IEnumerator<DateOnly> GetDailyEnumerator(DateOnly beginDate,
         DateOnly fromDate,
         int takeCount,
         int interval = 1)
@@ -18,17 +15,13 @@ public partial struct Recurrence
             fromDate,
             interval,
             out var startDate);
-        
-        if (!canStart)
-        {
-            return EmptyEnumerator;
-        }
+
+        if (!canStart) return EmptyEnumerator;
 
         return new DailyEnumeratorLimitByCount(startDate, takeCount, interval);
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="beginDate"></param>
     /// <param name="endDate"></param>
@@ -36,8 +29,7 @@ public partial struct Recurrence
     /// <param name="toDate"></param>
     /// <param name="interval"></param>
     /// <returns></returns>
-    public static IEnumerator<DateOnly> GetDailyEnumerator(
-        DateOnly beginDate,
+    public static IEnumerator<DateOnly> GetDailyEnumerator(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
@@ -48,11 +40,8 @@ public partial struct Recurrence
             fromDate,
             interval,
             out var startDate);
-        
-        if (!canStart)
-        {
-            return EmptyEnumerator;
-        }
+
+        if (!canStart) return EmptyEnumerator;
 
         var stopDate = DateOnlyMin(toDate, endDate);
 

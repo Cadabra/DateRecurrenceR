@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics.Contracts;
 
 namespace DateRecurrenceR.Helpers;
@@ -8,14 +7,14 @@ internal static class DateHelper
     private const int DaysInWeek = 7;
 
     [Pure]
-    public static bool TryGetDateOfDayOfWeek(
-        DateOnly dateInSameWeek,
+    public static bool TryGetDateOfDayOfWeek(DateOnly dateInSameWeek,
         DayOfWeek dayOfWeek,
         DayOfWeek firstDayOfWeek,
         out DateOnly result)
     {
         var diffToDay = WeekDaysHelper.GetDiffToDay(firstDayOfWeek, dayOfWeek);
-        var startDayNumber = dateInSameWeek.DayNumber - WeekDaysHelper.GetDiffToDay(firstDayOfWeek, dateInSameWeek.DayOfWeek);
+        var startDayNumber = dateInSameWeek.DayNumber -
+                             WeekDaysHelper.GetDiffToDay(firstDayOfWeek, dateInSameWeek.DayOfWeek);
         var newDayNumber = startDayNumber + diffToDay;
         if (newDayNumber < DateOnly.MinValue.DayNumber || newDayNumber > DateOnly.MaxValue.DayNumber)
         {

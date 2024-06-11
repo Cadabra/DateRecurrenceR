@@ -24,7 +24,7 @@ public sealed class DailyEnumeratorLimitByCountTests : EnumeratorLimitByCountTes
         // Assert
         dayDif.Should().Be(expectedInterval);
     }
-    
+
     public override void MoveNext_returns_true_expected_times(int expectedCount)
     {
         // Arrange
@@ -32,15 +32,12 @@ public sealed class DailyEnumeratorLimitByCountTests : EnumeratorLimitByCountTes
         var counter = 0;
 
         // Act
-        while (sut.MoveNext())
-        {
-            counter++;
-        }
+        while (sut.MoveNext()) counter++;
 
         // Assert
         counter.Should().Be(expectedCount);
     }
-    
+
     public override void MoveNext_returns_false_after_last_element()
     {
         // Arrange
@@ -49,17 +46,13 @@ public sealed class DailyEnumeratorLimitByCountTests : EnumeratorLimitByCountTes
 
         // Act
         for (var i = 0; i < 10; i++)
-        {
             if (!moveNext)
-            {
                 moveNext = sut.MoveNext();
-            }
-        }
 
         // Assert
         moveNext.Should().Be(false);
     }
-    
+
     public override void MoveNext_returns_false_after_DateMax()
     {
         // Arrange

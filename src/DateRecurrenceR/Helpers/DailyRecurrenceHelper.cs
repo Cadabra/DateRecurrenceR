@@ -1,5 +1,3 @@
-using System;
-
 namespace DateRecurrenceR.Helpers;
 
 internal struct DailyRecurrenceHelper
@@ -14,10 +12,7 @@ internal struct DailyRecurrenceHelper
 
         var intervalCount = (fromDate.DayNumber - beginDate.DayNumber) / interval;
         var dateDayNumber = beginDate.DayNumber + intervalCount * interval;
-        if (dateDayNumber < fromDate.DayNumber)
-        {
-            dateDayNumber += interval;
-        }
+        if (dateDayNumber < fromDate.DayNumber) dateDayNumber += interval;
 
         if (dateDayNumber > DateOnly.MaxValue.DayNumber)
         {

@@ -1,11 +1,8 @@
-using System;
-
 namespace DateRecurrenceR.Helpers;
 
 internal struct MonthlyRecurrenceHelper
 {
-    public static bool TryGetStartDate(
-        DateOnly beginDate,
+    public static bool TryGetStartDate(DateOnly beginDate,
         DateOnly fromDate,
         int dayOfMonth,
         int interval,
@@ -14,10 +11,7 @@ internal struct MonthlyRecurrenceHelper
         var deltaToStartMonth = SubtractMonth(fromDate, beginDate);
 
         var monthsDiff = Math.Max(deltaToStartMonth / interval * interval, 0);
-        if (deltaToStartMonth % interval > 0 || fromDate.Day > dayOfMonth)
-        {
-            monthsDiff += interval;
-        }
+        if (deltaToStartMonth % interval > 0 || fromDate.Day > dayOfMonth) monthsDiff += interval;
 
         if (DateOutOfRangeByMonth(beginDate, monthsDiff))
         {

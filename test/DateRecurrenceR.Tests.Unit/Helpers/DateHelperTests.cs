@@ -182,7 +182,7 @@ public sealed class DateHelperTests
         const int year = 1;
         const int month = 1;
         const DayOfWeek dayOfWeek = DayOfWeek.Monday;
-        const NumberOfWeek numberOfWeek = (NumberOfWeek)5;
+        const NumberOfWeek numberOfWeek = (NumberOfWeek) 5;
 
         // Act
         var action = () => DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, numberOfWeek);
@@ -206,7 +206,7 @@ public sealed class DateHelperTests
         //Assert
         date.Should().Be(expectedDate);
     }
-    
+
     [Fact]
     public void Method_GetDateByDayOfYear_returns_max_365()
     {
@@ -221,7 +221,7 @@ public sealed class DateHelperTests
         //Assert
         date.Should().Be(expectedDate);
     }
-    
+
     [Fact]
     public void Method_GetDateByDayOfYear_returns_max_366()
     {

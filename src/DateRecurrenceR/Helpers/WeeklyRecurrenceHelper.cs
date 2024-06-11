@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using DateRecurrenceR.Internals;
 
@@ -14,7 +13,7 @@ internal struct WeeklyRecurrenceHelper
 
         var increment = DaysInWeek * (interval - 1) + 1;
 
-        var weekDayIndex = ((int)weekDays.MinDay + 6) % DaysInWeek;
+        var weekDayIndex = ((int) weekDays.MinDay + 6) % DaysInWeek;
 
         for (var i = DaysInWeek; i > 0; i--)
         {
@@ -119,8 +118,7 @@ internal struct WeeklyRecurrenceHelper
         return hash;
     }
 
-    public static bool TryGetStartDate(
-        DateOnly beginDate,
+    public static bool TryGetStartDate(DateOnly beginDate,
         DateOnly fromDate,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
@@ -133,10 +131,7 @@ internal struct WeeklyRecurrenceHelper
             return false;
         }
 
-        if (startDate >= fromDate)
-        {
-            return true;
-        }
+        if (startDate >= fromDate) return true;
 
         var difDays = CalculateDaysToNextInterval(startDate.DayNumber, fromDate.DayNumber, interval, weekDays);
         var startDay = startDate.DayNumber + difDays;
@@ -159,10 +154,7 @@ internal struct WeeklyRecurrenceHelper
         var daysDif = fromDay - startDay;
 
         var modDif = daysDif / daysInInterval * daysInInterval;
-        if (daysDif > modDif)
-        {
-            return modDif + daysInInterval;
-        }
+        if (daysDif > modDif) return modDif + daysInInterval;
 
         return modDif;
         // if (modDif > DaysInWeek)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using DateRecurrenceR.Internals;
 
@@ -6,21 +5,22 @@ namespace DateRecurrenceR.Collections;
 
 internal sealed class MonthlyEnumeratorLimitByCount : IEnumerator<DateOnly>
 {
-    private readonly int _takeCount;
-    private readonly int _interval;
     private readonly GetNextMonthDateDelegate _getNextDate;
-    private int _count;
+    private readonly int _interval;
+    private readonly int _takeCount;
     private bool _canMoveNext = true;
+    private int _count;
     private DateOnly _iterator;
 
-    public MonthlyEnumeratorLimitByCount(DateOnly startDate, int takeCount, int interval, GetNextMonthDateDelegate getNextDate)
+    public MonthlyEnumeratorLimitByCount(DateOnly startDate, int takeCount, int interval,
+        GetNextMonthDateDelegate getNextDate)
     {
         _iterator = startDate;
         _takeCount = takeCount;
         _interval = interval;
         _getNextDate = getNextDate;
     }
-    
+
     public bool MoveNext()
     {
         if (!_canMoveNext || _count >= _takeCount)
@@ -33,13 +33,9 @@ internal sealed class MonthlyEnumeratorLimitByCount : IEnumerator<DateOnly>
         _count++;
 
         if (GetMonthNumber(DateOnly.MaxValue) - GetMonthNumber(_iterator) < _interval)
-        {
             _canMoveNext = false;
-        }
         else
-        {
             _iterator = _iterator.AddMonths(_interval);
-        }
 
         return true;
     }

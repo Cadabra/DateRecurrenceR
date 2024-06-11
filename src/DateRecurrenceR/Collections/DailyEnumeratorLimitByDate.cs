@@ -1,12 +1,11 @@
-using System;
 using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
 internal sealed class DailyEnumeratorLimitByDate : IEnumerator<DateOnly>
 {
-    private readonly DateOnly _stopDate;
     private readonly int _interval;
+    private readonly DateOnly _stopDate;
     private bool _canMoveNext = true;
     private DateOnly _iterator;
 
@@ -26,15 +25,11 @@ internal sealed class DailyEnumeratorLimitByDate : IEnumerator<DateOnly>
         }
 
         Current = _iterator;
-        
+
         if (DateOnly.MaxValue.DayNumber - _iterator.DayNumber < _interval)
-        {
             _canMoveNext = false;
-        }
         else
-        {
             _iterator = _iterator.AddDays(_interval);
-        }
 
         return true;
     }

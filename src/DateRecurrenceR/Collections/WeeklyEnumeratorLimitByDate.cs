@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using DateRecurrenceR.Internals;
 
@@ -6,13 +5,12 @@ namespace DateRecurrenceR.Collections;
 
 internal sealed class WeeklyEnumeratorLimitByDate : IEnumerator<DateOnly>
 {
-    private readonly DateOnly _stop;
     private readonly WeeklyHash _hash;
+    private readonly DateOnly _stop;
     private bool _canMoveNext = true;
     private DateOnly _iterator;
 
-    public WeeklyEnumeratorLimitByDate(
-        DateOnly start,
+    public WeeklyEnumeratorLimitByDate(DateOnly start,
         DateOnly stop,
         WeeklyHash hash)
     {
@@ -30,15 +28,11 @@ internal sealed class WeeklyEnumeratorLimitByDate : IEnumerator<DateOnly>
         }
 
         Current = _iterator;
-        
+
         if (DateOnly.MaxValue.DayNumber - _iterator.DayNumber < _hash[_iterator.DayOfWeek])
-        {
             _canMoveNext = false;
-        }
         else
-        {
             _iterator = _iterator.AddDays(_hash[_iterator.DayOfWeek]);
-        }
 
         return true;
     }
