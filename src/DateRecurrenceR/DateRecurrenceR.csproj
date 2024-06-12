@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <Authors>Sergey Olshanskiy</Authors>
-        <Company>Sergey Olshanskiy</Company>
         <Copyright>Copyright Sergey Olshanskiy</Copyright>
         <Description>Library for represents a recurrence pattern of date.</Description>
         <Version>0.2.0</Version>
