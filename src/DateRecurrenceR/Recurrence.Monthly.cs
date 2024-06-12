@@ -11,7 +11,10 @@ public partial struct Recurrence
     /// <param name="beginDate">The date of recurrence begins.</param>
     /// <param name="fromDate">The date of specific range starts.</param>
     /// <param name="takeCount">The maximum number of contiguous dates.</param>
-    /// <param name="dayOfMonth">The day of month. Takes the last day of month if <paramref name="dayOfMonth" /> more than days in the month.</param>
+    /// <param name="dayOfMonth">
+    ///     The day of month. Takes the last day of month if <paramref name="dayOfMonth" /> more than days
+    ///     in the month.
+    /// </param>
     /// <param name="interval">The interval between occurrences, 1 by default.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -92,7 +95,10 @@ public partial struct Recurrence
     /// <param name="endDate">The date of recurrence ends.</param>
     /// <param name="fromDate">The date of specific range starts.</param>
     /// <param name="toDate">The date of specific range finishes.</param>
-    /// <param name="dayOfMonth">The day of month. Takes the last day of month if <paramref name="dayOfMonth" /> more than days in the month.</param>
+    /// <param name="dayOfMonth">
+    ///     The day of month. Takes the last day of month if <paramref name="dayOfMonth" /> more than days
+    ///     in the month.
+    /// </param>
     /// <param name="interval">The interval between occurrences, 1 by default</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />

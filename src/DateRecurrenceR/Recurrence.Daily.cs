@@ -24,7 +24,7 @@ public partial struct Recurrence
         if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
 
         if (takeCount < 1) return EmptyEnumerator;
-        
+
         var canStart = DailyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
