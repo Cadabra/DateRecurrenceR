@@ -27,9 +27,18 @@ public sealed class WeekDays
 
     public bool this[DayOfWeek dayOfWeek] => _ds[(int) dayOfWeek];
 
-    // init => _ds[(int)dayOfWeek] = value;
     private void UpdateMinDay(DayOfWeek dayOfWeek)
     {
         if (MinDay > dayOfWeek) MinDay = dayOfWeek;
+    }
+
+    public DayOfWeek GetNextDay(DayOfWeek dayOfWeek)
+    {
+        while (!_ds[(int) dayOfWeek])
+        {
+            dayOfWeek = (DayOfWeek)(((int)dayOfWeek + 1) % 7);
+        }
+
+        return dayOfWeek;
     }
 }

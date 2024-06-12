@@ -154,14 +154,14 @@ internal struct WeeklyRecurrenceHelper
         var daysDif = fromDay - startDay;
 
         var modDif = daysDif / daysInInterval * daysInInterval;
-        if (daysDif > modDif) return modDif + daysInInterval;
+        
+        if (daysDif > modDif)
+        {
+            daysDif += (((daysInInterval - (daysDif - modDif)) / DaysInWeek) * DaysInWeek);
+            var dayOfWeek = (DayOfWeek) (((uint) (startDay + daysDif) + 1) % 7);
+            return daysDif + (int)weekDays.GetNextDay(dayOfWeek) + 1;
+        }
 
         return modDif;
-        // if (modDif > DaysInWeek)
-        // {
-        //     return daysDif - modDif + daysInInterval;
-        // }
-        //
-        // return daysDif - modDif;
     }
 }
