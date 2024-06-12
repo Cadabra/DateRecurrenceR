@@ -1,4 +1,4 @@
-namespace Cadabra.CS.Date.Tests.Unit.Collections;
+namespace DateRecurrenceR.Tests.Unit.Collections;
 
 public abstract class EnumeratorLimitByCountTests
 {

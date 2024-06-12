@@ -1,7 +1,7 @@
 using DateRecurrenceR.Collections;
 using FluentAssertions;
 
-namespace Cadabra.CS.Date.Tests.Unit.Collections;
+namespace DateRecurrenceR.Tests.Unit.Collections;
 
 public sealed class DailyEnumeratorLimitByCountTests : EnumeratorLimitByCountTests
 {

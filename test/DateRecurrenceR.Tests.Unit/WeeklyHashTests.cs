@@ -1,7 +1,7 @@
 using DateRecurrenceR.Internals;
 using FluentAssertions;
 
-namespace Cadabra.CS.Date.Tests.Unit;
+namespace DateRecurrenceR.Tests.Unit;
 
 public sealed class WeeklyHashTests
 {

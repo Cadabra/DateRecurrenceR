@@ -1,8 +1,7 @@
-using DateRecurrenceR;
 using DateRecurrenceR.Helpers;
 using FluentAssertions;
 
-namespace Cadabra.CS.Date.Tests.Unit.Helpers;
+namespace DateRecurrenceR.Tests.Unit.Helpers;
 
 public sealed class WeeklyRecurrenceHelperTests
 {
