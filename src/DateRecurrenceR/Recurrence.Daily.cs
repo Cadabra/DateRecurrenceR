@@ -43,7 +43,7 @@ public partial struct Recurrence
     /// <param name="beginDate">The date of recurrence begins.</param>
     /// <param name="endDate">The date of recurrence ends.</param>
     /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="toDate">The date of specific range finishs.</param>
+    /// <param name="toDate">The date of specific range finishes.</param>
     /// <param name="interval">The interval between occurrences, 1 by default.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
