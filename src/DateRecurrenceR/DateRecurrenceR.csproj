@@ -4,7 +4,7 @@
         <Authors>Sergey Olshanskiy</Authors>
         <Copyright>Copyright Sergey Olshanskiy</Copyright>
         <Description>Library for represents a recurrence pattern of date.</Description>
-        <Version>0.4.0-beta</Version>
+        <Version>0.4.0-beta.2</Version>
         <RepositoryUrl>https://github.com/Cadabra/DateRecurrenceR</RepositoryUrl>
         <ImplicitUsings>enable</ImplicitUsings>
         <TargetFramework>net6.0</TargetFramework>
