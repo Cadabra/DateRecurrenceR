@@ -32,6 +32,8 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Pack
+      run: dotnet pack --configuration Release --no-build --output ./package
     - name: Push to github
       run: dotnet nuget push ./package/*.nupkg --source https://nuget.pkg.github.com/cadabra/index.json --api-key ${{ secrets.RECURRENCE_API_KEY }}
     - name: Push to NuGet
