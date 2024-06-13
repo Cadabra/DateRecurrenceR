@@ -8,11 +8,17 @@ on:
     # - '*.*.*'
 jobs:
   build:
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+
     strategy:
       matrix: 
         os: [ubuntu-latest]
       fail-fast: false
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -34,6 +40,10 @@ jobs:
       run: dotnet test --configuration Release --no-build --verbosity normal
     - name: Pack
       run: dotnet pack --configuration Release --output ./package
+    - name: Attest Build Provenance
+      uses: actions/attest-build-provenance@v1.3.0
+      with:
+          subject-path: '${{ github.workspace }}/package'
     - name: Push to github
       run: dotnet nuget push ./package/*.nupkg --source https://nuget.pkg.github.com/cadabra/index.json --api-key ${{ secrets.RECURRENCE_API_KEY }}
     - name: Push to NuGet
