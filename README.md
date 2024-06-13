@@ -1,5 +1,5 @@
-# DateRecurrenceR [![Nuget](https://img.shields.io/nuget/v/DateRecurrenceR?logo=NuGet)](https://www.nuget.org/packages/DateRecurrenceR)
-# needs help with testing
+# DateRecurrenceR
+[![Release](https://github.com/Cadabra/DateRecurrenceR/actions/workflows/release.yml/badge.svg)](https://github.com/Cadabra/DateRecurrenceR/actions/workflows/release.yml) [![Nuget](https://img.shields.io/nuget/v/DateRecurrenceR?logo=NuGet)](https://www.nuget.org/packages/DateRecurrenceR)
 
 DateRecurrenceR is a .NET library designed to handle recurrence patterns for dates efficiently. It allows you to generate and manage recurring date sequences without storing every sequences, making it ideal for applications with dynamic date range calculations.
 
