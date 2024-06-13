@@ -1,11 +1,11 @@
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Helpers;
 
 internal static class DateHelper
 {
-    private const int DaysInWeek = 7;
-
     [Pure]
     public static bool TryGetDateOfDayOfWeek(DateOnly dateInSameWeek,
         DayOfWeek dayOfWeek,
@@ -38,7 +38,8 @@ internal static class DateHelper
             NumberOfWeek.Second => 1,
             NumberOfWeek.Third => 2,
             NumberOfWeek.Fourth => 3,
-            NumberOfWeek.Last => 4 - (DateTime.DaysInMonth(date.Year, date.Month) % 7 <= diffToFirstDay ? 1 : 0),
+            NumberOfWeek.Last => 4 -
+                                 (DateTime.DaysInMonth(date.Year, date.Month) % DaysInWeek <= diffToFirstDay ? 1 : 0),
             _ => throw new ArgumentOutOfRangeException(nameof(numberOfWeek), numberOfWeek, null)
         };
 
@@ -66,5 +67,24 @@ internal static class DateHelper
             : dayOfYear;
 
         return new DateOnly(year, 1, 1).AddDays(saveDay - 1);
+    }
+
+    [Pure]
+    public static int CalculateDaysToNextInterval(int startDay, int fromDay, int interval, WeeklyHash weeklyHash)
+    {
+        Debug.Assert(fromDay >= startDay);
+
+        var daysInInterval = DaysInWeek * interval;
+        var daysDif = fromDay - startDay;
+
+        var modDif = daysDif / daysInInterval * daysInInterval;
+
+        for (var i = 0; (i < DaysInWeek) & (daysDif > modDif); i++)
+        {
+            var dayOfWeek = (DayOfWeek) (((uint) startDay + modDif + 1) % DaysInWeek);
+            modDif += weeklyHash[dayOfWeek];
+        }
+
+        return modDif;
     }
 }
