@@ -14,11 +14,13 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Monday);
         var firstDayOfWeek = DayOfWeek.Monday;
         var interval = 1;
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         // Act
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
+            patternHash,
             weekDays,
             firstDayOfWeek,
             interval,
@@ -37,11 +39,13 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Friday);
         var firstDayOfWeek = DayOfWeek.Monday;
         var interval = 1;
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         // Act
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
+            patternHash,
             weekDays,
             firstDayOfWeek,
             interval,
@@ -60,11 +64,13 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Saturday);
         var firstDayOfWeek = DayOfWeek.Monday;
         var interval = 1;
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         // Act
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
+            patternHash,
             weekDays,
             firstDayOfWeek,
             interval,
@@ -83,11 +89,13 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Saturday);
         var firstDayOfWeek = DayOfWeek.Monday;
         var interval = 1;
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         // Act
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
+            patternHash,
             weekDays,
             firstDayOfWeek,
             interval,
@@ -106,11 +114,13 @@ public sealed class WeeklyRecurrenceHelperTests
         var fromDate = beginDate.AddDays(7 * interval * 2);
         var weekDays = new WeekDays(DayOfWeek.Monday);
         var firstDayOfWeek = DayOfWeek.Monday;
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         // Act
         WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
+            patternHash,
             weekDays,
             firstDayOfWeek,
             interval,
@@ -184,17 +194,4 @@ public sealed class WeeklyRecurrenceHelperTests
         hash[DayOfWeek.Friday].Should().Be(1);
         hash[DayOfWeek.Saturday].Should().Be(1);
     }
-
-    // [Fact]
-    // public void Method_GetPatternHash_throws_Exception_if_dayOfWeek_outOfRange()
-    // {
-    //     // Arrange
-    //     var action = () => new WeekDays((DayOfWeek)7);
-    //
-    //     // Act
-    //     // var hash = WeeklyRecurrenceHelper.GetPatternHash(DayOfWeek.Friday, weekDays, 1);
-    //
-    //     //Assert
-    //     action.Should().Throw<Exception>();
-    // }
 }

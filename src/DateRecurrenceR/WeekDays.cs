@@ -2,11 +2,11 @@ namespace DateRecurrenceR;
 
 public sealed class WeekDays
 {
-    private readonly bool[] _ds = new bool[7];
+    private readonly bool[] _ds = new bool[DaysInWeek];
 
     public WeekDays(DayOfWeek dayOfWeek)
     {
-        MinDay = (DayOfWeek) 7;
+        MinDay = (DayOfWeek) DaysInWeek;
 
         _ds[(int) dayOfWeek] = true;
         UpdateMinDay(dayOfWeek);
@@ -14,7 +14,7 @@ public sealed class WeekDays
 
     public WeekDays(params DayOfWeek[] daysArray)
     {
-        MinDay = (DayOfWeek) 7;
+        MinDay = (DayOfWeek) DaysInWeek;
 
         for (var i = 0; i < daysArray.Length; i++)
         {
@@ -30,15 +30,5 @@ public sealed class WeekDays
     private void UpdateMinDay(DayOfWeek dayOfWeek)
     {
         if (MinDay > dayOfWeek) MinDay = dayOfWeek;
-    }
-
-    public DayOfWeek GetNextDay(DayOfWeek dayOfWeek)
-    {
-        while (!_ds[(int) dayOfWeek])
-        {
-            dayOfWeek = (DayOfWeek)(((int)dayOfWeek + 1) % 7);
-        }
-
-        return dayOfWeek;
     }
 }

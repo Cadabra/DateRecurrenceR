@@ -27,17 +27,18 @@ public partial struct Recurrence
     {
         if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
 
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
+            patternHash,
             weekDays,
             firstDayOfWeek,
             interval,
             out var startDate);
 
         if (!canStart) return EmptyEnumerator;
-
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         return new WeeklyEnumeratorLimitByCount(startDate, takeCount, patternHash);
     }
@@ -67,9 +68,12 @@ public partial struct Recurrence
     {
         if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
 
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
+            patternHash,
             weekDays,
             firstDayOfWeek,
             interval,
@@ -78,8 +82,6 @@ public partial struct Recurrence
         if (!canStart) return EmptyEnumerator;
 
         var stopDate = DateOnlyMin(toDate, endDate);
-
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         return new WeeklyEnumeratorLimitByDate(startDate, stopDate, patternHash);
     }

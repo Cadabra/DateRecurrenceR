@@ -1,12 +1,9 @@
-using System.Diagnostics;
 using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Helpers;
 
 internal struct WeeklyRecurrenceHelper
 {
-    private const int DaysInWeek = 7;
-
     public static WeeklyHash GetPatternHash(WeekDays weekDays, int interval)
     {
         var hash = new WeeklyHash();
@@ -120,6 +117,7 @@ internal struct WeeklyRecurrenceHelper
 
     public static bool TryGetStartDate(DateOnly beginDate,
         DateOnly fromDate,
+        WeeklyHash weeklyHash,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
         int interval,
@@ -133,7 +131,8 @@ internal struct WeeklyRecurrenceHelper
 
         if (startDate >= fromDate) return true;
 
-        var difDays = CalculateDaysToNextInterval(startDate.DayNumber, fromDate.DayNumber, interval, weekDays);
+        var difDays =
+            DateHelper.CalculateDaysToNextInterval(startDate.DayNumber, fromDate.DayNumber, interval, weeklyHash);
         var startDay = startDate.DayNumber + difDays;
 
         if (startDay > DateOnly.MaxValue.DayNumber)
@@ -144,24 +143,5 @@ internal struct WeeklyRecurrenceHelper
 
         startDate = DateOnly.FromDayNumber(startDay);
         return true;
-    }
-
-    private static int CalculateDaysToNextInterval(int startDay, int fromDay, int interval, WeekDays weekDays)
-    {
-        Debug.Assert(fromDay >= startDay);
-
-        var daysInInterval = DaysInWeek * interval;
-        var daysDif = fromDay - startDay;
-
-        var modDif = daysDif / daysInInterval * daysInInterval;
-        
-        if (daysDif > modDif)
-        {
-            daysDif += (((daysInInterval - (daysDif - modDif)) / DaysInWeek) * DaysInWeek);
-            var dayOfWeek = (DayOfWeek) (((uint) (startDay + daysDif) + 1) % 7);
-            return daysDif + (int)weekDays.GetNextDay(dayOfWeek) + 1;
-        }
-
-        return modDif;
     }
 }

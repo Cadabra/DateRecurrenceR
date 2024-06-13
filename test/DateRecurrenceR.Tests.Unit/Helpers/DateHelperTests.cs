@@ -235,4 +235,68 @@ public sealed class DateHelperTests
         //Assert
         date.Should().Be(expectedDate);
     }
+
+
+    [Fact]
+    public void Method_CalculateDaysToNextInterval_with_singleDay()
+    {
+        // Arrange
+        var interval = 50;
+        var weekDays = new WeekDays(DayOfWeek.Monday);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+
+        // Act
+        var res = DateHelper.CalculateDaysToNextInterval(
+            DateOnly.MinValue.DayNumber,
+            DateOnly.MinValue.AddDays(1).DayNumber,
+            interval,
+            patternHash);
+
+        //Assert
+        res.Should().Be(interval * DaysInWeek);
+    }
+
+    [Fact]
+    public void Method_CalculateDaysToNextInterval_with_multipleDays_with_start_after_lastDay()
+    {
+        // Arrange
+        var interval = 2;
+        var weekDays = new WeekDays(DayOfWeek.Tuesday, DayOfWeek.Friday);
+        var startDate = new DateOnly(999, 1, 1);
+        var fromDate = new DateOnly(999, 2, 16); // right after 999-02-15 Friday
+        var expectedDate = new DateOnly(999, 2, 26);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+
+        // Act
+        var res = DateHelper.CalculateDaysToNextInterval(
+            startDate.DayNumber,
+            fromDate.DayNumber,
+            interval,
+            patternHash);
+
+        //Assert
+        res.Should().Be(expectedDate.DayNumber - startDate.DayNumber);
+    }
+
+    [Fact]
+    public void Method_CalculateDaysToNextInterval_with_multipleDays_with_start_in_middleDay()
+    {
+        // Arrange
+        var interval = 2;
+        var weekDays = new WeekDays(DayOfWeek.Tuesday, DayOfWeek.Friday);
+        var startDate = new DateOnly(999, 1, 1);
+        var fromDate = new DateOnly(999, 2, 14); // before 999-02-15 Friday
+        var expectedDate = new DateOnly(999, 2, 15);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+
+        // Act
+        var res = DateHelper.CalculateDaysToNextInterval(
+            startDate.DayNumber,
+            fromDate.DayNumber,
+            interval,
+            patternHash);
+
+        //Assert
+        res.Should().Be(expectedDate.DayNumber - startDate.DayNumber);
+    }
 }
