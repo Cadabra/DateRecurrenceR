@@ -1,7 +1,8 @@
 ﻿using DateRecurrenceR;
 
-var year = 999;
-var firstDayOfWeek = DayOfWeek.Sunday;
+const int year = 999;
+const int interval = 2;
+const DayOfWeek firstDayOfWeek = DayOfWeek.Sunday;
 var beginDate = new DateOnly(year, 1, 1);
 var endDate = new DateOnly(year, 3, 31);
 var fromDate = beginDate;
@@ -14,12 +15,12 @@ var toDate1 = new DateOnly(year, 1, 31);
 var fromDate2 = new DateOnly(year, 2, 16);
 var toDate2 = endDate;
 
-var enumeratorFull = Recurrence.GetWeeklyEnumerator(beginDate, endDate, fromDate, toDate, weekDays, firstDayOfWeek, 2);
+var enumeratorFull = Recurrence.Weekly(beginDate, endDate, fromDate, toDate, weekDays, firstDayOfWeek, interval);
 
 var enumeratorFirstMonth =
-    Recurrence.GetWeeklyEnumerator(beginDate, endDate, fromDate1, toDate1, weekDays, firstDayOfWeek, 2);
+    Recurrence.Weekly(beginDate, endDate, fromDate1, toDate1, weekDays, firstDayOfWeek, interval);
 var enumeratorSecondMonth =
-    Recurrence.GetWeeklyEnumerator(beginDate, endDate, fromDate2, toDate2, weekDays, firstDayOfWeek, 2);
+    Recurrence.Weekly(beginDate, endDate, fromDate2, toDate2, weekDays, firstDayOfWeek, interval);
 
 while (enumeratorFull.MoveNext()) Console.Write($"{enumeratorFull.Current:d} ");
 

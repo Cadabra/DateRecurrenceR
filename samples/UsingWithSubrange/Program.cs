@@ -1,12 +1,14 @@
 ﻿using DateRecurrenceR;
 
 const int subRangeYears = 5;
+const int dayOfYear = 256;
+const int interval = 1;
 var beginDate = DateOnly.MinValue;
 var endDate = DateOnly.MaxValue;
 var fromDate = DateOnly.FromDateTime(DateTime.Now);
 var toDate = fromDate.AddYears(subRangeYears);
 
-var enumerator = Recurrence.YearlyByDayOfYear(beginDate, endDate, fromDate, toDate, 256);
+var enumerator = Recurrence.Yearly(beginDate, endDate, fromDate, toDate, dayOfYear, interval);
 
 Console.WriteLine($"Current day of year is {fromDate.DayOfYear}");
 Console.WriteLine($"Range {beginDate:M/d/yy} - {endDate:M/d/yy}");
