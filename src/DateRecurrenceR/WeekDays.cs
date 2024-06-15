@@ -52,26 +52,41 @@ public sealed class WeekDays
         _ds[(int) day6] = true;
         _ds[(int) day7] = true;
 
-        UpdateMinDay(day1, day2, day3, day4, day5, day6, day7);
+        UpdateMinDay();
+    }
+
+    public WeekDays(bool day1,
+        bool day2,
+        bool day3,
+        bool day4,
+        bool day5,
+        bool day6,
+        bool day7)
+    {
+        MinDay = (DayOfWeek) DaysInWeek;
+
+        _ds[0] = day1;
+        _ds[1] = day2;
+        _ds[2] = day3;
+        _ds[3] = day4;
+        _ds[4] = day5;
+        _ds[5] = day6;
+        _ds[6] = day7;
+
+        UpdateMinDay();
     }
 
     public DayOfWeek MinDay { get; private set; }
 
     public bool this[DayOfWeek dayOfWeek] => _ds[(int) dayOfWeek];
 
-    private void UpdateMinDay(DayOfWeek day1,
-        DayOfWeek day2,
-        DayOfWeek day3,
-        DayOfWeek day4,
-        DayOfWeek day5,
-        DayOfWeek day6,
-        DayOfWeek day7)
+    private void UpdateMinDay()
     {
-        MinDay = (DayOfWeek) Math.Min((int) day1,
-            Math.Min((int) day2,
-                Math.Min((int) day3,
-                    Math.Min((int) day4,
-                        Math.Min((int) day5,
-                            Math.Min((int) day6, (int) day7))))));
+        for (var i = 0; i < DaysInWeek; i++)
+        {
+            if (!_ds[i]) continue;
+            MinDay = (DayOfWeek) i;
+            break;
+        }
     }
 }
