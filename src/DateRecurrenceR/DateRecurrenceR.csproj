@@ -2,10 +2,12 @@
 
     <PropertyGroup>
         <Authors>Sergey Olshanskiy</Authors>
-        <Copyright>Copyright Sergey Olshanskiy</Copyright>
         <Description>Library for represents a recurrence pattern of date.</Description>
-        <Version>0.5.0-beta.2</Version>
-        <RepositoryUrl>https://github.com/Cadabra/DateRecurrenceR</RepositoryUrl>
+        <Copyright>Copyright Sergey Olshanskiy</Copyright>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageTags>recurring-dates;date-interval;date-recurrence;date-repeat;date-patterns</PackageTags>
+        <Version>0.5.0-beta.3</Version>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <ImplicitUsings>enable</ImplicitUsings>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
@@ -14,7 +16,10 @@
         <Title>DateRecurrenceR</Title>
         <PackageId>DateRecurrenceR</PackageId>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
