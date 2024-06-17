@@ -8,6 +8,8 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
 
     private bool _isInit;
 
+    
+    // todo refactor this!
     public UnionEnumerator(IReadOnlyList<IEnumerator<DateOnly>> enumerators)
     {
         var enumeratorsCount = 0;
@@ -31,13 +33,9 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
             {
                 for (var j = 0; j < ue._enumerators.Length; j++)
                 {
-                    // ref var e2 = ref ue._enumerators[j];
                     tempArray[index] = ue._enumerators[j];
                     index += 1;
                 }
-
-                // Array.Copy(ue._enumerators, 0, _enumerators, index, ue._enumerators.Length);
-                // index += ue._enumerators.Length;
             }
             else
             {
@@ -56,20 +54,10 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
                 var e1 = tempArray[i].Enum;
                 var e2 = tempArray[j].Enum;
 
-                if (object.ReferenceEquals(e1, e2))
+                if (ReferenceEquals(e1, e2))
                 {
                     isUniq = false;
                 }
-                // unsafe
-                // {
-                //     fixed (IEnumerator<DateOnly>* e1 = &tempArray[i].Enum, e2 = &tempArray[j].Enum)
-                //     {
-                //         if (e1 == e2)
-                //         {
-                //             isUniq = false;
-                //         }
-                //     }
-                // }
             }
 
             if (isUniq)
@@ -100,11 +88,6 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
                     }
                 }
             }
-            // for (var i = 0; i < _enumerators.Length; i++)
-            // {
-            //     ref var e = ref _enumerators[i];
-            //     e.MoveNext();
-            // }
 
             _isInit = true;
         }
