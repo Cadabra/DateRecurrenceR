@@ -14,6 +14,7 @@ public class UnionEnumeratorTests
         var beginDate = DateOnly.MinValue;
         var fromDate = beginDate;
 
+        var equivalentEnumerator = Recurrence.Yearly(beginDate, fromDate, takeCount, dayOfYear, interval);
         var enumerator = Recurrence.Yearly(beginDate, fromDate, takeCount, dayOfYear, interval);
 
         var res = Recurrence.Union(enumerator, enumerator, enumerator, enumerator);
@@ -22,6 +23,12 @@ public class UnionEnumeratorTests
         res = Recurrence.Union(res, enumerator);
 
         // Act
+        var equivalentList = new List<DateOnly>();
+        while (equivalentEnumerator.MoveNext())
+        {
+            equivalentList.Add(equivalentEnumerator.Current);
+        }
+        
         var list = new List<DateOnly>();
         while (res.MoveNext())
         {
@@ -30,6 +37,7 @@ public class UnionEnumeratorTests
 
         //Assert
         list.Count.Should().Be(takeCount);
+        list.Should().BeEquivalentTo(equivalentList);
     }
     
     [Fact]
@@ -48,8 +56,8 @@ public class UnionEnumeratorTests
         var res1 = Recurrence.Union(enumerator1, enumerator1, enumerator1, enumerator1);
         var res2 = Recurrence.Union(enumerator2, enumerator2, enumerator2, enumerator2);
         var res = Recurrence.Union(res1, res2);
-        res = Recurrence.Union(res1, enumerator2, enumerator1);
-        res = Recurrence.Union(res2, enumerator1, enumerator2);
+        res = Recurrence.Union(res, res1, enumerator2, enumerator1);
+        res = Recurrence.Union(res, res2, enumerator1, enumerator2);
 
         // Act
         var list = new List<DateOnly>();
@@ -59,6 +67,6 @@ public class UnionEnumeratorTests
         }
 
         //Assert
-        list.Count.Should().Be(takeCount);
+        list.Count.Should().Be(takeCount * 2);
     }
 }

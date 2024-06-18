@@ -8,86 +8,50 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
 
     private bool _isInit;
 
-    
-    // todo refactor this!
     public UnionEnumerator(IReadOnlyList<IEnumerator<DateOnly>> enumerators)
     {
-        var enumeratorsCount = 0;
-        for (var i = 0; i < enumerators.Count; i++)
-        {
-            if (enumerators[i] is UnionEnumerator ue)
-            {
-                enumeratorsCount += ue._enumerators.Length;
-            }
-            else
-            {
-                enumeratorsCount += 1;
-            }
-        }
+        var hash = new HashSet<EWrapper>();
 
-        var tempArray = new EWrapper[enumeratorsCount];
-        var index = 0;
         for (var i = 0; i < enumerators.Count; i++)
         {
             if (enumerators[i] is UnionEnumerator ue)
             {
                 for (var j = 0; j < ue._enumerators.Length; j++)
                 {
-                    tempArray[index] = ue._enumerators[j];
-                    index += 1;
+                    hash.Add(ue._enumerators[j]);
                 }
             }
             else
             {
-                tempArray[index] = new EWrapper(enumerators[i]);
-                index += 1;
+                hash.Add(new EWrapper(enumerators[i]));
             }
         }
 
-        _enumerators = new EWrapper[enumeratorsCount];
-        var index2 = 0;
-        for (var i = 0; i < tempArray.Length; i++)
-        {
-            var isUniq = true;
-            for (var j = i + 1; j < tempArray.Length; j++)
-            {
-                var e1 = tempArray[i].Enum;
-                var e2 = tempArray[j].Enum;
+        _enumerators = hash.ToArray();
 
-                if (ReferenceEquals(e1, e2))
-                {
-                    isUniq = false;
-                }
-            }
-
-            if (isUniq)
-            {
-                _enumerators[index2] = tempArray[i];
-                index2++;
-            }
-        }
-
-        var copyArr = new EWrapper[index2];
-        Array.Copy(_enumerators, 0, copyArr, 0, index2);
-
-        _enumerators = copyArr;
         Current = default;
     }
 
+    // todo: try to remove '_isInit' 
     public bool MoveNext()
     {
         if (!_isInit)
         {
-            unsafe
+            for (var i = 0; i < _enumerators.Length; i++)
             {
-                for (var i = 0; i < _enumerators.Length; i++)
-                {
-                    fixed (EWrapper* e = &_enumerators[i])
-                    {
-                        e->MoveNext();
-                    }
-                }
+                _enumerators[i].MoveNext();
             }
+
+            // unsafe
+            // {
+            //     fixed (EWrapper* e = _enumerators)
+            //     {
+            //         for (var i = 0; i < _enumerators.Length; i++)
+            //         {
+            //             e[i].MoveNext();
+            //         }
+            //     }
+            // }
 
             _isInit = true;
         }
@@ -135,6 +99,46 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
     {
     }
 
+
+    private static unsafe int GetFlattenCount(IEnumerator<DateOnly>[] enumerators)
+    {
+        var enumeratorsCount = 0;
+        fixed (IEnumerator<DateOnly>* e = enumerators)
+        {
+            for (var i = 0; i < enumerators.Length; i++)
+            {
+                if (e[i] is UnionEnumerator ue)
+                {
+                    enumeratorsCount += ue._enumerators.Length;
+                }
+                else
+                {
+                    enumeratorsCount += 1;
+                }
+            }
+        }
+
+        return enumeratorsCount;
+    }
+
+    private static unsafe int GetFlattenCount_old(IReadOnlyList<IEnumerator<DateOnly>> enumerators)
+    {
+        var enumeratorsCount = 0;
+        for (var i = 0; i < enumerators.Count; i++)
+        {
+            if (enumerators[i] is UnionEnumerator ue)
+            {
+                enumeratorsCount += ue._enumerators.Length;
+            }
+            else
+            {
+                enumeratorsCount += 1;
+            }
+        }
+
+        return enumeratorsCount;
+    }
+
     private struct EWrapper
     {
         public EWrapper(IEnumerator<DateOnly> @enum)
@@ -151,6 +155,11 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
         {
             CanMoveNext = Enum.MoveNext();
             return CanMoveNext;
+        }
+
+        public override int GetHashCode()
+        {
+            return Enum.GetHashCode();
         }
     }
 }
