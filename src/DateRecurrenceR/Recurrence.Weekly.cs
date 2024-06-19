@@ -8,11 +8,11 @@ public partial struct Recurrence
     /// <summary>
     ///     Gets an enumerator for weekly period for first <c>n</c> contiguous dates.
     /// </summary>
-    /// <param name="beginDate">The date of recurrence begins.</param>
-    /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="takeCount">The maximum number of contiguous dates.</param>
-    /// <param name="weekDays">Days of week.</param>
-    /// <param name="firstDayOfWeek">The first day of week.</param>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="fromDate">The date when a specific range starts.</param>
+    /// <param name="count">The maximum number of contiguous dates.</param>
+    /// <param name="weekDays">Days of the week.</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -20,7 +20,7 @@ public partial struct Recurrence
     /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
         DateOnly fromDate,
-        int takeCount,
+        int count,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
         int interval)
@@ -40,19 +40,19 @@ public partial struct Recurrence
 
         if (!canStart) return EmptyEnumerator;
 
-        return new WeeklyEnumeratorLimitByCount(startDate, takeCount, patternHash);
+        return new WeeklyEnumeratorLimitByCount(startDate, count, patternHash);
     }
 
     /// <summary>
     ///     Gets an enumerator for weekly period in intersection ranges <c>[beginDate, endDate]</c> and
     ///     <c>[fromDate, toDate]</c>.
     /// </summary>
-    /// <param name="beginDate">The date of recurrence begins.</param>
-    /// <param name="endDate">The date of recurrence ends.</param>
-    /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="toDate">The date of specific range finishes.</param>
-    /// <param name="weekDays">Days of week.</param>
-    /// <param name="firstDayOfWeek">The first day of week.</param>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="endDate">The date when the recurrence ends.</param>
+    /// <param name="fromDate">The date when a specific range starts.</param>
+    /// <param name="toDate">The date when a specific range finishes.</param>
+    /// <param name="weekDays">Days of the week.</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />

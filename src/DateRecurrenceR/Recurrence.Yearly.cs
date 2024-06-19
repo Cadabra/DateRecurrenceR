@@ -9,14 +9,14 @@ public partial struct Recurrence
     ///     Gets an enumerator for yearly period for first <c>n</c> contiguous dates.<br/>
     ///     <b>By day of month and month of year.</b>
     /// </summary>
-    /// <param name="beginDate">The date of recurrence begins.</param>
-    /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="takeCount">The maximum number of contiguous dates.</param>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="fromDate">The date when a specific range starts.</param>
+    /// <param name="count">The maximum number of contiguous dates.</param>
     /// <param name="dayOfMonth">
-    ///     The day of month. Takes the last day of month if <paramref name="dayOfMonth" /> more than days
+    ///     The day of the month. Takes the last day of the month if <paramref name="dayOfMonth" /> is more than the days
     ///     in the month.
     /// </param>
-    /// <param name="monthOfYear">The number of month.</param>
+    /// <param name="numberOfMonth">The number of the month.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -24,14 +24,14 @@ public partial struct Recurrence
     /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Yearly(DateOnly beginDate,
         DateOnly fromDate,
-        int takeCount,
+        int count,
         int dayOfMonth,
-        int monthOfYear,
+        int numberOfMonth,
         int interval)
     {
         if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
 
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, monthOfYear, dayOfMonth);
+        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, numberOfMonth, dayOfMonth);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -43,13 +43,13 @@ public partial struct Recurrence
 
         return new YearlyEnumeratorLimitByCount(
             startDate.Year,
-            takeCount,
+            count,
             interval,
             GetNextDate);
 
         DateOnly GetNextDate(int year)
         {
-            return DateHelper.GetDateByDayOfMonth(year, monthOfYear, dayOfMonth);
+            return DateHelper.GetDateByDayOfMonth(year, numberOfMonth, dayOfMonth);
         }
     }
 
@@ -57,12 +57,12 @@ public partial struct Recurrence
     ///     Gets an enumerator for yearly period for first <c>n</c> contiguous dates.<br/>
     ///     <b>By day of week, number of week and month of year.</b>
     /// </summary>
-    /// <param name="beginDate">The date of recurrence begins.</param>
-    /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="takeCount">The maximum number of contiguous dates.</param>
-    /// <param name="dayOfWeek">The day of week.</param>
-    /// <param name="numberOfWeek">The number of week. First Week of a Month starting from the first day of the month.</param>
-    /// <param name="monthOfYear">The number of month.</param>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="fromDate">The date when a specific range starts.</param>
+    /// <param name="count">The maximum number of contiguous dates.</param>
+    /// <param name="dayOfWeek">The day of the week.</param>
+    /// <param name="numberOfWeek">The number of the week. The first week of a month starts from the first day of the month.</param>
+    /// <param name="numberOfMonth">The number of the month.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -70,15 +70,15 @@ public partial struct Recurrence
     /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Yearly(DateOnly beginDate,
         DateOnly fromDate,
-        int takeCount,
+        int count,
         DayOfWeek dayOfWeek,
         NumberOfWeek numberOfWeek,
-        int monthOfYear,
+        int numberOfMonth,
         int interval)
     {
         if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
 
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, monthOfYear, dayOfWeek, numberOfWeek);
+        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, numberOfMonth, dayOfWeek, numberOfWeek);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -90,13 +90,13 @@ public partial struct Recurrence
 
         return new YearlyEnumeratorLimitByCount(
             startDate.Year,
-            takeCount,
+            count,
             interval,
             GetNextDate);
 
         DateOnly GetNextDate(int year)
         {
-            return DateHelper.GetDateByDayOfMonth(year, monthOfYear, dayOfWeek, numberOfWeek);
+            return DateHelper.GetDateByDayOfMonth(year, numberOfMonth, dayOfWeek, numberOfWeek);
         }
     }
 
@@ -104,10 +104,10 @@ public partial struct Recurrence
     ///     Gets an enumerator for yearly period for first <c>n</c> contiguous dates.<br/>
     ///     <b>By day of year.</b>
     /// </summary>
-    /// <param name="beginDate">The date of recurrence begins.</param>
-    /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="takeCount">The maximum number of contiguous dates.</param>
-    /// <param name="dayOfYear">The day of year.</param>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="fromDate">The date when a specific range starts.</param>
+    /// <param name="count">The maximum number of contiguous dates.</param>
+    /// <param name="dayOfYear">The day of the year.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -115,7 +115,7 @@ public partial struct Recurrence
     /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Yearly(DateOnly beginDate,
         DateOnly fromDate,
-        int takeCount,
+        int count,
         int dayOfYear,
         int interval)
     {
@@ -132,7 +132,7 @@ public partial struct Recurrence
 
         return new YearlyEnumeratorLimitByCount(
             startDate.Year,
-            takeCount,
+            count,
             interval,
             GetNextDate);
 
@@ -147,15 +147,15 @@ public partial struct Recurrence
     ///     <c>[fromDate, toDate]</c>.<br/>
     ///     <b>By day of month and month of year.</b>
     /// </summary>
-    /// <param name="beginDate">The date of recurrence begins.</param>
-    /// <param name="endDate">The date of recurrence ends.</param>
-    /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="toDate">The date of specific range finishes.</param>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="endDate">The date when the recurrence ends.</param>
+    /// <param name="fromDate">The date when a specific range starts.</param>
+    /// <param name="toDate">The date when a specific range finishes.</param>
     /// <param name="dayOfMonth">
-    ///     The day of month. Takes the last day of month if <paramref name="dayOfMonth" /> more than days
+    ///     The day of the month. Takes the last day of the month if <paramref name="dayOfMonth" /> is more than the days
     ///     in the month.
     /// </param>
-    /// <param name="monthOfYear">The number of month.</param>
+    /// <param name="numberOfMonth">The number of the month.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -166,12 +166,12 @@ public partial struct Recurrence
         DateOnly fromDate,
         DateOnly toDate,
         int dayOfMonth,
-        int monthOfYear,
+        int numberOfMonth,
         int interval)
     {
         if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
 
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, monthOfYear, dayOfMonth);
+        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, numberOfMonth, dayOfMonth);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -191,7 +191,7 @@ public partial struct Recurrence
 
         DateOnly GetNextDate(int year)
         {
-            return DateHelper.GetDateByDayOfMonth(year, monthOfYear, dayOfMonth);
+            return DateHelper.GetDateByDayOfMonth(year, numberOfMonth, dayOfMonth);
         }
     }
 
@@ -200,13 +200,13 @@ public partial struct Recurrence
     ///     <c>[fromDate, toDate]</c>.<br/>
     ///     <b>By day of week, number of week and month of year.</b>
     /// </summary>
-    /// <param name="beginDate">The date of recurrence begins.</param>
-    /// <param name="endDate">The date of recurrence ends.</param>
-    /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="toDate">The date of specific range finishes.</param>
-    /// <param name="dayOfWeek">The day of week.</param>
-    /// <param name="numberOfWeek">The number of week. First Week of a Month starting from the first day of the month.</param>
-    /// <param name="monthOfYear">The number of month.</param>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="endDate">The date when the recurrence ends.</param>
+    /// <param name="fromDate">The date when a specific range starts.</param>
+    /// <param name="toDate">The date when a specific range finishes.</param>
+    /// <param name="dayOfWeek">The day of the week.</param>
+    /// <param name="numberOfWeek">The number of the week. The first week of a month starts from the first day of the month.</param>
+    /// <param name="numberOfMonth">The number of the month.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -218,12 +218,12 @@ public partial struct Recurrence
         DateOnly toDate,
         DayOfWeek dayOfWeek,
         NumberOfWeek numberOfWeek,
-        int monthOfYear,
+        int numberOfMonth,
         int interval)
     {
         if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
 
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, monthOfYear, dayOfWeek, numberOfWeek);
+        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, numberOfMonth, dayOfWeek, numberOfWeek);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -243,7 +243,7 @@ public partial struct Recurrence
 
         DateOnly GetNextDate(int year)
         {
-            return DateHelper.GetDateByDayOfMonth(year, monthOfYear, dayOfWeek, numberOfWeek);
+            return DateHelper.GetDateByDayOfMonth(year, numberOfMonth, dayOfWeek, numberOfWeek);
         }
     }
 
@@ -252,11 +252,11 @@ public partial struct Recurrence
     ///     <c>[fromDate, toDate]</c>.<br/>
     ///     <b>By day of year.</b>
     /// </summary>
-    /// <param name="beginDate">The date of recurrence begins.</param>
-    /// <param name="endDate">The date of recurrence ends.</param>
-    /// <param name="fromDate">The date of specific range starts.</param>
-    /// <param name="toDate">The date of specific range finishes.</param>
-    /// <param name="dayOfYear">The day of year.</param>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="endDate">The date when the recurrence ends.</param>
+    /// <param name="fromDate">The date when a specific range starts.</param>
+    /// <param name="toDate">The date when a specific range finishes.</param>
+    /// <param name="dayOfYear">The day of the year.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />

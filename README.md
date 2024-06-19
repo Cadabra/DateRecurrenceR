@@ -14,7 +14,7 @@
 * **Flexible Collection Handling:** Returns an enumerator, allowing developers to choose the collection type.
 * **Optimal Performance:** Boasts a Big O notation of O(1), ensuring efficient operations.
 
-### Methods for recurrences
+### Methods for Recurrences
 
 | method  | description                                                                                   |
 |---------|-----------------------------------------------------------------------------------------------|
@@ -27,21 +27,21 @@ All these methods return an instance of `IEnumerator<DateOnly>`.
 
 ### All parameters
 
-| parameter      | description                                                                                |
-|----------------|--------------------------------------------------------------------------------------------|
-| beginDate      | The date of recurrence begins.                                                             |
-| endDate        | The date of recurrence ends.                                                               |
-| interval       | The interval between occurrences.                                                          |
-| fromDate       | The date of specific range starts.                                                         |
-| toDate         | The date of specific range finishes.                                                       |
-| takeCount      | The maximum number of contiguous dates.                                                    |
-| dayOfWeek      | The day of week.                                                                           |
-| dayOfMonth     | The day of month. Takes the last day of month if `dayOfMonth` more than days in the month. |
-| dayOfYear      | The day of year.                                                                           |
-| weekDays       | Days of week.                                                                              |
-| firstDayOfWeek | The first day of week.                                                                     |
-| numberOfWeek   | The number of week. First Week of a Month starting from the first day of the month.        |
-| monthOfYear    | The number of month.                                                                       |
+| parameter      | description                                                                                               |
+|----------------|-----------------------------------------------------------------------------------------------------------|
+| beginDate      | The date when the recurrence begins.                                                                      |
+| endDate        | The date when the recurrence ends.                                                                        |
+| interval       | The interval between occurrences.                                                                         |
+| fromDate       | The date when a specific range starts.                                                                    |
+| toDate         | The date when a specific range finishes.                                                                  |
+| count          | The maximum number of contiguous dates.                                                                   |
+| dayOfWeek      | The day of the week.                                                                                      |
+| dayOfMonth     | The day of the month. Takes the last day of the month if `dayOfMonth` is more than the days in the month. |
+| dayOfYear      | The day of the year.                                                                                      |
+| weekDays       | Days of the week.                                                                                         |
+| numberOfWeek   | The number of the week. The first week of a month starts from the first day of the month.                 |
+| numberOfMonth  | The number of the month.                                                                                  |
+| firstDayOfWeek | The first day of the week.                                                                                |
 
 ### Subranges
 
@@ -50,15 +50,15 @@ All methods for recurrences support the following subrange rules:
 #### By dates
 
 * **Parameters:** `fromDate` and `toDate`
-* **Rule:** takes dates from intersection `[beginDate, endDate] ∪ [fromDate, toDate]`
+* **Rule:** Takes dates from the intersection `[beginDate, endDate] ∪ [fromDate, toDate]`
 
 #### By count
 
-* **Parameters:** `fromDate` and `takeCount`
-* **Rule:** takes dates from intersection `[beginDate, endDate] ∪ [fromDate, DateOnly.MaxValue]` and takes
-  first `takeCount` dates
+* **Parameters:** `fromDate` and `count`
+* **Rule:** Takes dates from the intersection `[beginDate, endDate] ∪ [fromDate, DateOnly.MaxValue]` and takes the
+  first `count` dates
 
-## Examples of using
+## Examples of Use
 
 ```csharp
 var enumerator = Recurrence.Daily(beginDate, endDate, fromDate, toDate, interval); // IEnumerator<DateOnly>
