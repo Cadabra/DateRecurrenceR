@@ -2,7 +2,11 @@ namespace DateRecurrenceR;
 
 public sealed class WeekDays
 {
+#if NET8_0
+    private readonly WeekDaysArray _ds = new WeekDaysArray();
+#else
     private readonly bool[] _ds = new bool[DaysInWeek];
+#endif
 
     public WeekDays(DayOfWeek day1)
         : this(day1, day1)
@@ -33,6 +37,17 @@ public sealed class WeekDays
         : this(day1, day2, day3, day4, day5, day6, day6)
     {
     }
+
+#if NET8_0
+    public WeekDays(WeekDaysArray daysArray)
+    {
+        MinDay = (DayOfWeek) DaysInWeek;
+
+        _ds = daysArray;
+
+        UpdateMinDay();
+    }
+#endif
 
     public WeekDays(DayOfWeek day1,
         DayOfWeek day2,
