@@ -1,4 +1,5 @@
 using DateRecurrenceR.Collections;
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 
 namespace DateRecurrenceR;
@@ -23,10 +24,8 @@ public partial struct Recurrence
         int count,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
-        int interval)
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
@@ -64,10 +63,8 @@ public partial struct Recurrence
         DateOnly toDate,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
-        int interval)
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
 
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(

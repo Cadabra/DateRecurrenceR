@@ -1,4 +1,5 @@
 using DateRecurrenceR.Collections;
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 
 namespace DateRecurrenceR;
@@ -25,12 +26,10 @@ public partial struct Recurrence
     public static IEnumerator<DateOnly> Yearly(DateOnly beginDate,
         DateOnly fromDate,
         int count,
-        int dayOfMonth,
-        int numberOfMonth,
-        int interval)
+        DayOfMonth dayOfMonth,
+        MonthOfYear numberOfMonth,
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, numberOfMonth, dayOfMonth);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
@@ -73,11 +72,9 @@ public partial struct Recurrence
         int count,
         DayOfWeek dayOfWeek,
         NumberOfWeek numberOfWeek,
-        int numberOfMonth,
-        int interval)
+        MonthOfYear numberOfMonth,
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, numberOfMonth, dayOfWeek, numberOfWeek);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
@@ -116,11 +113,9 @@ public partial struct Recurrence
     public static IEnumerator<DateOnly> Yearly(DateOnly beginDate,
         DateOnly fromDate,
         int count,
-        int dayOfYear,
-        int interval)
+        DayOfYear dayOfYear,
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -165,12 +160,10 @@ public partial struct Recurrence
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
-        int dayOfMonth,
-        int numberOfMonth,
-        int interval)
+        DayOfMonth dayOfMonth,
+        MonthOfYear numberOfMonth,
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, numberOfMonth, dayOfMonth);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
@@ -218,11 +211,9 @@ public partial struct Recurrence
         DateOnly toDate,
         DayOfWeek dayOfWeek,
         NumberOfWeek numberOfWeek,
-        int numberOfMonth,
-        int interval)
+        MonthOfYear numberOfMonth,
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, numberOfMonth, dayOfWeek, numberOfWeek);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
@@ -266,11 +257,9 @@ public partial struct Recurrence
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
-        int dayOfYear,
-        int interval)
+        DayOfYear dayOfYear,
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
