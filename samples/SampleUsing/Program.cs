@@ -1,6 +1,7 @@
 ﻿using DateRecurrenceR;
+using DateRecurrenceR.Core;
 
-const int interval = 1;
+var interval = new Interval(1);
 var firstDayOfWeek = Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 var beginDate = new DateOnly(2000, 1, 1);
 var endDate = new DateOnly(2000, 1, 31);

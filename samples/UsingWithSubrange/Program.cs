@@ -1,8 +1,9 @@
 ﻿using DateRecurrenceR;
+using DateRecurrenceR.Core;
 
 const int subRangeYears = 5;
-const int dayOfYear = 256;
-const int interval = 1;
+var dayOfYear = new DayOfYear(256);
+var interval = new Interval(1);
 var beginDate = DateOnly.MinValue;
 var endDate = DateOnly.MaxValue;
 var fromDate = DateOnly.FromDateTime(DateTime.Now);

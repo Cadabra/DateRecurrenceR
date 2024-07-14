@@ -1,7 +1,8 @@
 ﻿using DateRecurrenceR;
+using DateRecurrenceR.Core;
 
 const int year = 999;
-const int interval = 2;
+var interval = new Interval(2);
 const DayOfWeek firstDayOfWeek = DayOfWeek.Sunday;
 var beginDate = new DateOnly(year, 1, 1);
 var endDate = new DateOnly(year, 3, 31);
