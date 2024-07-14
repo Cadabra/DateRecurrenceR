@@ -12,6 +12,6 @@ var toDate = fromDate.AddYears(subRangeYears);
 var enumerator = Recurrence.Yearly(beginDate, endDate, fromDate, toDate, dayOfYear, interval);
 
 Console.WriteLine($"Current day of year is {fromDate.DayOfYear}");
-Console.WriteLine($"Range {beginDate:M/d/yy} - {endDate:M/d/yy}");
-Console.WriteLine($"Sub range {fromDate:M/d/yy} - {toDate:M/d/yy}");
-while (enumerator.MoveNext()) Console.WriteLine($"{enumerator.Current:yyyy-M-d dddd} ({enumerator.Current.DayOfYear})");
+Console.WriteLine($"Range {beginDate:O} - {endDate:O}");
+Console.WriteLine($"Sub range {fromDate:O} - {toDate:O}");
+while (enumerator.MoveNext()) Console.WriteLine($"{enumerator.Current:O} ({enumerator.Current.DayOfYear})");
