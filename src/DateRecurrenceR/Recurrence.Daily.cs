@@ -1,4 +1,5 @@
 using DateRecurrenceR.Collections;
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 
 namespace DateRecurrenceR;
@@ -19,10 +20,8 @@ public partial struct Recurrence
     public static IEnumerator<DateOnly> Daily(DateOnly beginDate,
         DateOnly fromDate,
         int count,
-        int interval)
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         if (count < 1) return EmptyEnumerator;
 
         var canStart = DailyRecurrenceHelper.TryGetStartDate(
@@ -53,10 +52,8 @@ public partial struct Recurrence
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
-        int interval)
+        Interval interval)
     {
-        if (interval < 1) throw new ArgumentException($"The '{nameof(interval)}' cannot be less than 1.");
-
         var canStart = DailyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
