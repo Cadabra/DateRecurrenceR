@@ -32,29 +32,9 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
         Current = default;
     }
 
-    // todo: try to remove '_isInit' 
     public bool MoveNext()
     {
-        if (!_isInit)
-        {
-            for (var i = 0; i < _enumerators.Length; i++)
-            {
-                _enumerators[i].MoveNext();
-            }
-
-            // unsafe
-            // {
-            //     fixed (EWrapper* e = _enumerators)
-            //     {
-            //         for (var i = 0; i < _enumerators.Length; i++)
-            //         {
-            //             e[i].MoveNext();
-            //         }
-            //     }
-            // }
-
-            _isInit = true;
-        }
+        var next = Current;
 
         var minByIndex = -1;
         for (var i = 0; i < _enumerators.Length; i++)
@@ -99,46 +79,6 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
     {
     }
 
-
-    private static unsafe int GetFlattenCount(IEnumerator<DateOnly>[] enumerators)
-    {
-        var enumeratorsCount = 0;
-        fixed (IEnumerator<DateOnly>* e = enumerators)
-        {
-            for (var i = 0; i < enumerators.Length; i++)
-            {
-                if (e[i] is UnionEnumerator ue)
-                {
-                    enumeratorsCount += ue._enumerators.Length;
-                }
-                else
-                {
-                    enumeratorsCount += 1;
-                }
-            }
-        }
-
-        return enumeratorsCount;
-    }
-
-    private static unsafe int GetFlattenCount_old(IReadOnlyList<IEnumerator<DateOnly>> enumerators)
-    {
-        var enumeratorsCount = 0;
-        for (var i = 0; i < enumerators.Count; i++)
-        {
-            if (enumerators[i] is UnionEnumerator ue)
-            {
-                enumeratorsCount += ue._enumerators.Length;
-            }
-            else
-            {
-                enumeratorsCount += 1;
-            }
-        }
-
-        return enumeratorsCount;
-    }
-
     private struct EWrapper
     {
         public EWrapper(IEnumerator<DateOnly> @enum)
@@ -146,7 +86,6 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
             Enum = @enum;
             CanMoveNext = false;
         }
-
 
         public IEnumerator<DateOnly> Enum { get; }
         public bool CanMoveNext { get; private set; }

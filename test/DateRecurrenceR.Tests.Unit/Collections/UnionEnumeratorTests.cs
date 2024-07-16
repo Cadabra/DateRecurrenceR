@@ -1,3 +1,4 @@
+using DateRecurrenceR.Core;
 using FluentAssertions;
 
 namespace DateRecurrenceR.Tests.Unit.Collections;
@@ -9,8 +10,8 @@ public class UnionEnumeratorTests
     {
         // Arrange
         const int takeCount = 5;
-        const int dayOfYear = 256;
-        const int interval = 1;
+        var dayOfYear = new DayOfYear(256);
+        var interval = new Interval(1);
         var beginDate = DateOnly.MinValue;
         var fromDate = beginDate;
 
@@ -45,13 +46,12 @@ public class UnionEnumeratorTests
     {
         // Arrange
         const int takeCount = 5;
-        const int dayOfYear = 256;
-        const int interval = 1;
+        var interval = new Interval(1);
         var beginDate = DateOnly.MinValue;
         var fromDate = beginDate;
 
-        var enumerator1 = Recurrence.Yearly(beginDate, fromDate, takeCount, 1, interval);
-        var enumerator2 = Recurrence.Yearly(beginDate, fromDate, takeCount, 2, interval);
+        var enumerator1 = Recurrence.Yearly(beginDate, fromDate, takeCount, new DayOfYear(1), interval);
+        var enumerator2 = Recurrence.Yearly(beginDate, fromDate, takeCount, new DayOfYear(2), interval);
 
         var res1 = Recurrence.Union(enumerator1, enumerator1, enumerator1, enumerator1);
         var res2 = Recurrence.Union(enumerator2, enumerator2, enumerator2, enumerator2);
@@ -68,5 +68,31 @@ public class UnionEnumeratorTests
 
         //Assert
         list.Count.Should().Be(takeCount * 2);
+    }    
+
+    [Fact]
+    public void JustTest3()
+    {
+        // Arrange
+        const int takeCount = 5;
+        var interval = new Interval(1);
+        var beginDate = DateOnly.MinValue;
+        var fromDate = beginDate;
+
+        var enumerator1 = Recurrence.Yearly(beginDate, fromDate, takeCount, new DayOfYear(1), interval);
+        var enumerator2 = Recurrence.Yearly(beginDate, fromDate, takeCount, new DayOfYear(2), interval);
+
+        var res = Recurrence.Union(enumerator1, enumerator2);
+
+        // Act
+        var list = new List<DateOnly>();
+        while (res.MoveNext())
+        {
+            enumerator2.MoveNext();
+            list.Add(res.Current);
+        }
+
+        //Assert
+        list.Count.Should().Be(takeCount);
     }
 }
