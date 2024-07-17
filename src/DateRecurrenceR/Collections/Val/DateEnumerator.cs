@@ -10,18 +10,22 @@ public partial struct DateEnumerator : IEnumerator<DateOnly>
 {
     // common
     private readonly int _interval = 0;
-    private int _count = 0;
     private bool _canMoveNext = true;
-    private DateOnly _iterator;
-    private int _intIterator = 0;
 
-    // by count | by end date
+    // by count
+    private int _count = 0;
     private readonly int _takeCount = 0;
+    
+    // by end date
     private readonly DateOnly _stopDate;
+    private DateOnly _iterator;
+    private int _intIterator = 0; // yearly
 
-    // specific
+    // weekly
     private readonly WeeklyHash _hash = new();
+    // monthly
     private readonly GetNextMonthDateDelegate _getNextMonthDate = null!;
+    // yearly
     private readonly GetNextYearDateDelegate _getNextYearDate = null!;
 
     private readonly EType _eType;
