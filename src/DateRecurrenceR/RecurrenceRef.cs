@@ -6,6 +6,11 @@ public readonly partial struct RecurrenceRef
 {
     private static readonly EmptyEnumerator EmptyEnumerator = new();
 
+    public static IEnumerator<DateOnly> Union(IEnumerator<DateOnly> d1, IEnumerator<DateOnly> d2)
+    {
+        return new UnionEnumerator(new [] {d1, d2});
+    }
+
     public static IEnumerator<DateOnly> Union(params IEnumerator<DateOnly>[] enumerators)
     {
         return new UnionEnumerator(enumerators);

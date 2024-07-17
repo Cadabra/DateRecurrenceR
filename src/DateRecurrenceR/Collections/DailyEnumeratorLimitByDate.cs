@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
-internal sealed class DailyEnumeratorLimitByDate : IEnumerator<DateOnly>
+internal struct DailyEnumeratorLimitByDate : IEnumerator<DateOnly>
 {
     private readonly int _interval;
     private readonly DateOnly _stopDate;
@@ -18,9 +18,15 @@ internal sealed class DailyEnumeratorLimitByDate : IEnumerator<DateOnly>
 
     public bool MoveNext()
     {
-        if (!_canMoveNext || _iterator > _stopDate)
+        if (!_canMoveNext)
+        {
+            return false;
+        }
+
+        if (_iterator > _stopDate)
         {
             Current = default;
+            _canMoveNext = false;
             return false;
         }
 

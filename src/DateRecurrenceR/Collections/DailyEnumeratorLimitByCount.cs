@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
-internal sealed class DailyEnumeratorLimitByCount : IEnumerator<DateOnly>
+internal struct DailyEnumeratorLimitByCount : IEnumerator<DateOnly>
 {
     private readonly int _interval;
     private readonly int _takeCount;
@@ -15,13 +15,20 @@ internal sealed class DailyEnumeratorLimitByCount : IEnumerator<DateOnly>
         _iterator = startDate;
         _takeCount = takeCount;
         _interval = interval;
+        _count = 0;
     }
 
     public bool MoveNext()
     {
-        if (!_canMoveNext || _count >= _takeCount)
+        if (!_canMoveNext)
+        {
+            return false;
+        }
+
+        if (_count >= _takeCount)
         {
             Current = default;
+            _canMoveNext = false;
             return false;
         }
 

@@ -3,10 +3,10 @@ using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Collections;
 
-internal sealed class WeeklyEnumeratorLimitByDate : IEnumerator<DateOnly>
+internal struct WeeklyEnumeratorLimitByDate : IEnumerator<DateOnly>
 {
     private readonly WeeklyHash _hash;
-    private readonly DateOnly _stop;
+    private readonly DateOnly _stopDate;
     private bool _canMoveNext = true;
     private DateOnly _iterator;
 
@@ -15,15 +15,21 @@ internal sealed class WeeklyEnumeratorLimitByDate : IEnumerator<DateOnly>
         WeeklyHash hash)
     {
         _iterator = start;
-        _stop = stop;
+        _stopDate = stop;
         _hash = hash;
     }
 
     public bool MoveNext()
     {
-        if (!_canMoveNext || _iterator > _stop)
+        if (!_canMoveNext)
+        {
+            return false;
+        }
+
+        if (_iterator > _stopDate)
         {
             Current = default;
+            _canMoveNext = false;
             return false;
         }
 

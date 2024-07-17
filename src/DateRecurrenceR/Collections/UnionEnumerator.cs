@@ -2,11 +2,11 @@ using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
-internal sealed class UnionEnumerator : IEnumerator<DateOnly>
+internal struct UnionEnumerator : IEnumerator<DateOnly>
 {
     private readonly EWrapper[] _enumerators;
-
-    private bool _isInit;
+    private bool _inited = false;
+    private DateOnly? _current = null;
 
     public UnionEnumerator(IReadOnlyList<IEnumerator<DateOnly>> enumerators)
     {
@@ -34,34 +34,49 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
 
     public bool MoveNext()
     {
-        var next = Current;
+        var nextIndex = -1;
 
-        var minByIndex = -1;
         for (var i = 0; i < _enumerators.Length; i++)
         {
-            if (_enumerators[i].CanMoveNext)
+            if (_current.HasValue)
             {
-                minByIndex = i;
+                while (_enumerators[i].CanMoveNext && _enumerators[i].Enum.Current <= _current.Value)
+                {
+                    _enumerators[i].MoveNext();
+                }
+            }
+            else
+            {
+                _enumerators[i].MoveNext();
             }
         }
 
-        if (minByIndex < 0)
+        // if (!_current.HasValue)
+        {
+            for (var i = 0; i < _enumerators.Length; i++)
+            {
+                if (!_enumerators[i].CanMoveNext) continue;
+
+                _current = _enumerators[i].Enum.Current;
+                nextIndex = i;
+                break;
+            }
+        }
+
+        for (var i = 0; i < _enumerators.Length; i++)
+        {
+            if (!_enumerators[i].CanMoveNext || !(_current > _enumerators[i].Enum.Current)) continue;
+            
+            _current = _enumerators[i].Enum.Current;
+            nextIndex = i;
+        }
+
+        if (nextIndex < 0)
         {
             return false;
         }
 
-        for (var i = 0; i < _enumerators.Length; i++)
-        {
-            if (!_enumerators[i].CanMoveNext) continue;
-
-            if (_enumerators[minByIndex].Enum.Current > _enumerators[i].Enum.Current)
-            {
-                minByIndex = i;
-            }
-        }
-
-        Current = _enumerators[minByIndex].Enum.Current;
-        _enumerators[minByIndex].MoveNext();
+        Current = _enumerators[nextIndex].Enum.Current;
 
         return true;
     }
@@ -84,7 +99,7 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
         public EWrapper(IEnumerator<DateOnly> @enum)
         {
             Enum = @enum;
-            CanMoveNext = false;
+            CanMoveNext = true;
         }
 
         public IEnumerator<DateOnly> Enum { get; }

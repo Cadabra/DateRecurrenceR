@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
-internal sealed class EmptyEnumerator : IEnumerator<DateOnly>
+internal struct EmptyEnumerator : IEnumerator<DateOnly>
 {
     public bool MoveNext()
     {

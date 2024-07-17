@@ -1,3 +1,4 @@
+using DateRecurrenceR.Collections;
 using DateRecurrenceR.Core;
 using FluentAssertions;
 
@@ -86,9 +87,13 @@ public class UnionEnumeratorTests
 
         // Act
         var list = new List<DateOnly>();
+
+        while (enumerator2.MoveNext())
+        {
+        }
+
         while (res.MoveNext())
         {
-            enumerator2.MoveNext();
             list.Add(res.Current);
         }
 

@@ -27,8 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\DateRecurrenceR\DateRecurrenceR.csproj"/>
+      <ProjectReference Include="..\..\src\DateRecurrenceR\DateRecurrenceR.csproj" />
     </ItemGroup>
-
 
 </Project>

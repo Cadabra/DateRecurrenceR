@@ -3,7 +3,7 @@ using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Collections;
 
-internal sealed class YearlyEnumeratorLimitByCount : IEnumerator<DateOnly>
+internal struct YearlyEnumeratorLimitByCount : IEnumerator<DateOnly>
 {
     private readonly GetNextDateDelegate _getNextDate;
     private readonly int _interval;
@@ -18,13 +18,20 @@ internal sealed class YearlyEnumeratorLimitByCount : IEnumerator<DateOnly>
         _takeCount = takeCount;
         _interval = interval;
         _getNextDate = getNextDate;
+        _count = 0;
     }
 
     public bool MoveNext()
     {
-        if (!_canMoveNext || _count >= _takeCount)
+        if (!_canMoveNext)
+        {
+            return false;
+        }
+
+        if (_count >= _takeCount)
         {
             Current = default;
+            _canMoveNext = false;
             return false;
         }
 
