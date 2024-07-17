@@ -4,7 +4,7 @@ using DateRecurrenceR.Helpers;
 
 namespace DateRecurrenceR;
 
-public partial struct Recurrence
+public partial struct RecurrenceRef
 {
     /// <summary>
     ///     Gets an enumerator for monthly period for first <c>n</c> contiguous dates.<br/>

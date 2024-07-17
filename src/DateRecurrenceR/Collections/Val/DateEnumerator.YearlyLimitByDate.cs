@@ -39,7 +39,7 @@ public partial struct DateEnumerator
         if (DateOnly.MaxValue.Year - _intIterator < _interval)
             _canMoveNext = false;
         else
-            _intIterator += _intIterator;
+            _intIterator += _interval;
 
         return true;
     }

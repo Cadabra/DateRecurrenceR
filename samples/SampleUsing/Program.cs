@@ -10,6 +10,6 @@ var weekDays = new WeekDays(DayOfWeek.Tuesday, DayOfWeek.Friday);
 var fromDate = beginDate;
 var toDate = endDate;
 
-var enumerator = Recurrence.Weekly(beginDate, endDate, fromDate, toDate, weekDays, firstDayOfWeek, interval);
+var enumerator = RecurrenceVal.Weekly(beginDate, endDate, fromDate, toDate, weekDays, firstDayOfWeek, interval);
 
 while (enumerator.MoveNext()) Console.WriteLine($"{enumerator.Current:yyyy-M-d dddd}");

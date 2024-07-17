@@ -2,7 +2,7 @@ using DateRecurrenceR.Collections;
 
 namespace DateRecurrenceR;
 
-public readonly partial struct Recurrence
+public readonly partial struct RecurrenceRef
 {
     private static readonly EmptyEnumerator EmptyEnumerator = new();
 

@@ -16,12 +16,12 @@ var toDate1 = new DateOnly(year, 1, 31);
 var fromDate2 = new DateOnly(year, 2, 16);
 var toDate2 = endDate;
 
-var enumeratorFull = Recurrence.Weekly(beginDate, endDate, fromDate, toDate, weekDays, firstDayOfWeek, interval);
+var enumeratorFull = RecurrenceVal.Weekly(beginDate, endDate, fromDate, toDate, weekDays, firstDayOfWeek, interval);
 
 var enumeratorFirstMonth =
-    Recurrence.Weekly(beginDate, endDate, fromDate1, toDate1, weekDays, firstDayOfWeek, interval);
+    RecurrenceVal.Weekly(beginDate, endDate, fromDate1, toDate1, weekDays, firstDayOfWeek, interval);
 var enumeratorSecondMonth =
-    Recurrence.Weekly(beginDate, endDate, fromDate2, toDate2, weekDays, firstDayOfWeek, interval);
+    RecurrenceVal.Weekly(beginDate, endDate, fromDate2, toDate2, weekDays, firstDayOfWeek, interval);
 
 while (enumeratorFull.MoveNext()) Console.Write($"{enumeratorFull.Current:d} ");
 
