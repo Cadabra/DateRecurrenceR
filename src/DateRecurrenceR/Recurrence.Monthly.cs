@@ -7,7 +7,26 @@ namespace DateRecurrenceR;
 public partial struct Recurrence
 {
     /// <summary>
-    ///     Gets an enumerator for monthly period for first <c>n</c> contiguous dates.<br/>
+    ///     Returns an enumerator for monthly period for first <c>n</c> contiguous dates.<br/>
+    ///     <b>By day of month.</b>
+    /// </summary>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="count">The maximum number of contiguous dates.</param>
+    /// <param name="dayOfMonth">
+    ///     The day of the month. Takes the last day of the month if <paramref name="dayOfMonth" /> is more than the days
+    ///     in the month.
+    /// </param>
+    /// <param name="interval">The interval between occurrences.</param>
+    /// <returns>
+    ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
+    /// </returns>
+    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate, int count, DayOfMonth dayOfMonth, Interval interval)
+    {
+        return Monthly(beginDate, beginDate, count, dayOfMonth, interval);
+    }
+
+    /// <summary>
+    ///     Returns an enumerator for monthly period for first <c>n</c> contiguous dates.<br/>
     ///     <b>By day of month.</b>
     /// </summary>
     /// <param name="beginDate">The date when the recurrence begins.</param>
@@ -21,7 +40,6 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
         DateOnly fromDate,
         int count,
@@ -48,7 +66,25 @@ public partial struct Recurrence
     }
 
     /// <summary>
-    ///     Gets an enumerator for monthly period for first <c>n</c> contiguous dates.<br/>
+    ///     Returns an enumerator for monthly period for first <c>n</c> contiguous dates.<br/>
+    ///     <b>By day of week and number of week.</b>
+    /// </summary>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="count">The maximum number of contiguous dates.</param>
+    /// <param name="dayOfWeek">The day of the week.</param>
+    /// <param name="numberOfWeek">The number of the week. The first week of a month starts from the first day of the month.</param>
+    /// <param name="interval">The interval between occurrences.</param>
+    /// <returns>
+    ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
+    /// </returns>
+    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate, int count, DayOfWeek dayOfWeek,
+        NumberOfWeek numberOfWeek, Interval interval)
+    {
+        return Monthly(beginDate, beginDate, count, dayOfWeek, numberOfWeek, interval);
+    }
+
+    /// <summary>
+    ///     Returns an enumerator for monthly period for first <c>n</c> contiguous dates.<br/>
     ///     <b>By day of week and number of week.</b>
     /// </summary>
     /// <param name="beginDate">The date when the recurrence begins.</param>
@@ -60,7 +96,6 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
         DateOnly fromDate,
         int count,
@@ -87,7 +122,30 @@ public partial struct Recurrence
     }
 
     /// <summary>
-    ///     Gets an enumerator for monthly period in intersection ranges <c>[beginDate, endDate]</c> and
+    ///     Returns an enumerator for monthly period in intersection ranges <c>[beginDate, endDate]</c> and
+    ///     <c>[fromDate, toDate]</c>.<br/>
+    ///     <b>By day of month.</b>
+    /// </summary>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="endDate">The date when the recurrence ends.</param>
+    /// <param name="dayOfMonth">
+    ///     The day of the month. Takes the last day of the month if <paramref name="dayOfMonth" /> is more than the days
+    ///     in the month.
+    /// </param>
+    /// <param name="interval">The interval between occurrences.</param>
+    /// <returns>
+    ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
+    /// </returns>
+    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
+        DateOnly endDate,
+        DayOfMonth dayOfMonth,
+        Interval interval)
+    {
+        return Monthly(beginDate, endDate, beginDate, endDate, dayOfMonth, interval);
+    }
+
+    /// <summary>
+    ///     Returns an enumerator for monthly period in intersection ranges <c>[beginDate, endDate]</c> and
     ///     <c>[fromDate, toDate]</c>.<br/>
     ///     <b>By day of month.</b>
     /// </summary>
@@ -103,7 +161,6 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
@@ -131,7 +188,29 @@ public partial struct Recurrence
     }
 
     /// <summary>
-    ///     Gets an enumerator for monthly period in intersection ranges <c>[beginDate, endDate]</c> and
+    ///     Returns an enumerator for monthly period in intersection ranges <c>[beginDate, endDate]</c> and
+    ///     <c>[fromDate, toDate]</c>.<br/>
+    ///     <b>By day of week and number of week.</b>
+    /// </summary>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="endDate">The date when the recurrence ends.</param>
+    /// <param name="dayOfWeek">The day of the week.</param>
+    /// <param name="numberOfWeek">The number of the week. The first week of a month starts from the first day of the month.</param>
+    /// <param name="interval">The interval between occurrences.</param>
+    /// <returns>
+    ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
+    /// </returns>
+    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
+        DateOnly endDate,
+        DayOfWeek dayOfWeek,
+        NumberOfWeek numberOfWeek,
+        Interval interval)
+    {
+        return Monthly(beginDate, endDate, beginDate, endDate, dayOfWeek, numberOfWeek, interval);
+    }
+
+    /// <summary>
+    ///     Returns an enumerator for monthly period in intersection ranges <c>[beginDate, endDate]</c> and
     ///     <c>[fromDate, toDate]</c>.<br/>
     ///     <b>By day of week and number of week.</b>
     /// </summary>
@@ -145,7 +224,6 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,

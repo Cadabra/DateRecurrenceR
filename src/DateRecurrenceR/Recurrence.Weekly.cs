@@ -7,7 +7,27 @@ namespace DateRecurrenceR;
 public partial struct Recurrence
 {
     /// <summary>
-    ///     Gets an enumerator for weekly period for first <c>n</c> contiguous dates.
+    ///     Returns an enumerator for weekly period for first <c>n</c> contiguous dates.
+    /// </summary>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="count">The maximum number of contiguous dates.</param>
+    /// <param name="weekDays">Days of the week.</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
+    /// <param name="interval">The interval between occurrences.</param>
+    /// <returns>
+    ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
+    /// </returns>
+    public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
+        int count,
+        WeekDays weekDays,
+        DayOfWeek firstDayOfWeek,
+        Interval interval)
+    {
+        return Weekly(beginDate, beginDate, count, weekDays, firstDayOfWeek, interval);
+    }
+
+    /// <summary>
+    ///     Returns an enumerator for weekly period for first <c>n</c> contiguous dates.
     /// </summary>
     /// <param name="beginDate">The date when the recurrence begins.</param>
     /// <param name="fromDate">The date when a specific range starts.</param>
@@ -18,7 +38,6 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
         DateOnly fromDate,
         int count,
@@ -43,7 +62,28 @@ public partial struct Recurrence
     }
 
     /// <summary>
-    ///     Gets an enumerator for weekly period in intersection ranges <c>[beginDate, endDate]</c> and
+    ///     Returns an enumerator for weekly period in intersection ranges <c>[beginDate, endDate]</c> and
+    ///     <c>[fromDate, toDate]</c>.
+    /// </summary>
+    /// <param name="beginDate">The date when the recurrence begins.</param>
+    /// <param name="endDate">The date when the recurrence ends.</param>
+    /// <param name="weekDays">Days of the week.</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
+    /// <param name="interval">The interval between occurrences.</param>
+    /// <returns>
+    ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
+    /// </returns>
+    public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
+        DateOnly endDate,
+        WeekDays weekDays,
+        DayOfWeek firstDayOfWeek,
+        Interval interval)
+    {
+        return Weekly(beginDate, endDate, beginDate, endDate, weekDays, firstDayOfWeek, interval);
+    }
+
+    /// <summary>
+    ///     Returns an enumerator for weekly period in intersection ranges <c>[beginDate, endDate]</c> and
     ///     <c>[fromDate, toDate]</c>.
     /// </summary>
     /// <param name="beginDate">The date when the recurrence begins.</param>
@@ -56,7 +96,6 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    /// <exception cref="ArgumentException">If <paramref name="interval" /> less than 1.</exception>
     public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,

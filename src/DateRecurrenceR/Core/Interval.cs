@@ -60,7 +60,10 @@ public readonly struct Interval : IInt32Based<Interval>
         return _value;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Converts the numeric value of this instance to its equivalent string representation.
+    /// </summary>
+    /// <returns>The string representation of the value of this instance, consisting of a sequence of digits ranging from 0 to 9 with no leading zeroes.</returns>
     public override string ToString()
     {
         return _value.ToString();

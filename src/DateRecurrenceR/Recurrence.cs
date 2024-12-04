@@ -2,6 +2,9 @@ using DateRecurrenceR.Collections;
 
 namespace DateRecurrenceR;
 
+/// <summary>
+/// Provides static methods for recurrence dates
+/// </summary>
 public readonly partial struct Recurrence
 {
     private static readonly EmptyEnumerator EmptyEnumerator = new();
