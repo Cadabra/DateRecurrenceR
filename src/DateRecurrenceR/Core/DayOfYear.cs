@@ -3,10 +3,10 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 ///     Represents a number of the day of the year
 /// </summary>
-#if NET6_0
-public readonly struct DayOfYear
-#else
+#if NET8_0_OR_GREATER
 public readonly struct DayOfYear : IInt32Based<DayOfYear>
+#else
+public readonly struct DayOfYear : IEquatable<DayOfYear>
 #endif
 {
     private const int MinVal = 1;

@@ -3,10 +3,10 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 ///     Represents a number of the interval
 /// </summary>
-#if NET6_0
-public readonly struct Interval
-#else
+#if NET8_0_OR_GREATER
 public readonly struct Interval : IInt32Based<Interval>
+#else
+public readonly struct Interval : IEquatable<Interval>
 #endif
 {
     private const int MinVal = 1;
@@ -27,7 +27,7 @@ public readonly struct Interval : IInt32Based<Interval>
     /// </summary>
     public Interval(int value)
     {
-        if (value is < MinVal or > MaxVal) throw new ArgumentOutOfRangeException(nameof(value));
+        if (value < MinVal) throw new ArgumentOutOfRangeException(nameof(value));
 
         _value = value;
     }

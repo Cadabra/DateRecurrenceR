@@ -3,10 +3,10 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 ///     Represents a number of the month of the year
 /// </summary>
-#if NET6_0
-public readonly struct MonthOfYear
-#else
+#if NET8_0_OR_GREATER
 public readonly struct MonthOfYear : IInt32Based<MonthOfYear>
+#else
+public readonly struct MonthOfYear : IEquatable<MonthOfYear>
 #endif
 {
     private const int MinVal = 1;
