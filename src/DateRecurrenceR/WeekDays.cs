@@ -3,7 +3,7 @@ namespace DateRecurrenceR;
 public sealed class WeekDays
 {
 #if NET8_0_OR_GREATER
-    private readonly WeekDaysArray _ds = new WeekDaysArray();
+    private readonly WeekDaysArray _ds;
 #else
     private readonly bool[] _ds = new bool[DaysInWeek];
 #endif
