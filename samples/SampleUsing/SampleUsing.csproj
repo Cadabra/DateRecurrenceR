@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\DateRecurrenceR\DateRecurrenceR.csproj"/>
+        <ProjectReference Include="..\ConsoleHelper\ConsoleHelper.csproj" />
     </ItemGroup>
 
 </Project>
