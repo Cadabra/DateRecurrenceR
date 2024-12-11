@@ -1,9 +1,8 @@
 ﻿using System.Collections;
-using System.Globalization;
 
 namespace ConsoleHelper;
 
-public sealed class DayEnumerator : IEnumerator<DayInfo>, IEnumerator, IDisposable
+public sealed class DayEnumerator : IEnumerator<DayInfo>
 {
     private readonly DayOfWeek _firstDayOfWeek;
     private readonly int _currentYear;
@@ -35,17 +34,17 @@ public sealed class DayEnumerator : IEnumerator<DayInfo>, IEnumerator, IDisposab
 
     public bool MoveNext()
     {
-        if (this._currentDayNumber == int.MinValue)
+        if (_currentDayNumber == int.MinValue)
         {
-            this._currentDayNumber = this._startDay;
-            this.Current = new DayInfo(this._currentDayNumber, this._currentMonth);
+            _currentDayNumber = _startDay;
+            Current = new DayInfo(_currentDayNumber, _currentMonth);
             return true;
         }
 
-        ++this._currentDayNumber;
-        if (this._currentDayNumber >= this._endDay)
+        ++_currentDayNumber;
+        if (_currentDayNumber >= _endDay)
             return false;
-        this.Current = new DayInfo(this._currentDayNumber, this._currentMonth);
+        Current = new DayInfo(_currentDayNumber, _currentMonth);
         return true;
     }
 
@@ -53,7 +52,7 @@ public sealed class DayEnumerator : IEnumerator<DayInfo>, IEnumerator, IDisposab
 
     public DayInfo Current { get; private set; }
 
-    object IEnumerator.Current => (object) this.Current;
+    object IEnumerator.Current => Current;
 
     public void Dispose()
     {

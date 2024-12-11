@@ -18,17 +18,17 @@ public sealed class YearEnumerator : IEnumerator<MonthEnumerable>
 
     public bool MoveNext()
     {
-        if (this._current == 0)
+        if (_current == 0)
         {
-            this._current = this._startDate.Year;
-            this.Current = new MonthEnumerable(in _current, in _startDate, in _endDate, _firstDayOfWeek);
+            _current = _startDate.Year;
+            Current = new MonthEnumerable(in _current, in _startDate, in _endDate, _firstDayOfWeek);
             return true;
         }
 
-        if (this._current >= this._endDate.Year)
+        if (_current >= _endDate.Year)
             return false;
-        ++this._current;
-        this.Current = new MonthEnumerable(in _current, in _startDate, in _endDate, _firstDayOfWeek);
+        ++_current;
+        Current = new MonthEnumerable(in _current, in _startDate, in _endDate, _firstDayOfWeek);
         return true;
     }
 
@@ -36,7 +36,45 @@ public sealed class YearEnumerator : IEnumerator<MonthEnumerable>
 
     public MonthEnumerable Current { get; private set; }
 
-    object IEnumerator.Current => (object) this.Current;
+    object IEnumerator.Current => Current;
+
+    public void Dispose()
+    {
+    }
+}
+public sealed class IntEnumerator : IEnumerator<int>
+{
+    private readonly int _startYear;
+    private readonly int _endYear;
+    private int _current = 0;
+
+    public IntEnumerator(DateOnly startDate, DateOnly endDate)
+    {
+        _startYear = startDate.Year;
+        _endYear = endDate.Year;
+    }
+
+    public bool MoveNext()
+    {
+        if (_current == 0)
+        {
+            _current = _startYear;
+            // Current = new MonthEnumerable(in _current, in _startDate, in _endDate, _firstDayOfWeek);
+            return true;
+        }
+
+        if (_current >= _endYear)
+            return false;
+        ++_current;
+        // Current = new MonthEnumerable(in _current, in _startDate, in _endDate, _firstDayOfWeek);
+        return true;
+    }
+
+    public void Reset() => throw new NotImplementedException();
+
+    public int Current => _current;
+
+    object IEnumerator.Current => Current;
 
     public void Dispose()
     {

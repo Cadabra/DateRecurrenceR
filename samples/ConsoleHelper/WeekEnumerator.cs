@@ -28,8 +28,7 @@ public sealed class WeekEnumerator : IEnumerator<int>
         var num1 = DateTime.DaysInMonth(_currentYear, _month);
         _fromDate = new DateOnly(_currentYear, _month, 1);
         _toDate = new DateOnly(_currentYear, _month, num1);
-        var num2 = (int) (num1 + (7 + (int) _fromDate.DayOfWeek - (int) _firstDayOfWeek) % 7);
-        // var num22 = dateOnly.DayNumber - (7 + (int) _fromDate.DayOfWeek - (int) _firstDayOfWeek) % 7 + 7 * weekNumber;
+        var num2 = num1 + (7 + (int) _fromDate.DayOfWeek - (int) _firstDayOfWeek) % 7;
         AffectedWeeks = num2 / 7 + (num2 % 7 > 0 ? 1 : 0);
     }
 
@@ -46,11 +45,11 @@ public sealed class WeekEnumerator : IEnumerator<int>
             return true;
         }
 
-        ++this._current;
-        this._startDateDayNumber += 7;
-        if (this._startDateDayNumber > this._toDate.DayNumber)
+        ++_current;
+        _startDateDayNumber += 7;
+        if (_startDateDayNumber > _toDate.DayNumber)
             return false;
-        this.Current = this._current;
+        Current = _current;
         return true;
     }
 
@@ -58,7 +57,7 @@ public sealed class WeekEnumerator : IEnumerator<int>
 
     public int Current { get; private set; }
 
-    object IEnumerator.Current => (object) this.Current;
+    object IEnumerator.Current => Current;
 
     public void Dispose()
     {

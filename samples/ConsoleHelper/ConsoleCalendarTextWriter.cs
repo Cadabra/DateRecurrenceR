@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Runtime.CompilerServices;
 
 namespace ConsoleHelper;
 
@@ -14,7 +13,7 @@ public sealed class ConsoleCalendarTextWriter : ICalendarTextWriter
         CharsBetweenMonth = 2
     };
 
-    public void WriteYear(int year)
+    public void WriteYearTitle(int year)
     {
         Console.ForegroundColor = ConsoleColor.Black;
         Console.BackgroundColor = ConsoleColor.White;
@@ -23,19 +22,19 @@ public sealed class ConsoleCalendarTextWriter : ICalendarTextWriter
         Console.WriteLine();
     }
 
-    public void WriteMonth(int month, int weeks)
+    public void WriteMonthTitle(int month)
     {
         var monthName = DateTimeFormat.GetMonthName(month);
-        var interpolatedStringHandler = new DefaultInterpolatedStringHandler(3, 1);
-        interpolatedStringHandler.AppendLiteral(" (");
-        interpolatedStringHandler.AppendFormatted(weeks);
-        interpolatedStringHandler.AppendLiteral(")");
-        var stringAndClear = interpolatedStringHandler.ToStringAndClear();
-        var str = monthName + stringAndClear;
+        // var interpolatedStringHandler = new DefaultInterpolatedStringHandler(3, 1);
+        // interpolatedStringHandler.AppendLiteral(" (");
+        // interpolatedStringHandler.AppendFormatted(weeks);
+        // interpolatedStringHandler.AppendLiteral(")");
+        // var stringAndClear = interpolatedStringHandler.ToStringAndClear();
+        // var str = monthName + stringAndClear;
         Console.ForegroundColor = ConsoleColor.Black;
         Console.BackgroundColor = ConsoleColor.Gray;
         var totalWidth = _options.DayCharCount + (_options.DayCharCount + _options.CharsBetweenDays) * 6;
-        Console.Write(str.PadRight(totalWidth));
+        Console.Write(monthName.PadRight(totalWidth));
         Console.ResetColor();
     }
 

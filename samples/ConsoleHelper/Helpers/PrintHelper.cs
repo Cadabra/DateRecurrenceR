@@ -1,40 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 
-namespace Cadabra.Recurrence.Examples.Helpers;
+namespace ConsoleHelper.Helpers;
 
-internal static class PrintHelper
+public static class PrintHelper
 {
     private const int WeekBorderSpace = 1;
-    private const int MonthInLine = 5;
+    private const int MonthInLine = 4;
     private const int BorderSpace = 2;
     private const int WeekLineLength = 20;
     private static readonly DateTimeFormatInfo DateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
 
     public static void PrintList(IEnumerable<DateOnly> list)
     {
-        foreach (DateOnly dateOnly in list)
-            Console.WriteLine((object) dateOnly);
+        foreach (var dateOnly in list)
+            Console.WriteLine(dateOnly);
     }
 
     public static void PrintCalendar(DateOnly startDate, DateOnly endDate, IList<DateOnly> list)
     {
-        int monthPerRow = Math.Min(5, 12);
-        DateOnly printStartDate = PrintHelper.GetPrintStartDate(startDate, monthPerRow);
-        int monthsFromBegin = printStartDate.Year * 12 + printStartDate.Month;
-        int num = endDate.Year * 12 + endDate.Month;
-        Console.WriteLine((object) startDate);
-        for (int year = startDate.Year; year <= endDate.Year; ++year)
+        var monthPerRow = Math.Min(MonthInLine, 12);
+        var printStartDate = GetPrintStartDate(startDate, monthPerRow);
+        var monthsFromBegin = printStartDate.Year * 12 + printStartDate.Month;
+        var num = endDate.Year * 12 + endDate.Month;
+        Console.WriteLine(startDate);
+        for (var year = startDate.Year; year <= endDate.Year; ++year)
         {
-            PrintHelper.WriteYear(year);
-            for (int numberOfMonth = PrintHelper.GetNumberOfMonth(monthsFromBegin);
+            WriteYear(year);
+            for (var numberOfMonth = GetNumberOfMonth(monthsFromBegin);
                  numberOfMonth < 12;
                  numberOfMonth += monthPerRow)
             {
-                int monthCount = Math.Min(12 - numberOfMonth / monthPerRow * monthPerRow, monthPerRow);
-                PrintHelper.PrintMonthHeaders(new DateOnly(year, numberOfMonth, 1), monthCount, startDate, endDate);
-                PrintHelper.PrintWeeks(new DateOnly(year, numberOfMonth, 1), monthCount, list, startDate, endDate);
+                var monthCount = Math.Min(12 - numberOfMonth / monthPerRow * monthPerRow, monthPerRow);
+                PrintMonthHeaders(new DateOnly(year, numberOfMonth, 1), monthCount, startDate, endDate);
+                PrintWeeks(new DateOnly(year, numberOfMonth, 1), monthCount, list, startDate, endDate);
             }
 
             Console.WriteLine();
@@ -52,8 +50,8 @@ internal static class PrintHelper
         DateOnly startDate,
         DateOnly endDate)
     {
-        for (int index = 0; index < monthCount; ++index)
-            PrintHelper.WriteMonth(startPrintDate.AddMonths(index), startDate, endDate);
+        for (var index = 0; index < monthCount; ++index)
+            WriteMonth(startPrintDate.AddMonths(index), startDate, endDate);
         Console.WriteLine();
     }
 
@@ -63,14 +61,14 @@ internal static class PrintHelper
         DateOnly startDate,
         DateOnly endDate)
     {
-        for (int index1 = 0; index1 < 6; ++index1)
+        for (var index1 = 0; index1 < 6; ++index1)
         {
-            for (int index2 = 0; index2 < monthCount; ++index2)
+            for (var index2 = 0; index2 < monthCount; ++index2)
             {
-                DateOnly date = startPrintDate.AddMonths(index2);
-                int month = date.Month;
+                var date = startPrintDate.AddMonths(index2);
+                var month = date.Month;
                 date = date.AddDays(-(int) date.DayOfWeek + 7 * index1);
-                PrintHelper.PrintOneWeekDays(month, date, startDate, endDate, list);
+                PrintOneWeekDays(month, date, startDate, endDate, list);
             }
 
             Console.WriteLine();
@@ -85,17 +83,17 @@ internal static class PrintHelper
         DateOnly toDate,
         IList<DateOnly> selectedDates)
     {
-        int num = 0;
+        var num = 0;
         while (num < 7)
         {
-            int count = num == 6 ? 2 : 1;
+            var count = num == 6 ? 2 : 1;
             int day;
             if (date.Month != monthNumber)
                 Console.Write(new string(' ', count + 2));
             else if (date < fromDate || toDate < date)
             // else if (!DateOnly.op_GreaterThanOrEqual(date, fromDate) || !DateOnly.op_GreaterThanOrEqual(toDate, date))
             {
-                ConsoleColor foregroundColor = Console.ForegroundColor;
+                var foregroundColor = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 day = date.Day;
                 Console.Write(day.ToString("D2") + new string(' ', count));
@@ -103,7 +101,7 @@ internal static class PrintHelper
             }
             else if (selectedDates.Contains(date))
             {
-                ConsoleColor foregroundColor = Console.ForegroundColor;
+                var foregroundColor = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.Red;
                 day = date.Day;
                 Console.Write(day.ToString("D2") + new string(' ', count));
@@ -124,13 +122,13 @@ internal static class PrintHelper
 
     private static void WriteYear(int year)
     {
-        ConsoleColor backgroundColor1 = Console.BackgroundColor;
-        int foregroundColor1 = (int) Console.ForegroundColor;
+        var backgroundColor1 = Console.BackgroundColor;
+        var foregroundColor1 = (int) Console.ForegroundColor;
         Console.ForegroundColor = backgroundColor1;
         Console.BackgroundColor = (ConsoleColor) foregroundColor1;
         Console.Write(year);
-        ConsoleColor backgroundColor2 = Console.BackgroundColor;
-        int foregroundColor2 = (int) Console.ForegroundColor;
+        var backgroundColor2 = Console.BackgroundColor;
+        var foregroundColor2 = (int) Console.ForegroundColor;
         Console.ForegroundColor = backgroundColor2;
         Console.BackgroundColor = (ConsoleColor) foregroundColor2;
         Console.WriteLine();
@@ -138,7 +136,7 @@ internal static class PrintHelper
 
     private static void WriteMonth(DateOnly date, DateOnly startDate, DateOnly endDate)
     {
-        string monthName = PrintHelper.DateTimeFormat.GetMonthName(date.Month);
+        var monthName = DateTimeFormat.GetMonthName(date.Month);
         if (startDate.Year == date.Year && startDate.Month <= date.Month ||
             startDate.Year < date.Year && date.Year < endDate.Year ||
             endDate.Year == date.Year && date.Month <= endDate.Month)
@@ -147,7 +145,7 @@ internal static class PrintHelper
         }
         else
         {
-            ConsoleColor foregroundColor = Console.ForegroundColor;
+            var foregroundColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.Write(monthName.PadRight(22));
             Console.ForegroundColor = foregroundColor;

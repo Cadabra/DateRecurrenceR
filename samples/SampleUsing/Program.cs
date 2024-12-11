@@ -17,3 +17,11 @@ var enumerator = Recurrence.Weekly(beginDate, endDate, fromDate, toDate, weekDay
 
 
 new ConsoleCalendar(DayOfWeek.Sunday).Write(beginDate, endDate);
+var list = new List<DateOnly>();
+
+while (enumerator.MoveNext())
+{
+    list.Add(enumerator.Current);
+}
+
+// PrintHelper.PrintCalendar(beginDate, endDate, list);

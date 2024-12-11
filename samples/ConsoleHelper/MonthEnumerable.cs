@@ -49,13 +49,49 @@ public sealed class MonthEnumerable : IEnumerator<WeekEnumerator>
     {
     }
 
-    // public DayEnumerator GetDayEnumerator(DayOfWeek firstDayOfWeek)
-    // {
-    //     return new DayEnumerator(this.Year, in this._current, in this._startDate, in this._endDate, firstDayOfWeek);
-    // }
-
     public WeekEnumerator GetWeekEnumerator()
     {
         return new WeekEnumerator(Year, in _current, in _startDate, in _endDate, _firstDayOfWeek);
+    }
+}
+
+public sealed class IntMonthEnumerator : IEnumerator<int>
+{
+    private readonly int _startMonth;
+    private readonly int _endMonth;
+    private int _current;
+
+    public IntMonthEnumerator(in int currentYear, in DateOnly startDate, in DateOnly endDate)
+    {
+        // Year = currentYear;
+        _startMonth = currentYear > startDate.Year ? 1 : startDate.Month;
+        _endMonth = currentYear < endDate.Year ? 12 : endDate.Month;
+    }
+
+    // public int Year { get; }
+
+    public bool MoveNext()
+    {
+        if (_current == 0)
+        {
+            _current = _startMonth;
+            return true;
+        }
+
+        if (_current >= _endMonth)
+            return false;
+
+        ++_current;
+        return true;
+    }
+
+    public void Reset() => throw new NotImplementedException();
+
+    public int Current => _current;
+
+    object IEnumerator.Current => Current;
+
+    public void Dispose()
+    {
     }
 }

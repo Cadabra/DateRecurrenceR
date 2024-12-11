@@ -2,9 +2,9 @@
 
 public interface ICalendarTextWriter
 {
-    void WriteYear(int year);
+    void WriteYearTitle(int year);
 
-    void WriteMonth(int month, int weeks);
+    void WriteMonthTitle(int month);
 
     void WriteWeek(DayEnumerator dayEnumerator);
 
