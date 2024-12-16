@@ -6,7 +6,7 @@
         <Copyright>Copyright Sergey Olshanskiy</Copyright>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageTags>recurring-dates;date-interval;date-recurrence;date-repeat;date-patterns</PackageTags>
-        <Version>0.6.0-beta.1</Version>
+        <Version>0.6.0-beta.2</Version>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <ImplicitUsings>enable</ImplicitUsings>
         <TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
