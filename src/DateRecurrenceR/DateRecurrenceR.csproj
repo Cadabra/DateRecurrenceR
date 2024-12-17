@@ -4,9 +4,9 @@
         <Authors>Sergey Olshanskiy</Authors>
         <Description>Library for represents a recurrence pattern of date.</Description>
         <Copyright>Copyright Sergey Olshanskiy</Copyright>
-        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>recurring-dates;date-interval;date-recurrence;date-repeat;date-patterns</PackageTags>
-        <Version>0.7.0-beta.1</Version>
+        <Version>1.0.0</Version>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <ImplicitUsings>enable</ImplicitUsings>
         <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
