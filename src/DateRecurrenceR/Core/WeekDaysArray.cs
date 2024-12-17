@@ -1,5 +1,5 @@
 #if NET8_0_OR_GREATER
-namespace DateRecurrenceR;
+namespace DateRecurrenceR.Core;
 
 /// <summary>
 /// Represents array of week days. The first day of week is Sunday.

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Helpers;
@@ -27,20 +28,20 @@ internal struct DateHelper
     }
 
     [Pure]
-    public static DateOnly GetDateByDayOfMonth(int year, int month, DayOfWeek dayOfWeek, NumberOfWeek numberOfWeek)
+    public static DateOnly GetDateByDayOfMonth(int year, int month, DayOfWeek dayOfWeek, IndexOfDay indexOfDay)
     {
         var date = new DateOnly(year, month, 1);
         var diffToFirstDay = (dayOfWeek - date.DayOfWeek + DaysInWeek) % DaysInWeek;
 
-        var weekMultiplicand = numberOfWeek switch
+        var weekMultiplicand = indexOfDay switch
         {
-            NumberOfWeek.First => 0,
-            NumberOfWeek.Second => 1,
-            NumberOfWeek.Third => 2,
-            NumberOfWeek.Fourth => 3,
-            NumberOfWeek.Last => 4 -
+            IndexOfDay.First => 0,
+            IndexOfDay.Second => 1,
+            IndexOfDay.Third => 2,
+            IndexOfDay.Fourth => 3,
+            IndexOfDay.Last => 4 -
                                  (DateTime.DaysInMonth(date.Year, date.Month) % DaysInWeek <= diffToFirstDay ? 1 : 0),
-            _ => throw new ArgumentOutOfRangeException(nameof(numberOfWeek), numberOfWeek, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(indexOfDay), indexOfDay, null)
         };
 
         var dayDiff = diffToFirstDay + DaysInWeek * weekMultiplicand;

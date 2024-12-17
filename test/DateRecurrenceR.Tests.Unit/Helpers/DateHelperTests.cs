@@ -1,3 +1,4 @@
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 using FluentAssertions;
 
@@ -96,7 +97,7 @@ public sealed class DateHelperTests
         const int year = 1;
         const int month = 1;
         const DayOfWeek dayOfWeek = DayOfWeek.Saturday;
-        const NumberOfWeek numberOfWeek = NumberOfWeek.First;
+        const IndexOfDay numberOfWeek = IndexOfDay.First;
         var expectedDate = new DateOnly(1, 1, 6);
 
         // Act
@@ -113,7 +114,7 @@ public sealed class DateHelperTests
         const int year = 1;
         const int month = 1;
         const DayOfWeek dayOfWeek = DayOfWeek.Monday;
-        const NumberOfWeek numberOfWeek = NumberOfWeek.Second;
+        const IndexOfDay numberOfWeek = IndexOfDay.Second;
         var expectedDate = new DateOnly(1, 1, 8);
 
         // Act
@@ -130,7 +131,7 @@ public sealed class DateHelperTests
         const int year = 1;
         const int month = 1;
         const DayOfWeek dayOfWeek = DayOfWeek.Monday;
-        const NumberOfWeek numberOfWeek = NumberOfWeek.Third;
+        const IndexOfDay numberOfWeek = IndexOfDay.Third;
         var expectedDate = new DateOnly(1, 1, 15);
 
         // Act
@@ -147,7 +148,7 @@ public sealed class DateHelperTests
         const int year = 1;
         const int month = 1;
         const DayOfWeek dayOfWeek = DayOfWeek.Monday;
-        const NumberOfWeek numberOfWeek = NumberOfWeek.Fourth;
+        const IndexOfDay numberOfWeek = IndexOfDay.Fourth;
         var expectedDate = new DateOnly(1, 1, 22);
 
         // Act
@@ -164,7 +165,7 @@ public sealed class DateHelperTests
         const int year = 1;
         const int month = 1;
         const DayOfWeek dayOfWeek = DayOfWeek.Monday;
-        const NumberOfWeek numberOfWeek = NumberOfWeek.Last;
+        const IndexOfDay numberOfWeek = IndexOfDay.Last;
         var expectedDate = new DateOnly(1, 1, 29);
 
         // Act
@@ -181,7 +182,7 @@ public sealed class DateHelperTests
         const int year = 1;
         const int month = 1;
         const DayOfWeek dayOfWeek = DayOfWeek.Monday;
-        const NumberOfWeek numberOfWeek = (NumberOfWeek) 5;
+        const IndexOfDay numberOfWeek = (IndexOfDay) 5;
 
         // Act
         var action = () => DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, numberOfWeek);

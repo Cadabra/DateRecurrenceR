@@ -72,15 +72,15 @@ public partial struct Recurrence
     /// <param name="beginDate">The date when the recurrence begins.</param>
     /// <param name="count">The maximum number of contiguous dates.</param>
     /// <param name="dayOfWeek">The day of the week.</param>
-    /// <param name="numberOfWeek">The number of the week. The first week of a month starts from the first day of the month.</param>
+    /// <param name="indexOfDay">Index of <b>dayOfWeek</b> in the month.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
     public static IEnumerator<DateOnly> Monthly(DateOnly beginDate, int count, DayOfWeek dayOfWeek,
-        NumberOfWeek numberOfWeek, Interval interval)
+        IndexOfDay indexOfDay, Interval interval)
     {
-        return Monthly(beginDate, beginDate, count, dayOfWeek, numberOfWeek, interval);
+        return Monthly(beginDate, beginDate, count, dayOfWeek, indexOfDay, interval);
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public partial struct Recurrence
     /// <param name="fromDate">The date when a specific range starts.</param>
     /// <param name="count">The maximum number of contiguous dates.</param>
     /// <param name="dayOfWeek">The day of the week.</param>
-    /// <param name="numberOfWeek">The number of the week. The first week of a month starts from the first day of the month.</param>
+    /// <param name="indexOfDay">Index of <b>dayOfWeek</b> in the month.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -100,10 +100,10 @@ public partial struct Recurrence
         DateOnly fromDate,
         int count,
         DayOfWeek dayOfWeek,
-        NumberOfWeek numberOfWeek,
+        IndexOfDay indexOfDay,
         Interval interval)
     {
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, numberOfWeek);
+        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -117,7 +117,7 @@ public partial struct Recurrence
 
         DateOnly GetNextDate(int year, int month)
         {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, numberOfWeek);
+            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
         }
     }
 
@@ -195,7 +195,7 @@ public partial struct Recurrence
     /// <param name="beginDate">The date when the recurrence begins.</param>
     /// <param name="endDate">The date when the recurrence ends.</param>
     /// <param name="dayOfWeek">The day of the week.</param>
-    /// <param name="numberOfWeek">The number of the week. The first week of a month starts from the first day of the month.</param>
+    /// <param name="indexOfDay">Index of <b>dayOfWeek</b> in the month.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -203,10 +203,10 @@ public partial struct Recurrence
     public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
         DateOnly endDate,
         DayOfWeek dayOfWeek,
-        NumberOfWeek numberOfWeek,
+        IndexOfDay indexOfDay,
         Interval interval)
     {
-        return Monthly(beginDate, endDate, beginDate, endDate, dayOfWeek, numberOfWeek, interval);
+        return Monthly(beginDate, endDate, beginDate, endDate, dayOfWeek, indexOfDay, interval);
     }
 
     /// <summary>
@@ -219,7 +219,7 @@ public partial struct Recurrence
     /// <param name="fromDate">The date when a specific range starts.</param>
     /// <param name="toDate">The date when a specific range finishes.</param>
     /// <param name="dayOfWeek">The day of the week.</param>
-    /// <param name="numberOfWeek">The number of the week. The first week of a month starts from the first day of the month.</param>
+    /// <param name="indexOfDay">Index of <b>dayOfWeek</b> in the month.</param>
     /// <param name="interval">The interval between occurrences.</param>
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
@@ -229,10 +229,10 @@ public partial struct Recurrence
         DateOnly fromDate,
         DateOnly toDate,
         DayOfWeek dayOfWeek,
-        NumberOfWeek numberOfWeek,
+        IndexOfDay indexOfDay,
         Interval interval)
     {
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, numberOfWeek);
+        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -252,7 +252,7 @@ public partial struct Recurrence
 
         DateOnly GetNextDate(int year, int month)
         {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, numberOfWeek);
+            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace DateRecurrenceR;
+namespace DateRecurrenceR.Core;
 
 /// <summary>
 /// Represents weekdays for one week.
