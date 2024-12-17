@@ -4,12 +4,11 @@
 
 ## Efficient Date Recurrence Library for .NET
 
-**DateRecurrenceR** is a .NET library designed to handle and manage date recurrence patterns efficiently.
+**DateRecurrenceR** is a .NET library designed to handle and manage recurrence date patterns efficiently.
 
 ### Key Features
 
-* **Dynamic Subrange Generation:** Generate only the dates you need within a specified range, optimizing performance and
-  memory usage.
+* **Dynamic Subrange Generation:** Generate only the needed dates within a specified range, optimizing performance and memory usage.
 * **Time Localization Simplification:** Uses DateOnly, eliminating issues related to time localization.
 * **Flexible Collection Handling:** Returns an enumerator, allowing developers to choose the collection type.
 * **Optimal Performance:** Boasts a Big O notation of O(1), ensuring efficient operations.
@@ -39,7 +38,7 @@ All these methods return an instance of `IEnumerator<DateOnly>`.
 | dayOfMonth     | The day of the month. Takes the last day of the month if `dayOfMonth` is more than the days in the month. |
 | dayOfYear      | The day of the year.                                                                                      |
 | weekDays       | Days of the week.                                                                                         |
-| numberOfWeek   | The number of the week. The first week of a month starts from the first day of the month.                 |
+| numberOfWeek   | Index of dayOfWeek in the month.                                                                          |
 | numberOfMonth  | The number of the month.                                                                                  |
 | firstDayOfWeek | The first day of the week.                                                                                |
 

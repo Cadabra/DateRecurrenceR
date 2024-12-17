@@ -220,6 +220,7 @@ public sealed class WeeklyRecurrenceHelperTests
         hash[DayOfWeek.Saturday].Should().Be(1);
     }
 
+#if NET8_0_OR_GREATER
     [Fact]
     public void Method_8_GetPatternHash_returns_correct_hash_for_seven_days()
     {
@@ -246,4 +247,5 @@ public sealed class WeeklyRecurrenceHelperTests
         hash[DayOfWeek.Friday].Should().Be(1);
         hash[DayOfWeek.Saturday].Should().Be(1);
     }
+#endif
 }
