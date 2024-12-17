@@ -10,7 +10,7 @@ public readonly struct MonthOfYear : IEquatable<MonthOfYear>
 #endif
 {
     private const int MinVal = 1;
-    private const int MaxVal = 12;
+    private const int MaxVal = MonthsInYear;
 
     private readonly int _value;
 

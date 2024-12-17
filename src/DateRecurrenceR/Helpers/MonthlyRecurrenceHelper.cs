@@ -33,8 +33,8 @@ internal struct MonthlyRecurrenceHelper
 
     private static int SubtractMonth(DateOnly minuendDate, DateOnly subtractedDate)
     {
-        var minuend = minuendDate.Year * 12 + minuendDate.Month;
-        var subtracted = subtractedDate.Year * 12 + subtractedDate.Month;
+        var minuend = minuendDate.Year * MonthsInYear + minuendDate.Month;
+        var subtracted = subtractedDate.Year * MonthsInYear + subtractedDate.Month;
 
         return minuend - subtracted;
     }

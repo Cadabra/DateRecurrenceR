@@ -53,6 +53,6 @@ internal sealed class MonthlyEnumeratorLimitByDate : IEnumerator<DateOnly>
 
     private static int GetMonthNumber(DateOnly date)
     {
-        return 12 * date.Year + date.Month;
+        return MonthsInYear * date.Year + date.Month;
     }
 }

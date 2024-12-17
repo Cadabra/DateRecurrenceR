@@ -23,15 +23,15 @@ var enumeratorFirstMonth =
 var enumeratorSecondMonth =
     Recurrence.Weekly(beginDate, endDate, fromDate2, toDate2, weekDays, firstDayOfWeek, interval);
 
-while (enumeratorFull.MoveNext()) Console.Write($"{enumeratorFull.Current:d} ");
+while (enumeratorFull.MoveNext()) Console.Write($"{enumeratorFull.Current:MM/dd/yyyy} ");
 
 Console.WriteLine();
 
 Console.ForegroundColor = ConsoleColor.Cyan;
-while (enumeratorFirstMonth.MoveNext()) Console.Write($"{enumeratorFirstMonth.Current:d} ");
+while (enumeratorFirstMonth.MoveNext()) Console.Write($"{enumeratorFirstMonth.Current:MM/dd/yyyy} ");
 
 // just beautify
 Console.Write(new string(' ', 33));
 
 Console.ForegroundColor = ConsoleColor.Magenta;
-while (enumeratorSecondMonth.MoveNext()) Console.Write($"{enumeratorSecondMonth.Current:d} ");
+while (enumeratorSecondMonth.MoveNext()) Console.Write($"{enumeratorSecondMonth.Current:MM/dd/yyyy} ");

@@ -25,7 +25,6 @@ public struct WeekDays
     /// </summary>
     /// <param name="day1"><see cref="DayOfWeek" /></param>
     /// <param name="day2"><see cref="DayOfWeek" /></param>
-
     public WeekDays(DayOfWeek day1, DayOfWeek day2)
         : this(day1, day2, day2)
     {

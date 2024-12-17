@@ -38,7 +38,7 @@ All these methods return an instance of `IEnumerator<DateOnly>`.
 | dayOfMonth     | The day of the month. Takes the last day of the month if `dayOfMonth` is more than the days in the month. |
 | dayOfYear      | The day of the year.                                                                                      |
 | weekDays       | Days of the week.                                                                                         |
-| numberOfWeek   | Index of dayOfWeek in the month.                                                                          |
+| indexOfDay     | Index of dayOfWeek in the month.                                                                          |
 | numberOfMonth  | The number of the month.                                                                                  |
 | firstDayOfWeek | The first day of the week.                                                                                |
 
