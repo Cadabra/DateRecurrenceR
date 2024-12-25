@@ -2,6 +2,8 @@
 
 [![Release](https://github.com/Cadabra/DateRecurrenceR/actions/workflows/release.yml/badge.svg)](https://github.com/Cadabra/DateRecurrenceR/actions/workflows/release.yml) [![Nuget](https://img.shields.io/nuget/v/DateRecurrenceR?logo=NuGet)](https://www.nuget.org/packages/DateRecurrenceR) [![CodeFactor](https://www.codefactor.io/repository/github/cadabra/daterecurrencer/badge/main)](https://www.codefactor.io/repository/github/cadabra/daterecurrencer/overview/main)
 
+_No AI, just math._
+
 ## Efficient Date Recurrence Library for .NET
 
 **DateRecurrenceR** is a .NET library designed to handle and manage recurrence date patterns efficiently.
@@ -38,7 +40,7 @@ All these methods return an instance of `IEnumerator<DateOnly>`.
 | dayOfMonth     | The day of the month. Takes the last day of the month if `dayOfMonth` is more than the days in the month. |
 | dayOfYear      | The day of the year.                                                                                      |
 | weekDays       | Days of the week.                                                                                         |
-| indexOfDay     | Index of dayOfWeek in the month.                                                                          |
+| indexOfDay     | Index of `dayOfWeek` in the month.                                                                        |
 | numberOfMonth  | The number of the month.                                                                                  |
 | firstDayOfWeek | The first day of the week.                                                                                |
 
