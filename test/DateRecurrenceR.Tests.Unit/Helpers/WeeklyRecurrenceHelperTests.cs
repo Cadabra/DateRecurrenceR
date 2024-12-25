@@ -132,6 +132,31 @@ public sealed class WeeklyRecurrenceHelperTests
     }
 
     [Fact]
+    public void Method_TryGetStartDate_returns_Result_eq_FromDate_2()
+    {
+        // Arrange
+        var beginDate = new DateOnly(1, 1, 8);
+        var fromDate = beginDate;
+        var firstDayOfWeek = DayOfWeek.Monday;
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Monday);
+        var interval = 1;
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+
+        // Act
+        WeeklyRecurrenceHelper.TryGetStartDate(
+            beginDate,
+            fromDate,
+            patternHash,
+            weekDays,
+            firstDayOfWeek,
+            interval,
+            out var startDate);
+
+        //Assert
+        startDate.Should().Be(fromDate);
+    }
+
+    [Fact]
     public void Method_GetPatternHash_returns_correct_hash_for_one_day()
     {
         // Arrange
