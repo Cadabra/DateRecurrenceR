@@ -11,7 +11,7 @@ internal struct WeeklyRecurrenceHelper
 
         var increment = DaysInWeek * (interval - 1) + 1;
 
-        var weekDayIndex = ((int) weekDays.MinDay + 6) % DaysInWeek;
+        var weekDayIndex = ((int) weekDays.GetMinByFirstDayOfWeek(0) + 6) % DaysInWeek;
 
         for (var i = DaysInWeek; i > 0; i--)
         {
@@ -124,7 +124,8 @@ internal struct WeeklyRecurrenceHelper
         int interval,
         out DateOnly startDate)
     {
-        if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.MinDay, firstDayOfWeek, out startDate))
+        // if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.MinDay, firstDayOfWeek, out startDate))
+        if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.GetMinByFirstDayOfWeek(firstDayOfWeek), firstDayOfWeek, out startDate))
         {
             startDate = default;
             return false;

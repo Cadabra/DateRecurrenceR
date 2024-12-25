@@ -3,7 +3,7 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 /// Represents weekdays for one week.
 /// </summary>
-public struct WeekDays
+public readonly struct WeekDays
 {
 #if NET8_0_OR_GREATER
     private readonly WeekDaysArray _ds;
@@ -98,8 +98,6 @@ public struct WeekDays
         DayOfWeek day6,
         DayOfWeek day7)
     {
-        MinDay = (DayOfWeek) DaysInWeek;
-
         _ds[(int) day1] = true;
         _ds[(int) day2] = true;
         _ds[(int) day3] = true;
@@ -107,8 +105,6 @@ public struct WeekDays
         _ds[(int) day5] = true;
         _ds[(int) day6] = true;
         _ds[(int) day7] = true;
-
-        UpdateMinDay();
     }
 
 #if NET8_0_OR_GREATER
@@ -118,11 +114,7 @@ public struct WeekDays
     /// <param name="daysArray"><see cref="WeekDaysArray" /></param>
     public WeekDays(WeekDaysArray daysArray)
     {
-        MinDay = (DayOfWeek) DaysInWeek;
-
         _ds = daysArray;
-
-        UpdateMinDay();
     }
 #endif
 
@@ -144,8 +136,6 @@ public struct WeekDays
         bool isFriday,
         bool isSaturday)
     {
-        MinDay = (DayOfWeek) DaysInWeek;
-
         _ds[0] = isSunday;
         _ds[1] = isMonday;
         _ds[2] = isTuesday;
@@ -153,28 +143,38 @@ public struct WeekDays
         _ds[4] = isThursday;
         _ds[5] = isFriday;
         _ds[6] = isSaturday;
-
-        UpdateMinDay();
     }
 
     /// <summary>
     /// Returns a minimal defined day of the week. 
     /// </summary>
-    public DayOfWeek MinDay { get; private set; }
+    public DayOfWeek GetMinByFirstDayOfWeek(DayOfWeek firstDayOfWeek)
+    {
+        var shift = (7 + (int) firstDayOfWeek) % 7;
+        if (_ds[shift]) return (DayOfWeek) shift;
+
+        shift = (7 + (int) firstDayOfWeek + 1) % 7;
+        if (_ds[shift]) return (DayOfWeek) shift;
+
+        shift = (7 + (int) firstDayOfWeek + 2) % 7;
+        if (_ds[shift]) return (DayOfWeek) shift;
+
+        shift = (7 + (int) firstDayOfWeek + 3) % 7;
+        if (_ds[shift]) return (DayOfWeek) shift;
+
+        shift = (7 + (int) firstDayOfWeek + 4) % 7;
+        if (_ds[shift]) return (DayOfWeek) shift;
+
+        shift = (7 + (int) firstDayOfWeek + 5) % 7;
+        if (_ds[shift]) return (DayOfWeek) shift;
+
+        shift = (7 + (int) firstDayOfWeek + 6) % 7;
+        return (DayOfWeek) shift;
+    }
 
     /// <summary>
     /// Returns whether the day of the week has been defined.
     /// </summary>
     /// <param name="dayOfWeek"></param>
     public bool this[DayOfWeek dayOfWeek] => _ds[(int) dayOfWeek];
-
-    private void UpdateMinDay()
-    {
-        for (var i = 0; i < DaysInWeek; i++)
-        {
-            if (!_ds[i]) continue;
-            MinDay = (DayOfWeek) i;
-            break;
-        }
-    }
 }
