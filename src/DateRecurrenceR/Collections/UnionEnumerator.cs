@@ -192,7 +192,7 @@ internal struct UnionEnumerator : IEnumerator<DateOnly>
     {
     }
 
-    private struct EWrapper
+    private struct EWrapper : IEquatable<EWrapper>
     {
         public EWrapper(IEnumerator<DateOnly> @enum)
         {
@@ -209,9 +209,19 @@ internal struct UnionEnumerator : IEnumerator<DateOnly>
             return CanMoveNext;
         }
 
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return Enum.GetHashCode();
+        }
+
+        public readonly bool Equals(EWrapper other)
+        {
+            return Enum.Equals(other.Enum) && CanMoveNext == other.CanMoveNext;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is EWrapper other && Equals(other);
         }
     }
 }

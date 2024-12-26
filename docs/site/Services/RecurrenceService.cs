@@ -1,5 +1,6 @@
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Docs.Models;
+using System.Text;
 
 namespace DateRecurrenceR.Docs.Services;
 
@@ -46,7 +47,7 @@ public class RecurrenceService
         DateOnly beginDate, DateOnly endDate, int interval,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -130,7 +131,7 @@ public class RecurrenceService
         DayOfWeek firstDayOfWeek, SubrangeMode mode,
         DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate     = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -212,7 +213,7 @@ public class RecurrenceService
         DateOnly beginDate, DateOnly endDate, int interval, int dayOfMonth,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate  = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -294,7 +295,7 @@ public class RecurrenceService
         DayOfWeek dayOfWeek, IndexOfDay indexOfDay,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate  = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -379,7 +380,7 @@ public class RecurrenceService
         int dayOfMonth, int monthOfYear, SubrangeMode mode,
         DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate   = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -464,7 +465,7 @@ public class RecurrenceService
         DayOfWeek dayOfWeek, IndexOfDay indexOfDay, int monthOfYear,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate   = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -547,7 +548,7 @@ public class RecurrenceService
         DateOnly beginDate, DateOnly endDate, int interval, int dayOfYear,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -646,7 +647,7 @@ public class RecurrenceService
 
     private static string BuildUnionSnippet(List<UnionPatternSlot> slots)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
 
@@ -714,7 +715,7 @@ public class RecurrenceService
         return result;
     }
 
-    private static void AppendLoop(System.Text.StringBuilder sb)
+    private static void AppendLoop(StringBuilder sb)
     {
         sb.AppendLine();
         sb.AppendLine("while (enumerator.MoveNext())");
