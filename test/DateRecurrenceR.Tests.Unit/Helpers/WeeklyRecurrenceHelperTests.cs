@@ -15,7 +15,7 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Monday);
         var firstDayOfWeek = DayOfWeek.Monday;
         var interval = 1;
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
@@ -40,7 +40,7 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Friday);
         var firstDayOfWeek = DayOfWeek.Monday;
         var interval = 1;
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
@@ -65,7 +65,7 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Saturday);
         var firstDayOfWeek = DayOfWeek.Monday;
         var interval = 1;
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
@@ -90,7 +90,7 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Saturday);
         var firstDayOfWeek = DayOfWeek.Monday;
         var interval = 1;
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
@@ -115,7 +115,7 @@ public sealed class WeeklyRecurrenceHelperTests
         var fromDate = beginDate.AddDays(7 * interval * 2);
         var weekDays = new WeekDays(DayOfWeek.Monday);
         var firstDayOfWeek = DayOfWeek.Monday;
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         WeeklyRecurrenceHelper.TryGetStartDate(
@@ -140,7 +140,7 @@ public sealed class WeeklyRecurrenceHelperTests
         var firstDayOfWeek = DayOfWeek.Monday;
         var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Monday);
         var interval = 1;
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         WeeklyRecurrenceHelper.TryGetStartDate(
@@ -157,13 +157,51 @@ public sealed class WeeklyRecurrenceHelperTests
     }
 
     [Fact]
+    public void Method_GetPatternHash_returns_correct_hash_for_Sunday_and_Monday_with_Sunday_as_FirstDayOfWeek()
+    {
+        // Arrange
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Monday);
+
+        // Act
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 2, DayOfWeek.Sunday);
+
+        //Assert
+        hash[DayOfWeek.Sunday].Should().Be(1);
+        hash[DayOfWeek.Monday].Should().Be(13);
+        hash[DayOfWeek.Tuesday].Should().Be(0);
+        hash[DayOfWeek.Wednesday].Should().Be(0);
+        hash[DayOfWeek.Thursday].Should().Be(0);
+        hash[DayOfWeek.Friday].Should().Be(0);
+        hash[DayOfWeek.Saturday].Should().Be(0);
+    }
+
+    [Fact]
+    public void Method_GetPatternHash_returns_correct_hash_for_Sunday_and_Monday_with_Monday_as_FirstDayOfWeek()
+    {
+        // Arrange
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Monday);
+
+        // Act
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 2, DayOfWeek.Monday);
+
+        //Assert
+        hash[DayOfWeek.Sunday].Should().Be(8);
+        hash[DayOfWeek.Monday].Should().Be(6);
+        hash[DayOfWeek.Tuesday].Should().Be(0);
+        hash[DayOfWeek.Wednesday].Should().Be(0);
+        hash[DayOfWeek.Thursday].Should().Be(0);
+        hash[DayOfWeek.Friday].Should().Be(0);
+        hash[DayOfWeek.Saturday].Should().Be(0);
+    }
+
+    [Fact]
     public void Method_GetPatternHash_returns_correct_hash_for_one_day()
     {
         // Arrange
         var weekDays = new WeekDays(DayOfWeek.Monday);
 
         // Act
-        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1);
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
         //Assert
         hash[DayOfWeek.Sunday].Should().Be(0);
@@ -182,7 +220,7 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(DayOfWeek.Tuesday, DayOfWeek.Friday);
 
         // Act
-        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1);
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
         //Assert
         hash[DayOfWeek.Sunday].Should().Be(0);
@@ -209,7 +247,7 @@ public sealed class WeeklyRecurrenceHelperTests
         );
 
         // Act
-        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1);
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
         //Assert
         hash[DayOfWeek.Sunday].Should().Be(1);
@@ -234,7 +272,7 @@ public sealed class WeeklyRecurrenceHelperTests
             true);
 
         // Act
-        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1);
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
         //Assert
         hash[DayOfWeek.Sunday].Should().Be(1);
@@ -262,7 +300,7 @@ public sealed class WeeklyRecurrenceHelperTests
         var weekDays = new WeekDays(weekDaysArray);
 
         // Act
-        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1);
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
         //Assert
         hash[DayOfWeek.Sunday].Should().Be(1);

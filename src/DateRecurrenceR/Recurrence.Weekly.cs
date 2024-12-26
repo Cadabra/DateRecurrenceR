@@ -45,7 +45,7 @@ public partial struct Recurrence
         DayOfWeek firstDayOfWeek,
         Interval interval)
     {
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, firstDayOfWeek);
 
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,
@@ -104,7 +104,7 @@ public partial struct Recurrence
         DayOfWeek firstDayOfWeek,
         Interval interval)
     {
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, firstDayOfWeek);
 
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
             beginDate,

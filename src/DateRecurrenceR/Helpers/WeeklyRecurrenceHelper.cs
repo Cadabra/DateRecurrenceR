@@ -5,13 +5,13 @@ namespace DateRecurrenceR.Helpers;
 
 internal struct WeeklyRecurrenceHelper
 {
-    public static WeeklyHash GetPatternHash(WeekDays weekDays, int interval)
+    public static WeeklyHash GetPatternHash(WeekDays weekDays, int interval, DayOfWeek firstDayOfWeek)
     {
         var hash = new WeeklyHash();
 
         var increment = DaysInWeek * (interval - 1) + 1;
 
-        var weekDayIndex = ((int) weekDays.GetMinByFirstDayOfWeek(0) + 6) % DaysInWeek;
+        var weekDayIndex = ((int) weekDays.GetMinByFirstDayOfWeek(firstDayOfWeek) + 6) % DaysInWeek;
 
         for (var i = DaysInWeek; i > 0; i--)
         {

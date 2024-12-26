@@ -244,7 +244,7 @@ public sealed class DateHelperTests
         // Arrange
         var interval = 50;
         var weekDays = new WeekDays(DayOfWeek.Monday);
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         var res = DateHelper.CalculateDaysToNextInterval(
@@ -266,7 +266,7 @@ public sealed class DateHelperTests
         var startDate = new DateOnly(999, 1, 1);
         var fromDate = new DateOnly(999, 2, 16); // right after 999-02-15 Friday
         var expectedDate = new DateOnly(999, 2, 26);
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         var res = DateHelper.CalculateDaysToNextInterval(
@@ -288,7 +288,7 @@ public sealed class DateHelperTests
         var startDate = new DateOnly(999, 1, 1);
         var fromDate = new DateOnly(999, 2, 14); // before 999-02-15 Friday
         var expectedDate = new DateOnly(999, 2, 15);
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, DayOfWeek.Sunday);
 
         // Act
         var res = DateHelper.CalculateDaysToNextInterval(
