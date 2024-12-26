@@ -1,26 +1,29 @@
-using System.Collections;
 using DateRecurrenceR.Internals;
+using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
-internal sealed class MonthlyEnumeratorLimitByCount : IEnumerator<DateOnly>
+/// <summary>
+/// Enumerates dates in a yearly recurrence pattern.
+/// </summary>
+public struct YearlyEnumerator : IEnumerator<DateOnly>
 {
-    private readonly GetNextMonthDateDelegate _getNextDate;
+    private readonly GetNextDateDelegate _getNextDate;
     private readonly int _interval;
     private readonly int _takeCount;
     private bool _canMoveNext = true;
-    private int _count;
-    private DateOnly _iterator;
+    private int _count = 0;
+    private int _iterator = 0;
 
-    public MonthlyEnumeratorLimitByCount(DateOnly startDate, int takeCount, int interval,
-        GetNextMonthDateDelegate getNextDate)
+    internal YearlyEnumerator(int year, int takeCount, int interval, GetNextDateDelegate getNextDate)
     {
-        _iterator = startDate;
+        _iterator = year;
         _takeCount = takeCount;
         _interval = interval;
         _getNextDate = getNextDate;
     }
 
+    /// <inheritdoc />
     public bool MoveNext()
     {
         if (!_canMoveNext || _count >= _takeCount)
@@ -29,32 +32,32 @@ internal sealed class MonthlyEnumeratorLimitByCount : IEnumerator<DateOnly>
             return false;
         }
 
-        Current = _getNextDate(_iterator.Year, _iterator.Month);
+        Current = _getNextDate(_iterator);
         _count++;
 
-        if (GetMonthNumber(DateOnly.MaxValue) - GetMonthNumber(_iterator) < _interval)
+        if (DateOnly.MaxValue.Year - _iterator < _interval)
             _canMoveNext = false;
         else
-            _iterator = _iterator.AddMonths(_interval);
+            _iterator += _interval;
 
         return true;
     }
 
+    /// <inheritdoc />
     public void Reset()
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public DateOnly Current { get; private set; }
 
     object IEnumerator.Current => Current;
 
+    internal static YearlyEnumerator Empty = new(0, 0, 0, _ => default);
+
+    /// <inheritdoc />
     public void Dispose()
     {
-    }
-
-    private static int GetMonthNumber(DateOnly date)
-    {
-        return MonthsInYear * date.Year + date.Month;
     }
 }

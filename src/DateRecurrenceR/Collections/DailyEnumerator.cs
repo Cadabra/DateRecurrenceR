@@ -2,29 +2,36 @@ using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
-internal sealed class DailyEnumeratorLimitByDate : IEnumerator<DateOnly>
+/// <summary>
+/// Enumerates dates in a daily recurrence pattern.
+/// </summary>
+public struct DailyEnumerator : IEnumerator<DateOnly>
 {
     private readonly int _interval;
-    private readonly DateOnly _stopDate;
-    private bool _canMoveNext = true;
+    private readonly int _takeCount;
+    private bool _canMoveNext = false;
+    private int _count = 0;
     private DateOnly _iterator;
 
-    public DailyEnumeratorLimitByDate(DateOnly startDate, DateOnly stopDate, int interval)
+    internal DailyEnumerator(DateOnly startDate, int takeCount, int interval)
     {
         _iterator = startDate;
-        _stopDate = stopDate;
+        _takeCount = takeCount;
         _interval = interval;
+        _canMoveNext = true;
     }
 
+    /// <inheritdoc />
     public bool MoveNext()
     {
-        if (!_canMoveNext || _iterator > _stopDate)
+        if (!_canMoveNext || _count >= _takeCount)
         {
             Current = default;
             return false;
         }
 
         Current = _iterator;
+        _count++;
 
         if (DateOnly.MaxValue.DayNumber - _iterator.DayNumber < _interval)
             _canMoveNext = false;
@@ -34,15 +41,20 @@ internal sealed class DailyEnumeratorLimitByDate : IEnumerator<DateOnly>
         return true;
     }
 
+    /// <inheritdoc />
     public void Reset()
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public DateOnly Current { get; private set; }
 
     object IEnumerator.Current => Current;
 
+    internal static DailyEnumerator Empty = new(default, 0, 0);
+
+    /// <inheritdoc />
     public void Dispose()
     {
     }

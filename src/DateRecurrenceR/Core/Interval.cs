@@ -27,7 +27,7 @@ public readonly struct Interval : IEquatable<Interval>
     /// </summary>
     public Interval(int value)
     {
-        if (value < MinVal) throw new ArgumentOutOfRangeException(nameof(value));
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, MinVal);
 
         _value = value;
     }

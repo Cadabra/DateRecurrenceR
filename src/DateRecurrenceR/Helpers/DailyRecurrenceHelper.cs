@@ -23,4 +23,11 @@ internal struct DailyRecurrenceHelper
         startDate = DateOnly.FromDayNumber(dateDayNumber);
         return true;
     }
+
+    public static int GetCount(DateOnly startDate, DateOnly endDate, int interval)
+    {
+        var intervalCount = (endDate.DayNumber - startDate.DayNumber) / interval;
+
+        return intervalCount + 1;
+    }
 }
