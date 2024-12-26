@@ -172,6 +172,43 @@ public readonly struct WeekDays
         return (DayOfWeek) shift;
     }
 
+    public int GetCountSelectedDays()
+    {
+        return (_ds[0] ? 1 : 0)
+               + (_ds[1] ? 1 : 0)
+               + (_ds[2] ? 1 : 0)
+               + (_ds[3] ? 1 : 0)
+               + (_ds[4] ? 1 : 0)
+               + (_ds[5] ? 1 : 0)
+               + (_ds[6] ? 1 : 0);
+    }
+
+    public int GetCountSelectedDays(DayOfWeek fromDay, DayOfWeek firstDayOfWeek)
+    {
+        var fdwIndex = (int) firstDayOfWeek;
+        var fIndex = (7 + (int) fromDay) % 7;
+        return (_ds[(7 + fdwIndex) % 7] ? (7 + fIndex) % 7 == fIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 1) % 7] ? (7 + fdwIndex + 1) % 7 <= fIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 2) % 7] ? (7 + fdwIndex + 2) % 7 <= fIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 3) % 7] ? (7 + fdwIndex + 3) % 7 <= fIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 4) % 7] ? (7 + fdwIndex + 4) % 7 <= fIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 5) % 7] ? (7 + fdwIndex + 5) % 7 <= fIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 6) % 7] ? (7 + fdwIndex + 6) % 7 <= fIndex ? 1 : 0 : 0);
+    }
+
+    public int GetCountSelectedDays2(DayOfWeek beforeDay, DayOfWeek firstDayOfWeek)
+    {
+        var fdwIndex = (int) firstDayOfWeek;
+        var bIndex = (7 + (int) beforeDay - (int) firstDayOfWeek) % 7;
+        return (_ds[(7 - fdwIndex) % 7] ? (7 - bIndex) % 7 < bIndex ? 1 : 0 : 0)
+               + (_ds[(7 - fdwIndex + 1) % 7] ? (7 - fdwIndex + 1) % 7 < bIndex ? 1 : 0 : 0)
+               + (_ds[(7 - fdwIndex + 2) % 7] ? (7 - fdwIndex + 2) % 7 < bIndex ? 1 : 0 : 0)
+               + (_ds[(7 - fdwIndex + 3) % 7] ? (7 - fdwIndex + 3) % 7 < bIndex ? 1 : 0 : 0)
+               + (_ds[(7 - fdwIndex + 4) % 7] ? (7 - fdwIndex + 4) % 7 < bIndex ? 1 : 0 : 0)
+               + (_ds[(7 - fdwIndex + 5) % 7] ? (7 - fdwIndex + 5) % 7 < bIndex ? 1 : 0 : 0)
+               + (_ds[(7 - fdwIndex + 6) % 7] ? (7 - fdwIndex + 6) % 7 < bIndex ? 1 : 0 : 0);
+    }
+
     /// <summary>
     /// Returns whether the day of the week has been defined.
     /// </summary>

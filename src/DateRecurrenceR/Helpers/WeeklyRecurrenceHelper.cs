@@ -124,7 +124,6 @@ internal struct WeeklyRecurrenceHelper
         int interval,
         out DateOnly startDate)
     {
-        // if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.MinDay, firstDayOfWeek, out startDate))
         if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.GetMinByFirstDayOfWeek(firstDayOfWeek), firstDayOfWeek, out startDate))
         {
             startDate = default;
@@ -146,4 +145,34 @@ internal struct WeeklyRecurrenceHelper
         startDate = DateOnly.FromDayNumber(startDay);
         return true;
     }
+
+    // public static bool TryGetEndDate(DateOnly startDate,
+    //     DateOnly fromDate,
+    //     WeeklyHash weeklyHash,
+    //     WeekDays weekDays,
+    //     DayOfWeek firstDayOfWeek,
+    //     int interval,
+    //     out DateOnly startDate)
+    // {
+    //     if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.MinDay, firstDayOfWeek, out startDate))
+    //     {
+    //         startDate = default;
+    //         return false;
+    //     }
+    //
+    //     if (startDate >= fromDate) return true;
+    //
+    //     var difDays =
+    //         DateHelper.CalculateDaysToNextInterval(startDate.DayNumber, fromDate.DayNumber, interval, weeklyHash);
+    //     var startDay = startDate.DayNumber + difDays;
+    //
+    //     if (startDay > DateOnly.MaxValue.DayNumber)
+    //     {
+    //         startDate = default;
+    //         return false;
+    //     }
+    //
+    //     startDate = DateOnly.FromDayNumber(startDay);
+    //     return true;
+    // }
 }
