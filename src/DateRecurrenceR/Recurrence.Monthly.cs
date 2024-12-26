@@ -61,7 +61,7 @@ public partial struct Recurrence
 
         DateOnly GetNextDate(int year, int month)
         {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfMonth);
+            return DateOnlyHelper.GetDateByDayOfMonth(year, month, dayOfMonth);
         }
     }
 
@@ -103,7 +103,7 @@ public partial struct Recurrence
         IndexOfDay indexOfDay,
         Interval interval)
     {
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
+        var date = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -117,7 +117,7 @@ public partial struct Recurrence
 
         DateOnly GetNextDate(int year, int month)
         {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
+            return DateOnlyHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
         }
     }
 
@@ -183,7 +183,7 @@ public partial struct Recurrence
 
         DateOnly GetNextDate(int year, int month)
         {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfMonth);
+            return DateOnlyHelper.GetDateByDayOfMonth(year, month, dayOfMonth);
         }
     }
 
@@ -232,7 +232,7 @@ public partial struct Recurrence
         IndexOfDay indexOfDay,
         Interval interval)
     {
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
+        var date = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
@@ -252,7 +252,7 @@ public partial struct Recurrence
 
         DateOnly GetNextDate(int year, int month)
         {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
+            return DateOnlyHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
         }
     }
 }

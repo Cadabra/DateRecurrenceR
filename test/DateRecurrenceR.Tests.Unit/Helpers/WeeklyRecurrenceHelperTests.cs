@@ -1,9 +1,11 @@
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 using FluentAssertions;
+using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit.Helpers;
 
+[TestSubject(typeof(WeeklyRecurrenceHelper))]
 public sealed class WeeklyRecurrenceHelperTests
 {
     [Fact]
@@ -27,7 +29,7 @@ public sealed class WeeklyRecurrenceHelperTests
             interval,
             out _);
 
-        //Assert
+        // Assert
         canStart.Should().BeTrue();
     }
 
@@ -52,7 +54,7 @@ public sealed class WeeklyRecurrenceHelperTests
             interval,
             out _);
 
-        //Assert
+        // Assert
         canStart.Should().BeTrue();
     }
 
@@ -77,7 +79,7 @@ public sealed class WeeklyRecurrenceHelperTests
             interval,
             out _);
 
-        //Assert
+        // Assert
         canStart.Should().BeFalse();
     }
 
@@ -102,7 +104,7 @@ public sealed class WeeklyRecurrenceHelperTests
             interval,
             out _);
 
-        //Assert
+        // Assert
         canStart.Should().BeFalse();
     }
 
@@ -127,7 +129,7 @@ public sealed class WeeklyRecurrenceHelperTests
             interval,
             out var startDate);
 
-        //Assert
+        // Assert
         startDate.Should().Be(fromDate);
     }
 
@@ -152,7 +154,7 @@ public sealed class WeeklyRecurrenceHelperTests
             interval,
             out var startDate);
 
-        //Assert
+        // Assert
         startDate.Should().Be(fromDate);
     }
 
@@ -165,7 +167,7 @@ public sealed class WeeklyRecurrenceHelperTests
         // Act
         var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 2, DayOfWeek.Sunday);
 
-        //Assert
+        // Assert
         hash[DayOfWeek.Sunday].Should().Be(1);
         hash[DayOfWeek.Monday].Should().Be(13);
         hash[DayOfWeek.Tuesday].Should().Be(0);
@@ -184,7 +186,7 @@ public sealed class WeeklyRecurrenceHelperTests
         // Act
         var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 2, DayOfWeek.Monday);
 
-        //Assert
+        // Assert
         hash[DayOfWeek.Sunday].Should().Be(8);
         hash[DayOfWeek.Monday].Should().Be(6);
         hash[DayOfWeek.Tuesday].Should().Be(0);
@@ -203,7 +205,7 @@ public sealed class WeeklyRecurrenceHelperTests
         // Act
         var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
-        //Assert
+        // Assert
         hash[DayOfWeek.Sunday].Should().Be(0);
         hash[DayOfWeek.Monday].Should().Be(7);
         hash[DayOfWeek.Tuesday].Should().Be(0);
@@ -222,7 +224,7 @@ public sealed class WeeklyRecurrenceHelperTests
         // Act
         var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
-        //Assert
+        // Assert
         hash[DayOfWeek.Sunday].Should().Be(0);
         hash[DayOfWeek.Monday].Should().Be(0);
         hash[DayOfWeek.Tuesday].Should().Be(3);
@@ -249,7 +251,7 @@ public sealed class WeeklyRecurrenceHelperTests
         // Act
         var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
-        //Assert
+        // Assert
         hash[DayOfWeek.Sunday].Should().Be(1);
         hash[DayOfWeek.Monday].Should().Be(1);
         hash[DayOfWeek.Tuesday].Should().Be(1);
@@ -274,7 +276,7 @@ public sealed class WeeklyRecurrenceHelperTests
         // Act
         var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
-        //Assert
+        // Assert
         hash[DayOfWeek.Sunday].Should().Be(1);
         hash[DayOfWeek.Monday].Should().Be(1);
         hash[DayOfWeek.Tuesday].Should().Be(1);
@@ -302,7 +304,7 @@ public sealed class WeeklyRecurrenceHelperTests
         // Act
         var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Sunday);
 
-        //Assert
+        // Assert
         hash[DayOfWeek.Sunday].Should().Be(1);
         hash[DayOfWeek.Monday].Should().Be(1);
         hash[DayOfWeek.Tuesday].Should().Be(1);
@@ -312,4 +314,433 @@ public sealed class WeeklyRecurrenceHelperTests
         hash[DayOfWeek.Saturday].Should().Be(1);
     }
 #endif
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek_0()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 7); // Sunday
+        var endDate = startDate;
+        var firstDayOfWeek = DayOfWeek.Sunday;
+        var interval = 1;
+        var count = 1;
+
+        var weekDays = new WeekDays(true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 7); // Sunday
+        var endDate = startDate.AddDays(3);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 2;
+
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Wednesday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek_2()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 1); // Monday
+        var endDate = startDate.AddDays(2);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 2;
+
+        var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Wednesday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek_3()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 3); // Wednesday
+        var endDate = startDate.AddDays(5);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 2;
+
+        var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Wednesday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek_firstAndLastDays()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 7); // Sunday
+        var endDate = startDate.AddDays(6);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 2;
+
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Saturday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek_firstAndLastDays_2()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 1); // Monday
+        var endDate = startDate.AddDays(6);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 2;
+
+        var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Sunday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Sunday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneFullWeek()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 7); // Sunday
+        var endDate = startDate.AddDays(6);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 7;
+
+        var weekDays = new WeekDays(true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneFullWeek_2()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 1); // Monday
+        var endDate = startDate.AddDays(6);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 7;
+
+        var weekDays = new WeekDays(true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_twoWeeks_by_count()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 7); // Sunday
+        var endDate = startDate.AddDays(10);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 4;
+
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Wednesday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Wednesday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_twoWeeks_by_endDate()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 7); // Sunday
+        var endDate = startDate.AddDays(10);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 4;
+
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Wednesday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, endDate);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Wednesday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_twoWeeks_by_count_2()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 1); // Monday
+        var endDate = startDate.AddDays(9);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 4;
+
+        var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Wednesday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Wednesday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_twoWeeks_by_endDate_2()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 1); // Monday
+        var endDate = startDate.AddDays(9);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 4;
+
+        var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Wednesday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, endDate);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Wednesday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_twoFullWeeks_by_count()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 7); // Sunday
+        var endDate = startDate.AddDays(13);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 14;
+
+        var weekDays = new WeekDays(true, true, true, true, true, true, true);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Saturday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_twoFullWeeks_by_endDate()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 7); // Sunday
+        var endDate = startDate.AddDays(13);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 14;
+
+        var weekDays = new WeekDays(true, true, true, true, true, true, true);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, endDate);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Saturday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_twoFullWeeks_by_count_2()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 1); // Monday
+        var endDate = startDate.AddDays(13);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 14;
+
+        var weekDays = new WeekDays(true, true, true, true, true, true, true);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, count);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Sunday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_twoFullWeeks_by_endDate_2()
+    {
+        // Arrange
+        var startDate = new DateOnly(1, 1, 1); // Monday
+        var endDate = startDate.AddDays(13);
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 14;
+
+        var weekDays = new WeekDays(true, true, true, true, true, true, true);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, endDate);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Sunday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek_max_by_count()
+    {
+        // Arrange
+        var startDate = new DateOnly(9999, 12, 30); // Thursday
+        var endDate = startDate;
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 1;
+
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Thursday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, int.MaxValue);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Thursday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek_max_by_endDate()
+    {
+        // Arrange
+        var startDate = new DateOnly(9999, 12, 30); // Thursday
+        var endDate = startDate;
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 1;
+
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Thursday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, endDate);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Thursday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
+
+    [Fact]
+    public void Method_GetEndDateAndCount_returns_correct_data_for_oneWeek_max_by_endDate_2()
+    {
+        // Arrange
+        var startDate = new DateOnly(9999, 12, 30); // Thursday
+        var endDate = startDate;
+        var firstDayOfWeek = startDate.DayOfWeek;
+        var interval = 1;
+        var count = 1;
+
+        var weekDays = new WeekDays(DayOfWeek.Sunday, DayOfWeek.Thursday);
+
+        // Act
+        var (actualEndDate, actualCount) =
+            WeeklyRecurrenceHelper.GetEndDateAndCount(startDate, weekDays, firstDayOfWeek, interval, DateOnly.MaxValue);
+
+        // Assert
+        Assert.Equal(DayOfWeek.Thursday, endDate.DayOfWeek);
+        actualEndDate.Should().Be(endDate);
+        actualCount.Should().Be(count);
+    }
 }
