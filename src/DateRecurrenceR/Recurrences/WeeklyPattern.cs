@@ -3,7 +3,7 @@ using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 using Range = DateRecurrenceR.Core.Range;
 
-namespace DateRecurrenceR;
+namespace DateRecurrenceR.Recurrences;
 
 public interface IRecurrence
 {

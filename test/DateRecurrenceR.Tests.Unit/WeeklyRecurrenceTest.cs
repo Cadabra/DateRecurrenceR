@@ -1,5 +1,6 @@
 using DateRecurrenceR;
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Range = DateRecurrenceR.Core.Range;
