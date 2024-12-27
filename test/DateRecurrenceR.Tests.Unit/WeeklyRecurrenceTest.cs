@@ -25,13 +25,18 @@ public class WeeklyRecurrenceTest
 
         // Act
         var list = new List<DateOnly>(DateOnly.MaxValue.DayNumber);
+        var isContains = true;
         while (enumerator.MoveNext())
         {
             list.Add(enumerator.Current);
+            isContains &= sut.Contains(enumerator.Current);
         }
 
         // Assert
+        sut.StartDate.Should().Be(list.First());
+        sut.StopDate.Should().Be(list.Last());
         sut.Count.Should().Be(list.Count);
+        isContains.Should().BeTrue();
     }
 
     [Fact]
@@ -51,13 +56,18 @@ public class WeeklyRecurrenceTest
 
         // Act
         var list = new List<DateOnly>(DateOnly.MaxValue.DayNumber);
+        var isContains = true;
         while (enumerator.MoveNext())
         {
             list.Add(enumerator.Current);
+            isContains &= sut.Contains(enumerator.Current);
         }
 
         // Assert
+        sut.StartDate.Should().Be(list.First());
+        sut.StopDate.Should().Be(list.Last());
         sut.Count.Should().Be(list.Count);
+        isContains.Should().BeTrue();
     }
 
     [Fact]
@@ -77,12 +87,17 @@ public class WeeklyRecurrenceTest
 
         // Act
         var list = new List<DateOnly>(DateOnly.MaxValue.DayNumber);
+        var isContains = true;
         while (enumerator.MoveNext())
         {
             list.Add(enumerator.Current);
+            isContains &= sut.Contains(enumerator.Current);
         }
 
         // Assert
+        sut.StartDate.Should().Be(list.First());
+        sut.StopDate.Should().Be(list.Last());
         sut.Count.Should().Be(list.Count);
+        isContains.Should().BeTrue();
     }
 }

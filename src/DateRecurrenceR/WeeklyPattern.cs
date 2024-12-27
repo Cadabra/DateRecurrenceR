@@ -7,12 +7,15 @@ namespace DateRecurrenceR;
 
 public interface IRecurrence
 {
-    public IEnumerator<DateOnly> GetEnumerator();
-    public IEnumerator<DateOnly> GetEnumerator(int takeCount);
-    public IEnumerator<DateOnly> GetEnumerator(DateOnly fromDate, int takeCount);
-    public IEnumerator<DateOnly> GetEnumerator(DateOnly fromDate, DateOnly toDate);
+    DateOnly StartDate { get; }
+    DateOnly StopDate { get; }
+    int Count { get; }
 
     bool Contains(DateOnly date);
+    IEnumerator<DateOnly> GetEnumerator();
+    IEnumerator<DateOnly> GetEnumerator(int takeCount);
+    IEnumerator<DateOnly> GetEnumerator(DateOnly fromDate, int takeCount);
+    IEnumerator<DateOnly> GetEnumerator(DateOnly fromDate, DateOnly toDate);
 }
 
 public readonly struct WeeklyPattern
@@ -38,69 +41,203 @@ public readonly struct WeeklyRecurrence : IRecurrence
 
     public WeeklyRecurrence(Range range, WeeklyPattern pattern)
     {
-        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(pattern.WeekDays, pattern.Interval, pattern.FirstDayOfWeek);
-        var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
-            range.BeginDate, //beginDate,
-            range.BeginDate, //fromDate,
-            patternHash,
+        _pattern = pattern;
+
+        var canStart = RecurrenceExt.TryGetStartDate(
+            range.BeginDate,
             pattern.WeekDays,
-            pattern.FirstDayOfWeek,
             pattern.Interval,
+            pattern.FirstDayOfWeek,
             out _startDate);
 
-        var selectedDaysInWeek = pattern.WeekDays.GetCountSelectedDays();
+        if (!canStart)
+        {
+            _count = 0;
+            return;
+        }
+        
+        if(range.EndDate is not null)
+        {
+            _stopDate = RecurrenceExt.GetStopDate(
+                _startDate,
+                range.EndDate!.Value,
+                pattern.WeekDays,
+                pattern.Interval,
+                pattern.FirstDayOfWeek);
 
-        var startWeekDayNumber = _startDate.DayNumber - (int) _startDate.DayOfWeek + (int) pattern.FirstDayOfWeek;
-        var daysInRange = range.EndDate!.Value.DayNumber - startWeekDayNumber + 1;
-        var daysInInterval = DaysInWeek * pattern.Interval;
-        var fullIntervalsExceptFirst = (daysInRange / daysInInterval) * selectedDaysInWeek;
-        var tail = daysInRange % daysInInterval;
+            _count = RecurrenceExt.GetCount(
+                _startDate,
+                range.EndDate!.Value,
+                pattern.WeekDays,
+                pattern.Interval,
+                pattern.FirstDayOfWeek);
+        }
+        else
+        {
+            _stopDate = RecurrenceExt.GetStopDate(
+                _startDate,
+                range.EndDate!.Value,
+                pattern.WeekDays,
+                pattern.Interval,
+                pattern.FirstDayOfWeek);
 
-        var t0 = pattern.WeekDays.GetCountSelectedDays(range.EndDate!.Value.DayOfWeek, pattern.FirstDayOfWeek);
-        var t1 = pattern.WeekDays.GetCountSelectedDays2(_startDate.DayOfWeek, pattern.FirstDayOfWeek);
-        fullIntervalsExceptFirst += tail > DaysInWeek ? selectedDaysInWeek : tail == 0 ? 0 : t0;
-        fullIntervalsExceptFirst -= t1;
-
-        _count = fullIntervalsExceptFirst;
-        // _range = range;
-        _pattern = pattern;
+            _count = RecurrenceExt.GetCount(
+                _startDate,
+                range.EndDate!.Value,
+                pattern.WeekDays,
+                pattern.Interval,
+                pattern.FirstDayOfWeek);
+        }
     }
 
-    // public DateOnly StartDate => _startDate;
+    public DateOnly StartDate => _startDate;
+    public DateOnly StopDate => _stopDate;
     public int Count => _count;
+
+    public bool Contains(DateOnly date)
+    {
+        if (!_pattern.WeekDays[date.DayOfWeek]) return false;
+
+        if (date < StartDate || StopDate < date) return false;
+
+        if ((date.DayNumber - StartDate.DayNumber) % (_pattern.Interval * 7) > 7) return false;
+
+        return true;
+    }
 
     public IEnumerator<DateOnly> GetEnumerator()
     {
-        // return new WeeklyEnumeratorLimitByDate(startDate, stopDate, patternHash);
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(
+            _pattern.WeekDays,
+            _pattern.Interval,
+            _pattern.FirstDayOfWeek);
 
-        throw new NotImplementedException();
+        return new WeeklyEnumeratorLimitByDate(_startDate, _stopDate, patternHash);
     }
 
     public IEnumerator<DateOnly> GetEnumerator(int takeCount)
     {
-        throw new NotImplementedException();
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(
+            _pattern.WeekDays,
+            _pattern.Interval,
+            _pattern.FirstDayOfWeek);
+
+        return new WeeklyEnumeratorLimitByCount(_startDate, takeCount, patternHash);
     }
 
     public IEnumerator<DateOnly> GetEnumerator(DateOnly fromDate, int takeCount)
     {
-        throw new NotImplementedException();
+        return Recurrence.Weekly(_startDate, takeCount, _pattern.WeekDays, _pattern.FirstDayOfWeek, _pattern.Interval);
     }
 
     public IEnumerator<DateOnly> GetEnumerator(DateOnly fromDate, DateOnly toDate)
     {
-        throw new NotImplementedException();
+        return Recurrence.Weekly(_startDate, _stopDate, fromDate, toDate, _pattern.WeekDays, _pattern.FirstDayOfWeek,
+            _pattern.Interval);
     }
+}
 
-    public bool Contains(DateOnly date)
+public readonly struct RecurrenceExt
+{
+    public static bool TryGetStartDate(in DateOnly beginDate,
+        in WeekDays weekDays,
+        in Interval interval,
+        in DayOfWeek firstDayOfWeek,
+        out DateOnly startDate)
     {
-        throw new NotImplementedException();
+        var patternHash = WeeklyRecurrenceHelper.GetPatternHash(
+            weekDays,
+            interval,
+            firstDayOfWeek);
 
-        // if (!WeekDays[date.DayOfWeek]) return false;
-        //
-        // if (date < BeginDate || EndDate < date) return false;
-        //
-        // if ((date.DayNumber - BeginDate.DayNumber) % (Interval * 7) > 7) return false;
-        //
-        // return true;
+        return WeeklyRecurrenceHelper.TryGetStartDate(
+            beginDate, //beginDate,
+            beginDate, //fromDate,
+            patternHash,
+            weekDays,
+            firstDayOfWeek,
+            interval,
+            out startDate);
     }
+
+    public static DateOnly GetStopDate(in DateOnly startDate,
+        in DateOnly endDate,
+        in WeekDays weekDays,
+        in Interval interval,
+        in DayOfWeek firstDayOfWeek)
+    {
+        var startWeekDayNumber = startDate.DayNumber - (int)startDate.DayOfWeek + (int)firstDayOfWeek;
+        var daysInRange = endDate.DayNumber - startWeekDayNumber + 1;
+        var daysInInterval = DaysInWeek * interval;
+        var tail = daysInRange % daysInInterval;
+
+        var stopDateDayNumber = (daysInRange / daysInInterval) * daysInInterval;
+        stopDateDayNumber += tail > DaysInWeek
+            ? weekDays.TryGetDayFromLeft((DayOfWeek)((7 + 6 + (int)firstDayOfWeek) % 7),
+                firstDayOfWeek, out var sd)
+                ? (7 + (int)sd - (int)firstDayOfWeek) % 7 //(int)sd
+                : 0
+            : weekDays.TryGetDayFromLeft((DayOfWeek)(tail),
+                firstDayOfWeek, out var sd2)
+                ? (7 + (int)sd2 - (int)firstDayOfWeek) % 7 //(int)sd2
+                : 0;
+
+        return DateOnly.FromDayNumber(stopDateDayNumber);
+    }
+
+    public static int GetCount(in DateOnly startDate,
+        in DateOnly endDate,
+        in WeekDays weekDays,
+        in Interval interval,
+        in DayOfWeek firstDayOfWeek)
+    {
+        var selectedDaysInWeek = weekDays.GetCountSelectedDays();
+
+        var startWeekDayNumber = startDate.DayNumber - (int)startDate.DayOfWeek + (int)firstDayOfWeek;
+        var daysInRange = endDate.DayNumber - startWeekDayNumber + 1;
+        var daysInInterval = DaysInWeek * interval;
+        var fullIntervalsExceptFirst = (daysInRange / daysInInterval) * selectedDaysInWeek;
+        var tail = daysInRange % daysInInterval;
+
+        var t0 = weekDays.GetCountSelectedDays(endDate.DayOfWeek, firstDayOfWeek);
+        var t1 = weekDays.GetCountSelectedDays2(startDate.DayOfWeek, firstDayOfWeek);
+        fullIntervalsExceptFirst += tail > DaysInWeek ? selectedDaysInWeek : tail == 0 ? 0 : t0;
+        fullIntervalsExceptFirst -= t1;
+
+        return fullIntervalsExceptFirst;
+    }
+
+    // public static int GetCount(in DateOnly startDate,
+    //     in int expectedCount,
+    //     in WeekDays weekDays,
+    //     in Interval interval,
+    //     in DayOfWeek firstDayOfWeek)
+    // {
+    //     var selectedDaysInWeek = weekDays.GetCountSelectedDays();
+    //
+    //     var fullWeekDays = expectedCount / selectedDaysInWeek * 7 * interval;
+    //     var tail = expectedCount % selectedDaysInWeek;
+    //
+    //     if (tail == 0)
+    //     {
+    //         fullWeekDays -= 7 * interval;
+    //     }
+    //
+    //     var weekDaysMax = weekDays.MaxDay;
+    //     
+    //     
+    //
+    //     var startWeekDayNumber = startDate.DayNumber - (int)startDate.DayOfWeek + (int)firstDayOfWeek;
+    //     var daysInRange = endDate.DayNumber - startWeekDayNumber + 1;
+    //     var daysInInterval = DaysInWeek * interval;
+    //     var fullIntervalsExceptFirst = (daysInRange / daysInInterval) * selectedDaysInWeek;
+    //     var tail = daysInRange % daysInInterval;
+    //
+    //     var t0 = weekDays.GetCountSelectedDays(endDate.DayOfWeek, firstDayOfWeek);
+    //     var t1 = weekDays.GetCountSelectedDays2(startDate.DayOfWeek, firstDayOfWeek);
+    //     fullIntervalsExceptFirst += tail > DaysInWeek ? selectedDaysInWeek : tail == 0 ? 0 : t0;
+    //     fullIntervalsExceptFirst -= t1;
+    //
+    //     return fullIntervalsExceptFirst;
+    // }
 }

@@ -22,14 +22,13 @@ public readonly struct Range
         {
             throw new ArgumentException();
         }
-        
+
         BeginDate = beginDate;
         EndDate = null;
         Count = count;
     }
-    
+
     public DateOnly BeginDate { get; }
-    
     public DateOnly? EndDate { get; }
     public int? Count { get; }
 }
