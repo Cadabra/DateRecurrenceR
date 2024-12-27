@@ -55,8 +55,8 @@ public readonly struct WeeklyRecurrence : IRecurrence
             _count = 0;
             return;
         }
-        
-        if(range.EndDate is not null)
+
+        if (range.EndDate is not null)
         {
             _stopDate = RecurrenceExt.GetStopDate(
                 _startDate,
@@ -166,20 +166,20 @@ public readonly struct RecurrenceExt
         in Interval interval,
         in DayOfWeek firstDayOfWeek)
     {
-        var startWeekDayNumber = startDate.DayNumber - (int)startDate.DayOfWeek + (int)firstDayOfWeek;
+        var startWeekDayNumber = startDate.DayNumber - (int) startDate.DayOfWeek + (int) firstDayOfWeek;
         var daysInRange = endDate.DayNumber - startWeekDayNumber + 1;
         var daysInInterval = DaysInWeek * interval;
         var tail = daysInRange % daysInInterval;
 
         var stopDateDayNumber = (daysInRange / daysInInterval) * daysInInterval;
         stopDateDayNumber += tail > DaysInWeek
-            ? weekDays.TryGetDayFromLeft((DayOfWeek)((7 + 6 + (int)firstDayOfWeek) % 7),
+            ? weekDays.TryGetDayFromLeft((DayOfWeek) ((7 + 6 + (int) firstDayOfWeek) % 7),
                 firstDayOfWeek, out var sd)
-                ? (7 + (int)sd - (int)firstDayOfWeek) % 7 //(int)sd
+                ? (7 + (int) sd - (int) firstDayOfWeek) % 7
                 : 0
-            : weekDays.TryGetDayFromLeft((DayOfWeek)(tail),
+            : weekDays.TryGetDayFromLeft((DayOfWeek) (tail),
                 firstDayOfWeek, out var sd2)
-                ? (7 + (int)sd2 - (int)firstDayOfWeek) % 7 //(int)sd2
+                ? (7 + (int) sd2 - (int) firstDayOfWeek) % 7
                 : 0;
 
         return DateOnly.FromDayNumber(stopDateDayNumber);
@@ -193,7 +193,7 @@ public readonly struct RecurrenceExt
     {
         var selectedDaysInWeek = weekDays.GetCountSelectedDays();
 
-        var startWeekDayNumber = startDate.DayNumber - (int)startDate.DayOfWeek + (int)firstDayOfWeek;
+        var startWeekDayNumber = startDate.DayNumber - (int) startDate.DayOfWeek + (int) firstDayOfWeek;
         var daysInRange = endDate.DayNumber - startWeekDayNumber + 1;
         var daysInInterval = DaysInWeek * interval;
         var fullIntervalsExceptFirst = (daysInRange / daysInInterval) * selectedDaysInWeek;
@@ -207,37 +207,32 @@ public readonly struct RecurrenceExt
         return fullIntervalsExceptFirst;
     }
 
-    // public static int GetCount(in DateOnly startDate,
-    //     in int expectedCount,
-    //     in WeekDays weekDays,
-    //     in Interval interval,
-    //     in DayOfWeek firstDayOfWeek)
-    // {
-    //     var selectedDaysInWeek = weekDays.GetCountSelectedDays();
-    //
-    //     var fullWeekDays = expectedCount / selectedDaysInWeek * 7 * interval;
-    //     var tail = expectedCount % selectedDaysInWeek;
-    //
-    //     if (tail == 0)
-    //     {
-    //         fullWeekDays -= 7 * interval;
-    //     }
-    //
-    //     var weekDaysMax = weekDays.MaxDay;
-    //     
-    //     
-    //
-    //     var startWeekDayNumber = startDate.DayNumber - (int)startDate.DayOfWeek + (int)firstDayOfWeek;
-    //     var daysInRange = endDate.DayNumber - startWeekDayNumber + 1;
-    //     var daysInInterval = DaysInWeek * interval;
-    //     var fullIntervalsExceptFirst = (daysInRange / daysInInterval) * selectedDaysInWeek;
-    //     var tail = daysInRange % daysInInterval;
-    //
-    //     var t0 = weekDays.GetCountSelectedDays(endDate.DayOfWeek, firstDayOfWeek);
-    //     var t1 = weekDays.GetCountSelectedDays2(startDate.DayOfWeek, firstDayOfWeek);
-    //     fullIntervalsExceptFirst += tail > DaysInWeek ? selectedDaysInWeek : tail == 0 ? 0 : t0;
-    //     fullIntervalsExceptFirst -= t1;
-    //
-    //     return fullIntervalsExceptFirst;
-    // }
+    public static int GetCount(in DateOnly startDate,
+        in int expectedCount,
+        in WeekDays weekDays,
+        in Interval interval,
+        in DayOfWeek firstDayOfWeek)
+    {
+        var selectedDaysInWeek = weekDays.GetCountSelectedDays();
+
+        var fullWeekDays = expectedCount / selectedDaysInWeek * 7 * interval;
+        var tail = expectedCount % selectedDaysInWeek;
+        
+        if (startDate.DayOfWeek == weekDays.GetMinByFirstDayOfWeek(firstDayOfWeek)){}
+
+        if (tail == 0)
+        {
+            fullWeekDays -= 7 * interval;
+        }
+        else if (tail > 7)
+        {
+            var weekDaysMax = weekDays.GetMaxByFirstDayOfWeek(firstDayOfWeek);
+        }
+        else
+        {
+            var weekDaysMax = weekDays.GetMaxByFirstDayOfWeek(firstDayOfWeek);
+        }
+
+        return 0;
+    }
 }
