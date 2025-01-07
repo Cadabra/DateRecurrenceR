@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Internals;
 
@@ -7,6 +8,12 @@ namespace DateRecurrenceR.Helpers;
 
 internal struct DateHelper
 {
+    // public static int GetShift(DateOnly dayOfWeek, DayOfWeek firstDayOfWeek)
+    // {
+    //     return GetShiftedIndex()
+    //     return (7 + dayOfWeek) % 7 + firstDayOfWeek
+    // }
+
     [Pure]
     public static bool TryGetDateOfDayOfWeek(DateOnly dateInSameWeek,
         DayOfWeek dayOfWeek,
@@ -40,7 +47,7 @@ internal struct DateHelper
             IndexOfDay.Third => 2,
             IndexOfDay.Fourth => 3,
             IndexOfDay.Last => 4 -
-                                 (DateTime.DaysInMonth(date.Year, date.Month) % DaysInWeek <= diffToFirstDay ? 1 : 0),
+                               (DateTime.DaysInMonth(date.Year, date.Month) % DaysInWeek <= diffToFirstDay ? 1 : 0),
             _ => throw new ArgumentOutOfRangeException(nameof(indexOfDay), indexOfDay, null)
         };
 
@@ -82,10 +89,24 @@ internal struct DateHelper
 
         for (var i = 0; (i < DaysInWeek) & (daysDif > modDif); i++)
         {
-            var dayOfWeek = (DayOfWeek) (((uint) startDay + modDif + 1) % DaysInWeek);
+            var dayOfWeek = (DayOfWeek)(((uint)startDay + modDif + 1) % DaysInWeek);
             modDif += weeklyHash[dayOfWeek];
         }
 
         return modDif;
+    }
+
+    public static bool TryGetFirstDayOfNextWeek(DateOnly startDate, DayOfWeek firstDayOfWeek, out DateOnly date)
+    {
+        var resultNumber = startDate.DayNumber + 7 - WeekDaysHelper.GetDiffToDay(firstDayOfWeek, startDate.DayOfWeek);
+
+        if (resultNumber > DateOnly.MaxValue.DayNumber)
+        {
+            date = default;
+            return false;
+        }
+        
+        date = DateOnly.FromDayNumber(resultNumber);
+        return true;
     }
 }

@@ -11,7 +11,7 @@ internal struct WeeklyRecurrenceHelper
 
         var increment = DaysInWeek * (interval - 1) + 1;
 
-        var weekDayIndex = ((int) weekDays.GetMinByFirstDayOfWeek(firstDayOfWeek) + 6) % DaysInWeek;
+        var weekDayIndex = ((int)weekDays.GetMinByFirstDayOfWeek(firstDayOfWeek) + 6) % DaysInWeek;
 
         for (var i = DaysInWeek; i > 0; i--)
         {
@@ -124,7 +124,8 @@ internal struct WeeklyRecurrenceHelper
         int interval,
         out DateOnly startDate)
     {
-        if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.GetMinByFirstDayOfWeek(firstDayOfWeek), firstDayOfWeek, out startDate))
+        if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.GetMinByFirstDayOfWeek(firstDayOfWeek),
+                firstDayOfWeek, out startDate))
         {
             startDate = default;
             return false;
@@ -146,33 +147,63 @@ internal struct WeeklyRecurrenceHelper
         return true;
     }
 
-    // public static bool TryGetEndDate(DateOnly startDate,
-    //     DateOnly fromDate,
-    //     WeeklyHash weeklyHash,
-    //     WeekDays weekDays,
-    //     DayOfWeek firstDayOfWeek,
-    //     int interval,
-    //     out DateOnly startDate)
-    // {
-    //     if (!DateHelper.TryGetDateOfDayOfWeek(beginDate, weekDays.MinDay, firstDayOfWeek, out startDate))
-    //     {
-    //         startDate = default;
-    //         return false;
-    //     }
-    //
-    //     if (startDate >= fromDate) return true;
-    //
-    //     var difDays =
-    //         DateHelper.CalculateDaysToNextInterval(startDate.DayNumber, fromDate.DayNumber, interval, weeklyHash);
-    //     var startDay = startDate.DayNumber + difDays;
-    //
-    //     if (startDay > DateOnly.MaxValue.DayNumber)
-    //     {
-    //         startDate = default;
-    //         return false;
-    //     }
-    //
-    //     startDate = DateOnly.FromDayNumber(startDay);
-    //     return true;
-    // }
+    public static (DateOnly, int) GetEndDateAndCount(
+        DateOnly startDate,
+        WeekDays weekDays,
+        DayOfWeek firstDayOfWeek,
+        int interval,
+        int count)
+    {
+        throw new NotImplementedException();
+        // var startMonthNumber = 12 * startDate.Year + startDate.Month;
+        // var maxMonthNumber = 12 * DateOnly.MaxValue.Year + DateOnly.MaxValue.Month;
+        //
+        // var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval, count);
+        // var endMonthNumber = startMonthNumber + (safeCount - 1) * interval;
+        //
+        // var endYear = endMonthNumber / 12;
+        // var endMonth = endMonthNumber % 12;
+        //
+        // var date = DateHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfWeek, indexOfDay);
+        //
+        // return (date, safeCount);
+    }
+
+    public static (DateOnly, int) GetEndDateAndCount(
+        DateOnly startDate,
+        WeekDays weekDays,
+        DayOfWeek firstDayOfWeek,
+        int interval,
+        DateOnly endDate)
+    {
+        // throw new NotImplementedException();
+        var intervalDayCount = 7 * interval;
+
+        var count = 0;
+        if (DateHelper.TryGetFirstDayOfNextWeek(startDate, firstDayOfWeek, out DateOnly firstDateOfNextWeek))
+        {
+            count = (endDate.DayNumber - firstDateOfNextWeek.DayNumber) / intervalDayCount;
+        }
+
+        count += weekDays.GetCountFrom(startDate.DayOfWeek, firstDayOfWeek);
+
+        var actualEndDayNumber = firstDateOfNextWeek.DayNumber + intervalDayCount * count;
+        var tail = (endDate.DayNumber - firstDateOfNextWeek.DayNumber) % intervalDayCount;
+        if (tail > 7)
+        {
+            count += weekDays.GetCount();
+            var lastSelectedDay = weekDays.GetMaxDay(firstDayOfWeek);
+            actualEndDayNumber += WeekDaysHelper.GetDiffToDay(firstDayOfWeek, lastSelectedDay);
+        }
+        else
+        // {
+            if (weekDays.TryGetDayFromLeft(endDate.DayOfWeek, firstDayOfWeek, out var result))
+            {
+                count += weekDays.GetCountBefore(endDate.DayOfWeek, firstDayOfWeek);
+                actualEndDayNumber += WeekDaysHelper.GetDiffToDay(firstDayOfWeek, result);
+            }
+        // }
+
+        return (DateOnly.FromDayNumber(actualEndDayNumber), count);
+    }
 }

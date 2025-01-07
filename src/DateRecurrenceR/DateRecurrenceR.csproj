@@ -12,7 +12,7 @@
         <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <WarningsAsErrors>Nullable</WarningsAsErrors>
-        <Deterministic>true</Deterministic>
+        <Optimize>true</Optimize>
         <Title>DateRecurrenceR</Title>
         <PackageId>DateRecurrenceR</PackageId>
         <PackageReadmeFile>README.md</PackageReadmeFile>

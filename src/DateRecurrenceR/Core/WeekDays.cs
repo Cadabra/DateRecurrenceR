@@ -172,7 +172,7 @@ public readonly struct WeekDays
         return (DayOfWeek) shift;
     }
 
-    public DayOfWeek GetMaxByFirstDayOfWeek(DayOfWeek firstDayOfWeek)
+    public DayOfWeek GetMaxDay(DayOfWeek firstDayOfWeek)
     {
         var shift = (7 + (int) firstDayOfWeek + 6) % 7;
         if (_ds[shift]) return (DayOfWeek) shift;
@@ -197,7 +197,7 @@ public readonly struct WeekDays
     }
 
     // todo: turn into property Count
-    public int GetCountSelectedDays()
+    public int GetCount()
     {
         return (_ds[0] ? 1 : 0)
                + (_ds[1] ? 1 : 0)
@@ -208,7 +208,7 @@ public readonly struct WeekDays
                + (_ds[6] ? 1 : 0);
     }
 
-    public int GetCountSelectedDays(DayOfWeek fromDay, DayOfWeek firstDayOfWeek)
+    public int GetCountFrom(DayOfWeek fromDay, DayOfWeek firstDayOfWeek)
     {
         var fdwIndex = (int) firstDayOfWeek;
         var fIndex = (7 + (int) fromDay) % 7;
@@ -221,7 +221,7 @@ public readonly struct WeekDays
                + (_ds[(7 + fdwIndex + 6) % 7] ? (7 + fdwIndex + 6) % 7 <= fIndex ? 1 : 0 : 0);
     }
 
-    public int GetCountSelectedDays2(DayOfWeek beforeDay, DayOfWeek firstDayOfWeek)
+    public int GetCountBefore(DayOfWeek beforeDay, DayOfWeek firstDayOfWeek)
     {
         var fdwIndex = (int) firstDayOfWeek;
         var bIndex = (7 + (int) beforeDay - (int) firstDayOfWeek) % 7;
