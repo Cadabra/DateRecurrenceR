@@ -154,19 +154,30 @@ internal struct WeeklyRecurrenceHelper
         int interval,
         int count)
     {
-        throw new NotImplementedException();
-        // var startMonthNumber = 12 * startDate.Year + startDate.Month;
-        // var maxMonthNumber = 12 * DateOnly.MaxValue.Year + DateOnly.MaxValue.Month;
-        //
-        // var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval, count);
-        // var endMonthNumber = startMonthNumber + (safeCount - 1) * interval;
-        //
-        // var endYear = endMonthNumber / 12;
-        // var endMonth = endMonthNumber % 12;
-        //
-        // var date = DateHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfWeek, indexOfDay);
-        //
-        // return (date, safeCount);
+        var intervalDayCount = 7 * interval;
+
+        var actualCount = weekDays.GetCountFrom(startDate.DayOfWeek, firstDayOfWeek);
+
+        if (!DateHelper.TryGetFirstDayOfNextWeek(startDate, firstDayOfWeek, out DateOnly nextWeekFirstDay))
+        {
+            return (default, default);
+        }
+
+        var daysInInterval = weekDays.GetCount();
+        var intervalCount = (count - actualCount) / daysInInterval;
+
+        var safeCount = Math.Min((DateOnly.MaxValue.DayNumber - nextWeekFirstDay.DayNumber) / intervalDayCount, intervalCount);
+        var endDayNumber = nextWeekFirstDay.DayNumber + safeCount * intervalCount;
+
+        var tail = Math.Min(7, DateOnly.MaxValue.DayNumber - endDayNumber);
+        var mt = WeekDaysHelper.IndexToDayOfWeek(tail, firstDayOfWeek);
+        if (weekDays.TryGetDayFromLeft(mt, firstDayOfWeek, out var result))
+        {
+            safeCount += weekDays.GetCountBefore(result, firstDayOfWeek);
+            endDayNumber += WeekDaysHelper.DayToIndex(result, firstDayOfWeek);
+        }
+        
+        return (DateOnly.FromDayNumber(endDayNumber), safeCount);
     }
 
     public static (DateOnly, int) GetEndDateAndCount(
@@ -176,7 +187,6 @@ internal struct WeeklyRecurrenceHelper
         int interval,
         DateOnly endDate)
     {
-        // throw new NotImplementedException();
         var intervalDayCount = 7 * interval;
 
         var count = 0;
@@ -195,14 +205,11 @@ internal struct WeeklyRecurrenceHelper
             var lastSelectedDay = weekDays.GetMaxDay(firstDayOfWeek);
             actualEndDayNumber += WeekDaysHelper.GetDiffToDay(firstDayOfWeek, lastSelectedDay);
         }
-        else
-        // {
-            if (weekDays.TryGetDayFromLeft(endDate.DayOfWeek, firstDayOfWeek, out var result))
-            {
-                count += weekDays.GetCountBefore(endDate.DayOfWeek, firstDayOfWeek);
-                actualEndDayNumber += WeekDaysHelper.GetDiffToDay(firstDayOfWeek, result);
-            }
-        // }
+        else if (weekDays.TryGetDayFromLeft(endDate.DayOfWeek, firstDayOfWeek, out var result))
+        {
+            count += weekDays.GetCountBefore(endDate.DayOfWeek, firstDayOfWeek);
+            actualEndDayNumber += WeekDaysHelper.GetDiffToDay(firstDayOfWeek, result);
+        }
 
         return (DateOnly.FromDayNumber(actualEndDayNumber), count);
     }

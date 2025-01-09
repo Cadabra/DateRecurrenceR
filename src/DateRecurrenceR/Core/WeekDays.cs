@@ -172,6 +172,9 @@ public readonly struct WeekDays
         return (DayOfWeek) shift;
     }
 
+    /// <summary>
+    /// Returns a maximum defined day of the week. 
+    /// </summary>
     public DayOfWeek GetMaxDay(DayOfWeek firstDayOfWeek)
     {
         var shift = (7 + (int) firstDayOfWeek + 6) % 7;
