@@ -154,30 +154,48 @@ internal struct WeeklyRecurrenceHelper
         int interval,
         int count)
     {
-        var intervalDayCount = 7 * interval;
+        int endDayNumber = default;
 
-        var actualCount = weekDays.GetCountFrom(startDate.DayOfWeek, firstDayOfWeek);
+        // head
+        var headCount = weekDays.GetCountFrom(startDate.DayOfWeek, firstDayOfWeek);
 
-        if (!DateHelper.TryGetFirstDayOfNextWeek(startDate, firstDayOfWeek, out DateOnly nextWeekFirstDay))
+        if (headCount >= count)
         {
-            return (default, default);
+            endDayNumber = startDate.DayNumber +
+                            WeekDaysHelper.DayToIndex(weekDays.GetMaxDay(firstDayOfWeek), firstDayOfWeek);
+            return (DateOnly.FromDayNumber(endDayNumber), headCount);
         }
 
+        if (DateHelper.TryGetFirstDayOfNextWeek(startDate, firstDayOfWeek, out var nextWeek))
+        {
+            endDayNumber = nextWeek.DayNumber;
+        }
+        else
+        {
+            return (DateOnly.FromDayNumber(endDayNumber), headCount);
+        }
+
+        // body
         var daysInInterval = weekDays.GetCount();
-        var intervalCount = (count - actualCount) / daysInInterval;
+        var bodyCount = 0;
+        var periodCount = (count - headCount) / daysInInterval;
 
-        var safeCount = Math.Min((DateOnly.MaxValue.DayNumber - nextWeekFirstDay.DayNumber) / intervalDayCount, intervalCount);
-        var endDayNumber = nextWeekFirstDay.DayNumber + safeCount * intervalCount;
-
-        var tail = Math.Min(7, DateOnly.MaxValue.DayNumber - endDayNumber);
-        var mt = WeekDaysHelper.IndexToDayOfWeek(tail, firstDayOfWeek);
-        if (weekDays.TryGetDayFromLeft(mt, firstDayOfWeek, out var result))
+        if (periodCount > 0)
         {
-            safeCount += weekDays.GetCountBefore(result, firstDayOfWeek);
-            endDayNumber += WeekDaysHelper.DayToIndex(result, firstDayOfWeek);
+            bodyCount = periodCount * daysInInterval;
+            endDayNumber += periodCount * interval * 7;
         }
-        
-        return (DateOnly.FromDayNumber(endDayNumber), safeCount);
+
+        // tail
+        var tailCount = (count - headCount) % daysInInterval;
+
+        if (weekDays.TryGet(tailCount - 1, firstDayOfWeek, out DayOfWeek result2))
+        {
+            endDayNumber += WeekDaysHelper.DayToIndex(result2, firstDayOfWeek) + 1;
+            return (DateOnly.FromDayNumber(endDayNumber), headCount + bodyCount + tailCount);
+        }
+
+        return (DateOnly.FromDayNumber(endDayNumber), headCount + bodyCount);
     }
 
     public static (DateOnly, int) GetEndDateAndCount(
