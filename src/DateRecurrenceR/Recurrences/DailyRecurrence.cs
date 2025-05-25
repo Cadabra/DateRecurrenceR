@@ -74,7 +74,6 @@ public readonly struct DailyRecurrence : IRecurrence<DailyRecurrence, DailyEnume
     }
 
     /// <inheritdoc />
-    /// <inheritdoc />
     public DailyRecurrence GetSubRange(int takeCount)
     {
         return new DailyRecurrence(_startDate, takeCount, _pattern);
@@ -90,6 +89,21 @@ public readonly struct DailyRecurrence : IRecurrence<DailyRecurrence, DailyEnume
     public DailyRecurrence GetSubRange(DateOnly fromDate, DateOnly toDate)
     {
         return new DailyRecurrence(_startDate, toDate, _pattern);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(int takeCount)
+    {
+        return GetSubRange(takeCount);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(DateOnly fromDate, int takeCount)
+    {
+        return GetSubRange(fromDate, takeCount);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(DateOnly fromDate, DateOnly toDate)
+    {
+        return GetSubRange(fromDate, toDate);
     }
 
     /// <inheritdoc />

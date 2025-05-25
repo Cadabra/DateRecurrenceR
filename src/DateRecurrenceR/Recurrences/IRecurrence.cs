@@ -7,5 +7,10 @@ public interface IRecurrence
     int Count { get; }
 
     bool Contains(DateOnly date);
+
+    IRecurrence GetSubRange(int takeCount);
+    IRecurrence GetSubRange(DateOnly fromDate, int takeCount);
+    IRecurrence GetSubRange(DateOnly fromDate, DateOnly toDate);
+
     IEnumerator<DateOnly> GetEnumerator();
 }

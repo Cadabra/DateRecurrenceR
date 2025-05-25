@@ -129,6 +129,21 @@ public readonly struct YearlyByDayOfMonthRecurrence : IRecurrence<YearlyByDayOfM
         return New(_startDate, fromDate, toDate, _pattern);
     }
 
+    IRecurrence IRecurrence.GetSubRange(int takeCount)
+    {
+        return GetSubRange(takeCount);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(DateOnly fromDate, int takeCount)
+    {
+        return GetSubRange(fromDate, takeCount);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(DateOnly fromDate, DateOnly toDate)
+    {
+        return GetSubRange(fromDate, toDate);
+    }
+
     /// <inheritdoc />
     public YearlyEnumerator GetEnumerator()
     {

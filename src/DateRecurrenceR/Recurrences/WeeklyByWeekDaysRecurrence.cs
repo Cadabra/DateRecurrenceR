@@ -75,7 +75,8 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
         return new WeeklyByWeekDaysRecurrence(startDate, count, patternHash, pattern);
     }
 
-    private WeeklyByWeekDaysRecurrence(DateOnly startDate, int count, WeeklyHash weeklyHash, WeeklyByWeekDaysPattern pattern)
+    private WeeklyByWeekDaysRecurrence(DateOnly startDate, int count, WeeklyHash weeklyHash,
+        WeeklyByWeekDaysPattern pattern)
     {
         _startDate = startDate;
         _weeklyHash = weeklyHash;
@@ -89,7 +90,8 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
             count);
     }
 
-    private WeeklyByWeekDaysRecurrence(DateOnly startDate, DateOnly endDate, WeeklyHash weeklyHash, WeeklyByWeekDaysPattern pattern)
+    private WeeklyByWeekDaysRecurrence(DateOnly startDate, DateOnly endDate, WeeklyHash weeklyHash,
+        WeeklyByWeekDaysPattern pattern)
     {
         _startDate = startDate;
         _weeklyHash = weeklyHash;
@@ -141,6 +143,21 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
     public WeeklyByWeekDaysRecurrence GetSubRange(DateOnly fromDate, DateOnly toDate)
     {
         return New(_startDate, fromDate, toDate, _pattern);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(int takeCount)
+    {
+        return GetSubRange(takeCount);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(DateOnly fromDate, int takeCount)
+    {
+        return GetSubRange(fromDate, takeCount);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(DateOnly fromDate, DateOnly toDate)
+    {
+        return GetSubRange(fromDate, toDate);
     }
 
     /// <inheritdoc />
