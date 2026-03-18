@@ -36,8 +36,8 @@ internal struct MonthlyRecurrenceHelper
         var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval, count);
         var endMonthNumber = startMonthNumber + (safeCount - 1) * interval;
 
-        var endYear = endMonthNumber / 12;
-        var endMonth = endMonthNumber % 12;
+        var endYear = (endMonthNumber - 1) / 12;
+        var endMonth = (endMonthNumber - 1) % 12 + 1;
 
         return (DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfMonth), safeCount);
     }
@@ -49,19 +49,8 @@ internal struct MonthlyRecurrenceHelper
         var count = (endMonthNumber - startMonthNumber) / interval + 1;
         var actualEndMonthNumber = startMonthNumber + (count - 1) * interval;
 
-        // if ((endMonthNumber - startMonthNumber) % interval == 0)
-        // {
-        //     var saveDay = dayOfMonth > 28
-        //         ? Math.Min(dayOfMonth, DateTime.DaysInMonth(endDate.Year, endDate.Month))
-        //         : dayOfMonth;
-        //     if (endDate.Day > saveDay)
-        //     {
-        //         // actualEndMonthNumber -= interval;
-        //     }
-        // }
-
-        var endYear = actualEndMonthNumber / 12 + 1;
-        var endMonth = actualEndMonthNumber % 12;
+        var endYear = (actualEndMonthNumber - 1) / 12 + 1;
+        var endMonth = (actualEndMonthNumber - 1) % 12 + 1;
 
         return (DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfMonth), count);
     }
@@ -79,8 +68,8 @@ internal struct MonthlyRecurrenceHelper
         var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval, count);
         var endMonthNumber = startMonthNumber + (safeCount - 1) * interval;
 
-        var endYear = endMonthNumber / 12;
-        var endMonth = endMonthNumber % 12;
+        var endYear = (endMonthNumber - 1) / 12;
+        var endMonth = (endMonthNumber - 1) % 12 + 1;
 
         var date = DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfWeek, indexOfDay);
 
@@ -99,8 +88,8 @@ internal struct MonthlyRecurrenceHelper
         var count = (endMonthNumber - startMonthNumber) / interval + 1;
         var actualEndMonthNumber = startMonthNumber + (count - 1) * interval;
 
-        var endYear = actualEndMonthNumber / 12 + 1;
-        var endMonth = actualEndMonthNumber % 12;
+        var endYear = (actualEndMonthNumber - 1) / 12 + 1;
+        var endMonth = (actualEndMonthNumber - 1) % 12 + 1;
 
         var date = DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfWeek, indexOfDay);
 

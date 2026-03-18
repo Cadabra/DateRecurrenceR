@@ -21,8 +21,6 @@ public struct DateEnumerator : IEnumerator<DateOnly>
         _canMoveNext = _count < _takeCount;
     }
 
-    private DateOnly _current;
-
     public bool MoveNext()
     {
         if (!_canMoveNext)
@@ -50,6 +48,5 @@ public struct DateEnumerator : IEnumerator<DateOnly>
 
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }

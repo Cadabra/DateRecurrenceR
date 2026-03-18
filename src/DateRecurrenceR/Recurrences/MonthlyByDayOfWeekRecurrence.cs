@@ -1,4 +1,5 @@
 using DateRecurrenceR.Collections;
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 using Range = DateRecurrenceR.Core.Range;
 
@@ -126,9 +127,11 @@ public readonly struct MonthlyByDayOfWeekRecurrence : IRecurrence<MonthlyByDayOf
         if (((date.Year * 12 + date.Month) - (_startDate.Year * 12 + _startDate.Month)) % _pattern.Interval >
             0) return false;
 
-        if ((_pattern.Interval - 1) * 7 < date.Day || date.Day < _pattern.Interval * 7) return true;
+        var indexOfDay = (int)_pattern.IndexOfDay;
+        if (indexOfDay < (int)IndexOfDay.Last)
+            return indexOfDay * 7 < date.Day && date.Day <= (indexOfDay + 1) * 7;
 
-        return false;
+        return date.Day > DateTime.DaysInMonth(date.Year, date.Month) - 7;
     }
 
     /// <inheritdoc />

@@ -10,7 +10,7 @@ namespace DateRecurrenceR.Tests.Unit.Recurrences;
 public class DailyRecurrenceTest
 {
     [Fact]
-    public void METHOD()
+    public void Daily_WithEndDate_ReturnsCorrectDates()
     {
         // Arrange
         var beginDate = new DateOnly(1, 1, 1); // Monday
@@ -38,7 +38,7 @@ public class DailyRecurrenceTest
     }
 
     [Fact]
-    public void METHOD_2()
+    public void Daily_WithCount_ReturnsCorrectDates()
     {
         // Arrange
         var beginDate = new DateOnly(1, 1, 1); // Monday

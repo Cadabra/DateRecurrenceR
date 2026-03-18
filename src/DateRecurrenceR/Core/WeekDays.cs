@@ -150,6 +150,10 @@ public readonly struct WeekDays
         CountOfSelected = GetCountOfSelected();
     }
 
+    /// <summary>
+    /// Returns an integer bitmask representing the selected days of the week.
+    /// Bit 0 = Sunday, bit 1 = Monday, …, bit 6 = Saturday.
+    /// </summary>
     public int ToFlag()
     {
         var result = 0;
@@ -170,26 +174,13 @@ public readonly struct WeekDays
     /// </summary>
     public DayOfWeek GetMinByFirstDayOfWeek(DayOfWeek firstDayOfWeek)
     {
-        var shift = (7 + (int)firstDayOfWeek) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
+        for (var i = 0; i < DaysInWeek - 1; i++)
+        {
+            var shift = (7 + (int)firstDayOfWeek + i) % 7;
+            if (_ds[shift]) return (DayOfWeek)shift;
+        }
 
-        shift = (7 + (int)firstDayOfWeek + 1) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 2) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 3) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 4) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 5) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 6) % 7;
-        return (DayOfWeek)shift;
+        return (DayOfWeek)((7 + (int)firstDayOfWeek + 6) % 7);
     }
 
     /// <summary>
@@ -197,28 +188,18 @@ public readonly struct WeekDays
     /// </summary>
     public DayOfWeek GetMaxDay(DayOfWeek firstDayOfWeek)
     {
-        var shift = (7 + (int)firstDayOfWeek + 6) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
+        for (var i = DaysInWeek - 1; i > 0; i--)
+        {
+            var shift = (7 + (int)firstDayOfWeek + i) % 7;
+            if (_ds[shift]) return (DayOfWeek)shift;
+        }
 
-        shift = (7 + (int)firstDayOfWeek + 5) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 4) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 3) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 2) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 1) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek) % 7;
-        return (DayOfWeek)shift;
+        return (DayOfWeek)((7 + (int)firstDayOfWeek) % 7);
     }
 
+    /// <summary>
+    /// Gets the total number of selected days in the week.
+    /// </summary>
     public int CountOfSelected { get; }
 
     private int GetCountOfSelected()
@@ -232,6 +213,12 @@ public readonly struct WeekDays
                + (_ds[6] ? 1 : 0);
     }
 
+    /// <summary>
+    /// Returns the number of selected days up to and including <paramref name="maxDay"/>,
+    /// ordered relative to <paramref name="firstDayOfWeek"/>.
+    /// </summary>
+    /// <param name="maxDay">The inclusive upper bound day of the week.</param>
+    /// <param name="firstDayOfWeek">The first day of the week used as the ordering origin.</param>
     public int GetCountOfSelected(DayOfWeek maxDay, DayOfWeek firstDayOfWeek)
     {
         var fdwIndex = (int)firstDayOfWeek;
@@ -245,6 +232,12 @@ public readonly struct WeekDays
                + (_ds[(7 + fdwIndex + 6) % 7] ? (7 + 6) % 7 <= maxDayIndex ? 1 : 0 : 0);
     }
 
+    /// <summary>
+    /// Returns the number of selected days whose shifted index (relative to <paramref name="firstDayOfWeek"/>)
+    /// is less than or equal to <paramref name="maxDayIndex"/>.
+    /// </summary>
+    /// <param name="maxDayIndex">The inclusive upper bound as a shifted day index (0-based from <paramref name="firstDayOfWeek"/>).</param>
+    /// <param name="firstDayOfWeek">The first day of the week used as the ordering origin.</param>
     public int GetCountOfSelected(int maxDayIndex, DayOfWeek firstDayOfWeek)
     {
         var fdwIndex = (int)firstDayOfWeek;
@@ -263,68 +256,22 @@ public readonly struct WeekDays
     /// <param name="dayOfWeek"></param>
     public bool this[DayOfWeek dayOfWeek] => _ds[(int)dayOfWeek];
 
+    /// <summary>
+    /// Tries to get the day of the week at the given selected index (relative to <paramref name="firstDayOfWeek"/>),
+    /// counting only the days that are set in this instance.
+    /// </summary>
+    /// <param name="selectedIndex">Zero-based index among the selected days (ordered from <paramref name="firstDayOfWeek"/>).</param>
+    /// <param name="firstDayOfWeek">The first day of the week to use as the ordering origin.</param>
+    /// <param name="result">The matched day of the week, or <see langword="default"/> if not found.</param>
+    /// <returns><see langword="true"/> if a matching day was found; otherwise <see langword="false"/>.</returns>
     public bool TryGet(int selectedIndex, DayOfWeek firstDayOfWeek, out DayOfWeek result)
     {
-        var day = (DayOfWeek)((7 + (int)firstDayOfWeek) % 7);
-
         var currentIndex = 0;
-        if (_ds[(int)day])
+        for (var i = 0; i < DaysInWeek; i++)
         {
+            var day = (DayOfWeek)((7 + (int)firstDayOfWeek + i) % 7);
+            if (!_ds[(int)day]) continue;
             if (currentIndex++ == selectedIndex)
-            {
-                result = day;
-                return true;
-            }
-        }
-
-        if (_ds[(int)(day = day.Next())])
-        {
-            if (currentIndex++ == selectedIndex)
-            {
-                result = day;
-                return true;
-            }
-        }
-
-        if (_ds[(int)(day = day.Next())])
-        {
-            if (currentIndex++ == selectedIndex)
-            {
-                result = day;
-                return true;
-            }
-        }
-
-        if (_ds[(int)(day = day.Next())])
-        {
-            if (currentIndex++ == selectedIndex)
-            {
-                result = day;
-                return true;
-            }
-        }
-
-        if (_ds[(int)(day = day.Next())])
-        {
-            if (currentIndex++ == selectedIndex)
-            {
-                result = day;
-                return true;
-            }
-        }
-
-        if (_ds[(int)(day = day.Next())])
-        {
-            if (currentIndex++ == selectedIndex)
-            {
-                result = day;
-                return true;
-            }
-        }
-
-        if (_ds[(int)(day = day.Next())])
-        {
-            if (currentIndex == selectedIndex)
             {
                 result = day;
                 return true;
@@ -332,61 +279,7 @@ public readonly struct WeekDays
         }
 
         result = default;
-
         return false;
     }
 
-    private bool TryGetFirstSelectedBefore(DayOfWeek day, DayOfWeek firstDayOfWeek, out DayOfWeek result)
-    {
-        var dayIndex = GetShiftedIndex(day, firstDayOfWeek);
-
-        var tIndex = dayIndex - 1;
-        if (tIndex > 0 && _ds[tIndex])
-        {
-            result = (DayOfWeek)GetNormalIndex(tIndex, firstDayOfWeek);
-            return true;
-        }
-
-        tIndex = dayIndex - 2;
-        if (tIndex > 0 && _ds[tIndex])
-        {
-            result = (DayOfWeek)GetNormalIndex(tIndex, firstDayOfWeek);
-            return true;
-        }
-
-        tIndex = dayIndex - 3;
-        if (tIndex > 0 && _ds[tIndex])
-        {
-            result = (DayOfWeek)GetNormalIndex(tIndex, firstDayOfWeek);
-            return true;
-        }
-
-        tIndex = dayIndex - 4;
-        if (tIndex > 0 && _ds[tIndex])
-        {
-            result = (DayOfWeek)GetNormalIndex(tIndex, firstDayOfWeek);
-            return true;
-        }
-
-        tIndex = dayIndex - 5;
-        if (tIndex > 0 && _ds[tIndex])
-        {
-            result = (DayOfWeek)GetNormalIndex(tIndex, firstDayOfWeek);
-            return true;
-        }
-
-        result = default;
-
-        return false;
-    }
-
-    private static int GetShiftedIndex(DayOfWeek day, DayOfWeek firstDayOfWeek)
-    {
-        return (7 + (int)day - (int)firstDayOfWeek) % 7;
-    }
-
-    private static int GetNormalIndex(int dayIndex, DayOfWeek firstDayOfWeek)
-    {
-        return (7 + dayIndex + (int)firstDayOfWeek) % 7;
-    }
 }

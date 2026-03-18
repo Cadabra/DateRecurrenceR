@@ -8,15 +8,23 @@ namespace DateRecurrenceR.Core;
 public struct WeekDaysArray
 {
     private bool _item;
-    
-    public bool this[int i]
+
+    /// <summary>Gets the total number of elements in the array.</summary>
+    public int Length => DaysInWeek;
+
+#pragma warning disable CS9181 // Inline array indexer will not be used for element access expression
+    // This write-only indexer is needed for internal object-initializer syntax used in tests.
+    // The getter delegates to the compiler-generated InlineArray element accessor.
+    internal bool this[int i]
     {
         get => this[i];
-        internal set => this[i] = value;
+        set => this[i] = value;
     }
+#pragma warning restore CS9181
 
-    public int Length => DaysInWeek;
-    
+    /// <summary>
+    /// Returns the number of selected (true) days in the array.
+    /// </summary>
     public int GetCountOfSelected()
     {
         return (this[0] ? 1 : 0)

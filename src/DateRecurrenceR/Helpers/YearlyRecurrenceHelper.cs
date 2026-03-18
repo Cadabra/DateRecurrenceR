@@ -109,9 +109,9 @@ internal struct YearlyRecurrenceHelper
         int count)
     {
         var yearsDiff = DateOnly.MaxValue.Year - startDate.Year;
-        var actualCount = Math.Min(yearsDiff / interval, count);
+        var actualCount = Math.Min(yearsDiff / interval + 1, count);
 
-        var stopDateYear = startDate.Year + actualCount * interval;
+        var stopDateYear = startDate.Year + (actualCount - 1) * interval;
         var stopDate = DateOnlyHelper.GetDateByDayOfMonth(stopDateYear, monthOfYear, dayOfWeek, indexOfDay);
 
         return (stopDate, actualCount);
@@ -126,18 +126,20 @@ internal struct YearlyRecurrenceHelper
         DateOnly endDate)
     {
         var yearsDiff = endDate.Year - startDate.Year;
-        var actualCount = yearsDiff / interval;
+        var actualCount = yearsDiff / interval + 1;
 
-        var stopDateYear = startDate.Year + actualCount * interval;
+        var stopDateYear = startDate.Year + (actualCount - 1) * interval;
         var stopDate = DateOnlyHelper.GetDateByDayOfMonth(stopDateYear, monthOfYear, dayOfWeek, indexOfDay);
-        if (yearsDiff % interval == 0 && stopDate < endDate )
+
+        if (stopDate > endDate)
         {
             actualCount--;
+            stopDateYear = startDate.Year + (actualCount - 1) * interval;
+            stopDate = DateOnlyHelper.GetDateByDayOfMonth(stopDateYear, monthOfYear, dayOfWeek, indexOfDay);
         }
 
-        stopDateYear = startDate.Year + actualCount * interval;
-        stopDate = DateOnlyHelper.GetDateByDayOfMonth(stopDateYear, monthOfYear, dayOfWeek, indexOfDay);
-        return (stopDate, actualCount);    }
+        return (stopDate, actualCount);
+    }
 
     private static bool DateOutOfRangeByYear(DateOnly beginDate, int addYear)
     {

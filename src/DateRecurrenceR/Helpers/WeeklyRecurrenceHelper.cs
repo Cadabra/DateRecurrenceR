@@ -16,99 +16,16 @@ internal struct WeeklyRecurrenceHelper
 
         for (var i = DaysInWeek; i > 0; i--)
         {
-            switch (weekDayIndex)
+            var day = (DayOfWeek)weekDayIndex;
+            if (weekDays[day])
             {
-                case 0:
-                    if (weekDays[DayOfWeek.Sunday])
-                    {
-                        hash[DayOfWeek.Sunday] = increment;
-                        increment = 1;
-                    }
-                    else
-                    {
-                        hash[DayOfWeek.Sunday] = 0;
-                        increment++;
-                    }
-
-                    break;
-                case 1:
-                    if (weekDays[DayOfWeek.Monday])
-                    {
-                        hash[DayOfWeek.Monday] = increment;
-                        increment = 1;
-                    }
-                    else
-                    {
-                        hash[DayOfWeek.Monday] = 0;
-                        increment++;
-                    }
-
-                    break;
-                case 2:
-                    if (weekDays[DayOfWeek.Tuesday])
-                    {
-                        hash[DayOfWeek.Tuesday] = increment;
-                        increment = 1;
-                    }
-                    else
-                    {
-                        hash[DayOfWeek.Tuesday] = 0;
-                        increment++;
-                    }
-
-                    break;
-                case 3:
-                    if (weekDays[DayOfWeek.Wednesday])
-                    {
-                        hash[DayOfWeek.Wednesday] = increment;
-                        increment = 1;
-                    }
-                    else
-                    {
-                        hash[DayOfWeek.Wednesday] = 0;
-                        increment++;
-                    }
-
-                    break;
-                case 4:
-                    if (weekDays[DayOfWeek.Thursday])
-                    {
-                        hash[DayOfWeek.Thursday] = increment;
-                        increment = 1;
-                    }
-                    else
-                    {
-                        hash[DayOfWeek.Thursday] = 0;
-                        increment++;
-                    }
-
-                    break;
-                case 5:
-                    if (weekDays[DayOfWeek.Friday])
-                    {
-                        hash[DayOfWeek.Friday] = increment;
-                        increment = 1;
-                    }
-                    else
-                    {
-                        hash[DayOfWeek.Friday] = 0;
-                        increment++;
-                    }
-
-                    break;
-                case 6:
-                    if (weekDays[DayOfWeek.Saturday])
-                    {
-                        hash[DayOfWeek.Saturday] = increment;
-                        increment = 1;
-                    }
-                    else
-                    {
-                        hash[DayOfWeek.Saturday] = 0;
-                        increment++;
-                    }
-
-                    break;
+                hash[day] = increment;
+                increment = 1;
+            }
+            else
+            {
+                hash[day] = 0;
+                increment++;
             }
 
             weekDayIndex = (DaysInWeek + weekDayIndex - 1) % DaysInWeek;
