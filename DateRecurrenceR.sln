@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsingWithFewSubranges", "sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "samples\Benchmarks\Benchmarks.csproj", "{5D0BE027-F003-4AF2-ABB7-CCD3F4145308}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DateRecurrenceR.Docs", "docs\site\DateRecurrenceR.Docs.csproj", "{73A0C19B-8999-485E-AF03-8537EEAB56CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{5D0BE027-F003-4AF2-ABB7-CCD3F4145308}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D0BE027-F003-4AF2-ABB7-CCD3F4145308}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D0BE027-F003-4AF2-ABB7-CCD3F4145308}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73A0C19B-8999-485E-AF03-8537EEAB56CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73A0C19B-8999-485E-AF03-8537EEAB56CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73A0C19B-8999-485E-AF03-8537EEAB56CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73A0C19B-8999-485E-AF03-8537EEAB56CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D1655E90-C49A-4610-8633-5093835714E9} = {BA0C3720-8521-4850-918C-C5A6AFA4EBFA}

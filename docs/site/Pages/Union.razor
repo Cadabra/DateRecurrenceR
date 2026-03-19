@@ -1,0 +1,209 @@
+@page "/union"
+@inject RecurrenceService Svc
+
+<PageTitle>Union — DateRecurrenceR Demo</PageTitle>
+
+<PageLayout Title="union" Description="merge multiple patterns into one sorted stream" Result="@_result">
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+            @for (int i = 0; i < _slots.Count; i++)
+            {
+                var idx = i;
+                var slot = _slots[i];
+
+                <div class="union-slot">
+                    <div class="union-slot-header">
+                        <span class="union-slot-label pattern-color-@idx">// pattern @(idx + 1)</span>
+                        @if (_slots.Count > 1)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                           Size="Size.Small"
+                                           OnClick="@(() => RemoveSlot(idx))" />
+                        }
+                    </div>
+
+                    <MudSelect T="PatternType" Label="Type" Value="@slot.PatternType"
+                               ValueChanged="@(v => slot.PatternType = v)"
+                               Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-2">
+                        <MudSelectItem Value="PatternType.Daily">Daily</MudSelectItem>
+                        <MudSelectItem Value="PatternType.Weekly">Weekly</MudSelectItem>
+                        <MudSelectItem Value="PatternType.Monthly">Monthly</MudSelectItem>
+                        <MudSelectItem Value="PatternType.Yearly">Yearly</MudSelectItem>
+                    </MudSelect>
+
+                    <MudGrid Spacing="2">
+                        <MudItem xs="6">
+                            <MudDatePicker Label="Begin"
+                                           Date="@slot.BeginDate.ToDateTime(TimeOnly.MinValue)"
+                                           DateChanged="@(d => { if(d.HasValue) slot.BeginDate = DateOnly.FromDateTime(d.Value); })"
+                                           DateFormat="yyyy-MM-dd"
+                                           Margin="Margin.Dense" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudDatePicker Label="End"
+                                           Date="@slot.EndDate.ToDateTime(TimeOnly.MinValue)"
+                                           DateChanged="@(d => { if(d.HasValue) slot.EndDate = DateOnly.FromDateTime(d.Value); })"
+                                           DateFormat="yyyy-MM-dd"
+                                           Margin="Margin.Dense" Variant="Variant.Outlined" />
+                        </MudItem>
+                    </MudGrid>
+
+                    <MudNumericField T="int" Label="Interval" Value="@slot.Interval"
+                                     ValueChanged="@(v => slot.Interval = v)"
+                                     Min="1" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mt-2" />
+
+                    @if (slot.PatternType == PatternType.Weekly)
+                    {
+                        <div style="margin-top:8px;">
+                            <MudText Typo="Typo.caption" Style="color:var(--text-secondary);font-family:'JetBrains Mono',monospace;font-size:11px;">// weekdays</MudText>
+                            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
+                                @foreach (var (label, getter, setter) in GetWeekDayAccessors(slot))
+                                {
+                                    var isActive = getter();
+                                    var setterCapture = setter;
+                                    <MudChip T="string"
+                                             Color="@(isActive ? Color.Primary : Color.Default)"
+                                             Variant="@(isActive ? Variant.Filled : Variant.Outlined)"
+                                             Size="Size.Small"
+                                             OnClick="@(() => setterCapture(!isActive))">
+                                        @label
+                                    </MudChip>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (slot.PatternType == PatternType.Monthly)
+                    {
+                        <div class="mode-tabs mt-2">
+                            <button class="mode-tab @(slot.MonthlySubMode == MonthlySubMode.ByDayOfMonth ? "active" : "")"
+                                    @onclick="@(() => slot.MonthlySubMode = MonthlySubMode.ByDayOfMonth)">
+                                Day of Month
+                            </button>
+                            <button class="mode-tab @(slot.MonthlySubMode == MonthlySubMode.ByDayOfWeek ? "active" : "")"
+                                    @onclick="@(() => slot.MonthlySubMode = MonthlySubMode.ByDayOfWeek)">
+                                Weekday
+                            </button>
+                        </div>
+
+                        @if (slot.MonthlySubMode == MonthlySubMode.ByDayOfMonth)
+                        {
+                            <MudNumericField T="int" Label="Day of Month" Value="@slot.DayOfMonth"
+                                             ValueChanged="@(v => slot.DayOfMonth = v)"
+                                             Min="1" Max="31" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mt-2" />
+                        }
+                        else
+                        {
+                            <MudGrid Spacing="2" Class="mt-1">
+                                <MudItem xs="6">
+                                    <MudSelect T="DayOfWeek" Label="Day" Value="@slot.DayOfWeek"
+                                               ValueChanged="@(v => slot.DayOfWeek = v)"
+                                               Margin="Margin.Dense" Variant="Variant.Outlined">
+                                        @foreach (DayOfWeek d in Enum.GetValues<DayOfWeek>())
+                                        {
+                                            <MudSelectItem Value="d">@d</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="6">
+                                    <MudSelect T="IndexOfDay" Label="Week" Value="@slot.IndexOfDay"
+                                               ValueChanged="@(v => slot.IndexOfDay = v)"
+                                               Margin="Margin.Dense" Variant="Variant.Outlined">
+                                        <MudSelectItem Value="IndexOfDay.First">First</MudSelectItem>
+                                        <MudSelectItem Value="IndexOfDay.Second">Second</MudSelectItem>
+                                        <MudSelectItem Value="IndexOfDay.Third">Third</MudSelectItem>
+                                        <MudSelectItem Value="IndexOfDay.Fourth">Fourth</MudSelectItem>
+                                        <MudSelectItem Value="IndexOfDay.Last">Last</MudSelectItem>
+                                    </MudSelect>
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    }
+
+                    @if (slot.PatternType == PatternType.Yearly)
+                    {
+                        <MudGrid Spacing="2" Class="mt-2">
+                            <MudItem xs="6">
+                                <MudNumericField T="int" Label="Day" Value="@slot.DayOfMonth"
+                                                 ValueChanged="@(v => slot.DayOfMonth = v)"
+                                                 Min="1" Max="31" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudSelect T="int" Label="Month" Value="@slot.MonthOfYear"
+                                           ValueChanged="@(v => slot.MonthOfYear = v)"
+                                           Margin="Margin.Dense" Variant="Variant.Outlined">
+                                    @for (int m = 1; m <= 12; m++)
+                                    {
+                                        var mv = m;
+                                        <MudSelectItem Value="mv">@MonthName(mv)</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                        </MudGrid>
+                    }
+                </div>
+            }
+
+            <div style="display:flex;gap:8px;">
+                @if (_slots.Count < 5)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                               OnClick="AddSlot" Size="Size.Small"
+                               Style="font-family:'JetBrains Mono',monospace;text-transform:lowercase;">
+                        + add pattern
+                    </MudButton>
+                }
+                <button class="btn-generate" style="flex:1;" @onclick="Generate">generate union</button>
+            </div>
+
+            @if (_error != null)
+            {
+                <MudAlert Severity="Severity.Error" Dense="true">@_error</MudAlert>
+            }
+        </div>
+
+</PageLayout>
+
+@code {
+    private List<UnionPatternSlot> _slots = new() { new UnionPatternSlot() };
+    private RecurrenceResult? _result;
+    private string? _error;
+
+    private void AddSlot()
+    {
+        if (_slots.Count < 5)
+            _slots.Add(new UnionPatternSlot());
+    }
+
+    private void RemoveSlot(int idx)
+    {
+        if (_slots.Count > 1)
+            _slots.RemoveAt(idx);
+    }
+
+    private void Generate()
+    {
+        _error = null;
+        try
+        {
+            _result = Svc.GetUnion(_slots);
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private static string MonthName(int month) => new DateTime(2000, month, 1).ToString("MMM");
+
+    private IEnumerable<(string Label, Func<bool> Getter, Action<bool> Setter)> GetWeekDayAccessors(UnionPatternSlot slot)
+    {
+        yield return ("Mon", () => slot.Mon, v => slot.Mon = v);
+        yield return ("Tue", () => slot.Tue, v => slot.Tue = v);
+        yield return ("Wed", () => slot.Wed, v => slot.Wed = v);
+        yield return ("Thu", () => slot.Thu, v => slot.Thu = v);
+        yield return ("Fri", () => slot.Fri, v => slot.Fri = v);
+        yield return ("Sat", () => slot.Sat, v => slot.Sat = v);
+        yield return ("Sun", () => slot.Sun, v => slot.Sun = v);
+    }
+}

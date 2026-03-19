@@ -1,0 +1,89 @@
+@* Reusable subrange mode selector + inputs *@
+
+<div class="mb-3">
+    <MudText Typo="Typo.caption" Class="mb-2" Style="font-weight:400;color:var(--text-secondary);font-family:'JetBrains Mono',monospace;font-size:11px;">// subrange</MudText>
+    <div class="subrange-mode-btns">
+        <MudChip T="string"
+                 Color="@(Mode == SubrangeMode.None ? Color.Primary : Color.Default)"
+                 Variant="@(Mode == SubrangeMode.None ? Variant.Filled : Variant.Outlined)"
+                 Size="Size.Small"
+                 OnClick="@(() => SetMode(SubrangeMode.None))">
+            None
+        </MudChip>
+        <MudChip T="string"
+                 Color="@(Mode == SubrangeMode.ByDates ? Color.Primary : Color.Default)"
+                 Variant="@(Mode == SubrangeMode.ByDates ? Variant.Filled : Variant.Outlined)"
+                 Size="Size.Small"
+                 OnClick="@(() => SetMode(SubrangeMode.ByDates))">
+            By Dates
+        </MudChip>
+        <MudChip T="string"
+                 Color="@(Mode == SubrangeMode.ByCount ? Color.Primary : Color.Default)"
+                 Variant="@(Mode == SubrangeMode.ByCount ? Variant.Filled : Variant.Outlined)"
+                 Size="Size.Small"
+                 OnClick="@(() => SetMode(SubrangeMode.ByCount))">
+            By Count
+        </MudChip>
+    </div>
+</div>
+
+@if (Mode != SubrangeMode.None)
+{
+    <MudDatePicker Label="From Date"
+                   Date="@FromDateDt"
+                   DateChanged="@(d => { FromDate = d.HasValue ? DateOnly.FromDateTime(d.Value) : null; FromDateChanged.InvokeAsync(FromDate); })"
+                   DateFormat="yyyy-MM-dd"
+                   Margin="Margin.Dense"
+                   Variant="Variant.Outlined"
+                   Class="mb-3" />
+
+    @if (Mode == SubrangeMode.ByDates)
+    {
+        <MudDatePicker Label="To Date"
+                       Date="@ToDateDt"
+                       DateChanged="@(d => { ToDate = d.HasValue ? DateOnly.FromDateTime(d.Value) : null; ToDateChanged.InvokeAsync(ToDate); })"
+                       DateFormat="yyyy-MM-dd"
+                       Margin="Margin.Dense"
+                       Variant="Variant.Outlined"
+                       Class="mb-3" />
+    }
+    else
+    {
+        <MudNumericField T="int"
+                         Label="Count"
+                         @bind-Value="CountValue"
+                         Min="1"
+                         Margin="Margin.Dense"
+                         Variant="Variant.Outlined"
+                         Class="mb-3" />
+    }
+}
+
+@code {
+    [Parameter] public SubrangeMode Mode { get; set; }
+    [Parameter] public EventCallback<SubrangeMode> ModeChanged { get; set; }
+
+    [Parameter] public DateOnly? FromDate { get; set; }
+    [Parameter] public EventCallback<DateOnly?> FromDateChanged { get; set; }
+
+    [Parameter] public DateOnly? ToDate { get; set; }
+    [Parameter] public EventCallback<DateOnly?> ToDateChanged { get; set; }
+
+    [Parameter] public int Count { get; set; } = 10;
+    [Parameter] public EventCallback<int> CountChanged { get; set; }
+
+    private DateTime? FromDateDt => FromDate.HasValue ? FromDate.Value.ToDateTime(TimeOnly.MinValue) : null;
+    private DateTime? ToDateDt => ToDate.HasValue ? ToDate.Value.ToDateTime(TimeOnly.MinValue) : null;
+
+    private int CountValue
+    {
+        get => Count;
+        set { Count = value; CountChanged.InvokeAsync(value); }
+    }
+
+    private async Task SetMode(SubrangeMode mode)
+    {
+        Mode = mode;
+        await ModeChanged.InvokeAsync(mode);
+    }
+}

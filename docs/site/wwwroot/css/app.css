@@ -1,0 +1,988 @@
+/* =====================================================
+   DateRecurrenceR Demo — Terminal-Inspired Dark Theme
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+    --sidebar-width: 240px;
+    --config-col-width: 420px;
+    --bg-page: #0A0A0A;
+    --bg-surface: #0F0F0F;
+    --bg-card: #141414;
+    --bg-active: #1F1F1F;
+    --text-emphasis: #FFFFFF;
+    --text-primary: #FAFAFA;
+    --text-secondary: #6B7280;
+    --text-tertiary: #4B5563;
+    --accent-green: #10b981;
+    --accent-cyan: #06B6D4;
+    --accent-amber: #F59E0B;
+    --border: #2a2a2a;
+    --mobile-header-height: 52px;
+}
+
+/* Laptop */
+@media (max-width: 1280px) {
+    :root { --config-col-width: 360px; }
+}
+/* Tablet */
+@media (max-width: 1024px) {
+    :root { --config-col-width: 320px; }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    background: var(--bg-page);
+    color: var(--text-primary);
+}
+
+/* =====================================================
+   App shell
+   ===================================================== */
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =====================================================
+   Sidebar
+   ===================================================== */
+
+.sidebar {
+    width: var(--sidebar-width);
+    min-height: 100vh;
+    background: var(--bg-page);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 200;
+    border-right: 1px solid var(--border);
+    padding: 32px 24px;
+    transition: transform 0.25s ease;
+}
+
+.main-content {
+    margin-left: var(--sidebar-width);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-page);
+    min-width: 0;
+}
+
+/* =====================================================
+   Sidebar content
+   ===================================================== */
+
+.sidebar-logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.sidebar-logo-prompt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-green);
+}
+
+.sidebar-logo-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Close button — only visible on mobile/tablet */
+.sidebar-close {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 400;
+    transition: background 0.15s, color 0.15s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+}
+
+.sidebar-nav-link:hover {
+    background: var(--bg-active);
+    color: var(--text-primary);
+}
+
+.sidebar-nav-link.active {
+    background: var(--bg-active);
+    color: var(--text-primary);
+}
+
+.sidebar-nav-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+    flex-shrink: 0;
+}
+
+.sidebar-nav-link.active .sidebar-nav-dot {
+    background: var(--accent-green);
+}
+
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 32px;
+}
+
+.sidebar-footer-version {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+}
+
+.sidebar-footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+}
+
+.sidebar-footer a:hover { color: var(--text-primary); }
+
+/* =====================================================
+   Mobile header bar (hidden on desktop)
+   ===================================================== */
+
+.mobile-header {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    height: var(--mobile-header-height);
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-page);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.hamburger span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-primary);
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+/* Nav backdrop */
+.nav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 150;
+}
+
+/* =====================================================
+   Page container
+   ===================================================== */
+
+.page-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =====================================================
+   Two-column page layout (config | results)
+   ===================================================== */
+
+.page-columns {
+    display: flex;
+    flex: 1;
+    min-height: calc(100vh - var(--mobile-header-height));
+}
+
+.config-column {
+    width: var(--config-col-width);
+    min-width: var(--config-col-width);
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+}
+
+.result-column {
+    flex: 1;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    overflow-y: auto;
+    min-width: 0;
+}
+
+/* Wide monitors — give result column more breathing room */
+@media (min-width: 1600px) {
+    :root { --config-col-width: 460px; }
+    .result-column { padding: 40px 48px; }
+}
+
+@media (min-width: 1920px) {
+    :root { --config-col-width: 500px; }
+}
+
+/* =====================================================
+   Page header
+   ===================================================== */
+
+.page-header { margin-bottom: 8px; }
+
+.page-prompt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin: 0 0 8px;
+}
+
+.page-description {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.page-description code {
+    color: var(--accent-cyan);
+    background: none;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* =====================================================
+   Config form
+   ===================================================== */
+
+.config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px solid var(--border);
+    padding: 18px;
+    background: var(--bg-card);
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.form-row > * { flex: 1; min-width: 0; }
+
+/* =====================================================
+   Panels (home page)
+   ===================================================== */
+
+.config-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 24px;
+}
+
+.panel-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent-green);
+    margin: 0 0 16px;
+}
+
+/* =====================================================
+   Result panel (inline, no tabs)
+   ===================================================== */
+
+.result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.result-header-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.result-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-green);
+    white-space: nowrap;
+}
+
+.result-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    flex-shrink: 0;
+}
+
+.result-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    color: var(--text-tertiary);
+    gap: 12px;
+    text-align: center;
+}
+
+.result-empty-icon { opacity: 0.4; }
+
+.result-empty-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.result-columns {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.result-date-list { flex: 1; min-width: 0; }
+
+.result-calendar {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.result-snippet { margin-top: 4px; }
+
+/* =====================================================
+   Date list table
+   ===================================================== */
+
+.dates-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.dates-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface);
+}
+
+.dates-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.dates-table tr:last-child td { border-bottom: none; }
+.dates-table tbody tr { cursor: pointer; }
+.dates-table tbody tr:hover td { background: var(--bg-active); }
+.dates-table tbody tr.row-selected td { background: #1e2d26; }
+
+.date-index { color: var(--text-tertiary); font-size: 12px; width: 48px; }
+.date-value { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+.date-dow { color: var(--text-secondary); }
+.date-sources { white-space: nowrap; }
+
+.pattern-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 3px;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+.pattern-dot-0 { background: var(--pattern-0); }
+.pattern-dot-1 { background: var(--pattern-1); }
+.pattern-dot-2 { background: var(--pattern-2); }
+.pattern-dot-3 { background: var(--pattern-3); }
+.pattern-dot-4 { background: var(--pattern-4); }
+
+/* =====================================================
+   Calendar
+   ===================================================== */
+
+.calendar-grid { width: 100%; }
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.calendar-month-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.calendar-days-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+}
+
+.calendar-day-name {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    padding: 4px 0;
+}
+
+.calendar-weeks {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.calendar-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: default;
+    font-weight: 400;
+}
+
+.calendar-cell.other-month { color: var(--text-tertiary); }
+.calendar-cell.highlighted { background: var(--accent-green); color: var(--bg-page); font-weight: 700; }
+.calendar-cell.today { border: 1.5px solid var(--accent-green); }
+.calendar-cell.selected { outline: 2px solid #fff; outline-offset: -2px; z-index: 1; position: relative; }
+
+/* Union pattern-colored calendar cells */
+.calendar-cell.pattern-bg-0 { background: rgba(16,185,129,.28); color: #10b981; font-weight: 700; }
+.calendar-cell.pattern-bg-1 { background: rgba(6,182,212,.28); color: #06B6D4; font-weight: 700; }
+.calendar-cell.pattern-bg-2 { background: rgba(245,158,11,.28); color: #F59E0B; font-weight: 700; }
+.calendar-cell.pattern-bg-3 { background: rgba(139,92,246,.28); color: #8B5CF6; font-weight: 700; }
+.calendar-cell.pattern-bg-4 { background: rgba(244,63,94,.28); color: #F43F5E; font-weight: 700; }
+
+.calendar-cell.highlighted-multi { background: var(--bg-card); font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; }
+.calendar-cell-dots { display: flex; gap: 2px; margin-top: 2px; }
+.calendar-cell-dots .pattern-dot { width: 5px; height: 5px; margin: 0; }
+
+/* =====================================================
+   Code snippet
+   ===================================================== */
+
+.code-snippet-wrapper {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+}
+
+.code-snippet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+}
+
+.code-snippet-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+}
+
+.code-snippet-copy {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.code-snippet-copy:hover { background: var(--bg-active); color: var(--text-primary); }
+.code-snippet-copy.copied { color: var(--accent-green); border-color: rgba(16,185,129,0.3); }
+
+pre.code-block {
+    margin: 0;
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 12px;
+    line-height: 1.6;
+    background: transparent !important;
+}
+
+pre.code-block code {
+    background: transparent !important;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-primary);
+}
+
+/* =====================================================
+   Mode tabs (Monthly/Yearly sub-modes)
+   ===================================================== */
+
+.mode-tabs {
+    display: flex;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 4px;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.mode-tab {
+    flex: 1;
+    padding: 7px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.mode-tab.active { background: var(--bg-active); color: var(--text-primary); }
+
+/* =====================================================
+   Subrange toggle
+   ===================================================== */
+
+.subrange-mode-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* =====================================================
+   Warning / truncation banner
+   ===================================================== */
+
+.truncation-warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent-amber);
+    margin-bottom: 12px;
+}
+
+/* =====================================================
+   Union page slots
+   ===================================================== */
+
+.union-slot {
+    border: 1px solid var(--border);
+    padding: 18px;
+    background: var(--bg-card);
+}
+
+.union-slot-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.union-slot-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent-green);
+}
+
+/* ── Pattern colors (Union slots 0–4) ── */
+:root {
+    --pattern-0: #10b981;
+    --pattern-1: #06B6D4;
+    --pattern-2: #F59E0B;
+    --pattern-3: #8B5CF6;
+    --pattern-4: #F43F5E;
+}
+
+.pattern-color-0 { color: var(--pattern-0) !important; }
+.pattern-color-1 { color: var(--pattern-1) !important; }
+.pattern-color-2 { color: var(--pattern-2) !important; }
+.pattern-color-3 { color: var(--pattern-3) !important; }
+.pattern-color-4 { color: var(--pattern-4) !important; }
+
+/* =====================================================
+   Pagination
+   ===================================================== */
+
+.pagination-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-surface);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* =====================================================
+   Generate button
+   ===================================================== */
+
+.btn-generate {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent-green);
+    color: var(--bg-page);
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    text-align: center;
+    margin-top: auto;
+}
+
+.btn-generate:hover { opacity: 0.9; }
+
+/* =====================================================
+   Home page
+   ===================================================== */
+
+.home-page { padding: 40px; }
+
+.home-hero {
+    padding: 24px 0 32px;
+    margin-bottom: 32px;
+}
+
+.home-hero-prompt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin: 0 0 8px;
+}
+
+.home-hero-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 12px;
+}
+
+.home-hero-subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+.home-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.home-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.home-feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.home-feature-card:hover { border-color: var(--accent-green); background: var(--bg-active); }
+
+.home-feature-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.home-feature-title::before { content: '$ '; color: var(--accent-green); }
+
+.home-feature-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.home-feature-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-green);
+}
+
+.highlight-box { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; }
+
+.highlight-box-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent-green);
+    margin-bottom: 8px;
+}
+
+.highlight-box-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* =====================================================
+   MudBlazor overrides
+   ===================================================== */
+
+.mud-input-label {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px !important;
+    color: var(--text-secondary) !important;
+}
+
+.mud-input,
+.mud-input-text,
+.mud-input > input,
+.mud-select .mud-input-slot {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+    color: var(--text-primary) !important;
+}
+
+.mud-input-outlined .mud-input-outlined-border {
+    border-color: var(--border) !important;
+}
+
+.mud-tab {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px !important;
+}
+
+.mud-chip { font-family: 'JetBrains Mono', monospace !important; }
+
+/* =====================================================
+   Blazor error UI
+   ===================================================== */
+
+#blazor-error-ui {
+    background: var(--bg-card);
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0,0,0,0.5);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    color: var(--accent-amber);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+#blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: 0.75rem; top: 0.5rem; }
+
+/* =====================================================
+   RESPONSIVE BREAKPOINTS
+   ===================================================== */
+
+/* --- Constrain date table on very wide screens --- */
+@media (min-width: 1600px) {
+    .result-date-list { max-width: 560px; }
+}
+
+/* --- Tablet & below (≤ 1024px): drawer sidebar --- */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        box-shadow: none;
+    }
+
+    .sidebar-close { display: block; }
+
+    .nav-backdrop { display: block; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+
+    .app-layout.nav-open .sidebar { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
+    .app-layout.nav-open .nav-backdrop { opacity: 1; pointer-events: auto; }
+
+    .mobile-header { display: flex; }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .page-columns { min-height: calc(100vh - var(--mobile-header-height)); }
+
+    /* Stack date pickers vertically — config column too narrow for side-by-side */
+    .form-row { flex-direction: column; gap: 0; }
+}
+
+/* --- Small tablet (≤ 768px): narrower config column --- */
+@media (max-width: 768px) {
+    .result-columns { flex-direction: column; }
+    .result-calendar { width: 100%; }
+
+    .config-column { padding: 24px 20px; }
+    .result-column { padding: 24px 20px; }
+}
+
+/* --- Mobile (≤ 640px): stacked layout --- */
+@media (max-width: 640px) {
+    :root { --config-col-width: 100%; }
+
+    .page-columns { flex-direction: column; }
+
+    .config-column {
+        width: 100%;
+        min-width: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 20px 16px;
+    }
+
+    .result-column { padding: 20px 16px; }
+
+    .form-row { flex-direction: column; gap: 0; }
+
+    .home-page { padding: 20px 16px; }
+
+    .home-hero-prompt { font-size: 22px; }
+    .home-hero-title { font-size: 18px; }
+    .home-features-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .page-prompt { font-size: 22px; }
+}
+
+/* --- Very small (≤ 400px): single column feature cards --- */
+@media (max-width: 400px) {
+    .home-features-grid { grid-template-columns: 1fr; }
+}

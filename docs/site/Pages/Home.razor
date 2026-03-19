@@ -1,0 +1,77 @@
+@page "/"
+
+<PageTitle>DateRecurrenceR — Interactive Demo</PageTitle>
+
+<div class="home-page">
+
+<div class="home-hero">
+    <div class="home-hero-prompt">> interactive_demo</div>
+    <h1 class="home-hero-title">date recurrence pattern explorer</h1>
+    <p class="home-hero-subtitle">
+        a high-performance .net library for generating recurring date sequences.
+        configure any pattern interactively, see live results, and copy ready-to-use c# code.
+    </p>
+</div>
+
+<div class="home-section-label">// available patterns</div>
+<div class="home-features-grid">
+    <a class="home-feature-card" href="/daily">
+        <div class="home-feature-title">daily</div>
+        <div class="home-feature-desc">every n days starting from a begin date.</div>
+        <div class="home-feature-link">> explore</div>
+    </a>
+    <a class="home-feature-card" href="/weekly">
+        <div class="home-feature-title">weekly</div>
+        <div class="home-feature-desc">selected weekdays, every n weeks.</div>
+        <div class="home-feature-link">> explore</div>
+    </a>
+    <a class="home-feature-card" href="/monthly">
+        <div class="home-feature-title">monthly</div>
+        <div class="home-feature-desc">by day of month or by week-in-month.</div>
+        <div class="home-feature-link">> explore</div>
+    </a>
+    <a class="home-feature-card" href="/yearly">
+        <div class="home-feature-title">yearly</div>
+        <div class="home-feature-desc">by day of year, day+month, or weekday+month.</div>
+        <div class="home-feature-link">> explore</div>
+    </a>
+    <a class="home-feature-card" href="/union">
+        <div class="home-feature-title">union</div>
+        <div class="home-feature-desc">merge multiple patterns into one sorted stream.</div>
+        <div class="home-feature-link">> explore</div>
+    </a>
+</div>
+
+<div class="home-section-label">// quick start</div>
+<CodeSnippetBox Code=@(@"using DateRecurrenceR;
+
+var beginDate      = new DateOnly(2025, 1, 1);
+var endDate        = new DateOnly(2025, 12, 31);
+var interval       = new Interval(1);
+var weekDays       = new WeekDays(false, true, false, true, false, false, false); // Mon, Wed
+var firstDayOfWeek = DayOfWeek.Monday;
+
+var enumerator = Recurrence.Weekly(beginDate, endDate, weekDays, firstDayOfWeek, interval);
+
+while (enumerator.MoveNext())
+    Console.WriteLine(enumerator.Current.ToString(""yyyy-MM-dd""));") />
+
+<div style="margin-top:40px;">
+    <div class="home-section-label">// highlights</div>
+    <MudGrid>
+        <MudItem xs="12" sm="4">
+            <div class="highlight-box">
+                <div class="highlight-box-title">O(1) memory</div>
+                <div class="highlight-box-desc">uses enumerators — generates dates on demand with constant memory regardless of count.</div>
+            </div>
+        </MudItem>
+<MudItem xs="12" sm="4">
+            <div class="highlight-box">
+                <div class="highlight-box-title">subranges</div>
+                <div class="highlight-box-desc">every pattern supports date-range and count-limited subrange overloads for slicing results.</div>
+            </div>
+        </MudItem>
+    </MudGrid>
+</div>
+
+</div>

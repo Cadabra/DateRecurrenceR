@@ -1,0 +1,105 @@
+@page "/daily"
+@inject RecurrenceService Svc
+
+<PageTitle>Daily — DateRecurrenceR Demo</PageTitle>
+
+<PageLayout Title="daily" Description="every N days starting from begin_date" Result="@_result">
+
+        <div class="config-form">
+            <div class="panel-title">// pattern configuration</div>
+
+            <div class="form-row">
+                <MudDatePicker Label="Begin Date"
+                               Date="@_beginDateDt"
+                               DateChanged="@(d => _beginDate = d.HasValue ? DateOnly.FromDateTime(d.Value) : _beginDate)"
+                               DateFormat="yyyy-MM-dd"
+                               Margin="Margin.Dense"
+                               Variant="Variant.Outlined"
+                               Class="mb-3" />
+
+                @if (_subrangeMode != SubrangeMode.ByCount)
+                {
+                    <MudDatePicker Label="End Date"
+                                   Date="@_endDateDt"
+                                   DateChanged="@(d => _endDate = d.HasValue ? DateOnly.FromDateTime(d.Value) : _endDate)"
+                                   DateFormat="yyyy-MM-dd"
+                                   Margin="Margin.Dense"
+                                   Variant="Variant.Outlined"
+                                   Class="mb-3" />
+                }
+            </div>
+
+            <MudNumericField T="int" Label="Interval (days)" @bind-Value="_interval"
+                             Min="1" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-4"
+                             Style="max-width:160px;" />
+
+            <SubrangeSelector Mode="@_subrangeMode" ModeChanged="@(m => _subrangeMode = m)"
+                              FromDate="@_fromDate" FromDateChanged="@(d => _fromDate = d)"
+                              ToDate="@_toDate" ToDateChanged="@(d => _toDate = d)"
+                              Count="@_count" CountChanged="@(c => _count = c)" />
+
+            @if (_error != null)
+            {
+                <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+            }
+
+            <button class="btn-generate" @onclick="Generate">generate</button>
+        </div>
+
+</PageLayout>
+
+@code {
+    private DateOnly _beginDate = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
+    private int _interval = 1;
+    private SubrangeMode _subrangeMode = SubrangeMode.None;
+    private DateOnly? _fromDate;
+    private DateOnly? _toDate;
+    private int _count = 10;
+    private string? _error;
+    private RecurrenceResult? _result;
+
+    private DateTime? _beginDateDt => _beginDate.ToDateTime(TimeOnly.MinValue);
+    private DateTime? _endDateDt => _endDate.ToDateTime(TimeOnly.MinValue);
+
+    private void Generate()
+    {
+        _error = null;
+        if (!Validate()) return;
+
+        try
+        {
+            _result = Svc.GetDaily(_beginDate, _endDate, _interval, _subrangeMode, _fromDate, _toDate,
+                _subrangeMode == SubrangeMode.ByCount ? _count : null);
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private bool Validate()
+    {
+        if (_subrangeMode != SubrangeMode.ByCount && _beginDate > _endDate)
+        {
+            _error = "Begin date must be ≤ end date.";
+            return false;
+        }
+        if (_interval < 1)
+        {
+            _error = "Interval must be ≥ 1.";
+            return false;
+        }
+        if (_subrangeMode == SubrangeMode.ByDates && _fromDate.HasValue && _toDate.HasValue && _fromDate > _toDate)
+        {
+            _error = "From date must be ≤ to date.";
+            return false;
+        }
+        if (_subrangeMode == SubrangeMode.ByCount && _count < 1)
+        {
+            _error = "Count must be ≥ 1.";
+            return false;
+        }
+        return true;
+    }
+}

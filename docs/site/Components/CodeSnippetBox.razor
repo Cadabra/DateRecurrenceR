@@ -1,0 +1,33 @@
+@inject IJSRuntime JS
+
+<div class="code-snippet-wrapper">
+    <div class="code-snippet-header">
+        <span class="code-snippet-lang">C#</span>
+        <button class="code-snippet-copy @(_copied ? "copied" : "")" @onclick="Copy">
+            @(_copied ? "✓ Copied" : "Copy")
+        </button>
+    </div>
+    <pre class="code-block"><code id="@_elementId" class="language-csharp">@Code</code></pre>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Code { get; set; } = string.Empty;
+
+    private string _elementId = $"code-{Guid.NewGuid():N}";
+    private bool _copied;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("highlightCode", _elementId);
+    }
+
+    private async Task Copy()
+    {
+        await JS.InvokeVoidAsync("copyToClipboard", Code);
+        _copied = true;
+        StateHasChanged();
+        await Task.Delay(2000);
+        _copied = false;
+        StateHasChanged();
+    }
+}

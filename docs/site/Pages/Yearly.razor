@@ -1,0 +1,150 @@
+@page "/yearly"
+@inject RecurrenceService Svc
+
+<PageTitle>Yearly — DateRecurrenceR Demo</PageTitle>
+
+<PageLayout Title="yearly" Description="by day_of_year, day+month, or day_of_week+week+month" Result="@_result">
+
+        <div class="config-form">
+            <div class="panel-title">// pattern configuration</div>
+
+            <div class="mode-tabs mb-3">
+                <button class="mode-tab @(_subMode == 0 ? "active" : "")" @onclick="@(() => _subMode = 0)">by_day_of_year</button>
+                <button class="mode-tab @(_subMode == 1 ? "active" : "")" @onclick="@(() => _subMode = 1)">by_day+month</button>
+                <button class="mode-tab @(_subMode == 2 ? "active" : "")" @onclick="@(() => _subMode = 2)">dow+week+month</button>
+            </div>
+
+            <div class="form-row">
+                <MudDatePicker Label="Begin Date"
+                               Date="@_beginDateDt"
+                               DateChanged="@(d => _beginDate = d.HasValue ? DateOnly.FromDateTime(d.Value) : _beginDate)"
+                               DateFormat="yyyy-MM-dd" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3" />
+
+                @if (_subrangeMode != SubrangeMode.ByCount)
+                {
+                    <MudDatePicker Label="End Date"
+                                   Date="@_endDateDt"
+                                   DateChanged="@(d => _endDate = d.HasValue ? DateOnly.FromDateTime(d.Value) : _endDate)"
+                                   DateFormat="yyyy-MM-dd" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3" />
+                }
+            </div>
+
+            @if (_subMode == 1)
+            {
+                @* By Day and Month *@
+                <MudNumericField T="int" Label="Day of Month (1–31)" @bind-Value="_dayOfMonth"
+                                 Min="1" Max="31" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3"
+                                 Style="max-width:160px;" />
+                <MudSelect T="int" Label="Month" @bind-Value="_monthOfYear"
+                           Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3">
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        var mv = m;
+                        <MudSelectItem Value="mv">@MonthName(mv)</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            else if (_subMode == 2)
+            {
+                @* By Day of Week + Index + Month *@
+                <MudSelect T="DayOfWeek" Label="Day of Week" @bind-Value="_dayOfWeek"
+                           Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3">
+                    @foreach (DayOfWeek d in Enum.GetValues<DayOfWeek>())
+                    {
+                        <MudSelectItem Value="d">@d</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="IndexOfDay" Label="Week in Month" @bind-Value="_indexOfDay"
+                           Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3">
+                    <MudSelectItem Value="IndexOfDay.First">First</MudSelectItem>
+                    <MudSelectItem Value="IndexOfDay.Second">Second</MudSelectItem>
+                    <MudSelectItem Value="IndexOfDay.Third">Third</MudSelectItem>
+                    <MudSelectItem Value="IndexOfDay.Fourth">Fourth</MudSelectItem>
+                    <MudSelectItem Value="IndexOfDay.Last">Last</MudSelectItem>
+                </MudSelect>
+                <MudSelect T="int" Label="Month" @bind-Value="_monthOfYear"
+                           Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3">
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        var mv = m;
+                        <MudSelectItem Value="mv">@MonthName(mv)</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            else
+            {
+                @* By Day of Year *@
+                <MudNumericField T="int" Label="Day of Year (1–366)" @bind-Value="_dayOfYear"
+                                 Min="1" Max="366" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3"
+                                 Style="max-width:160px;" />
+            }
+
+            <SubrangeSelector Mode="@_subrangeMode" ModeChanged="@(m => _subrangeMode = m)"
+                              FromDate="@_fromDate" FromDateChanged="@(d => _fromDate = d)"
+                              ToDate="@_toDate" ToDateChanged="@(d => _toDate = d)"
+                              Count="@_count" CountChanged="@(c => _count = c)" />
+
+            @if (_error != null)
+            {
+                <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+            }
+
+            <button class="btn-generate" @onclick="Generate">generate</button>
+        </div>
+
+</PageLayout>
+
+@code {
+    private DateOnly _beginDate = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Today.AddYears(10));
+    private int _interval = 1;
+    private int _subMode = 0;
+    private int _dayOfMonth = 15;
+    private int _monthOfYear = 6;
+    private DayOfWeek _dayOfWeek = DayOfWeek.Monday;
+    private IndexOfDay _indexOfDay = IndexOfDay.First;
+    private int _dayOfYear = 1;
+    private SubrangeMode _subrangeMode = SubrangeMode.None;
+    private DateOnly? _fromDate;
+    private DateOnly? _toDate;
+    private int _count = 10;
+    private string? _error;
+    private RecurrenceResult? _result;
+
+    private DateTime? _beginDateDt => _beginDate.ToDateTime(TimeOnly.MinValue);
+    private DateTime? _endDateDt => _endDate.ToDateTime(TimeOnly.MinValue);
+
+    private void Generate()
+    {
+        _error = null;
+        if (!Validate()) return;
+
+        try
+        {
+            int? countArg = _subrangeMode == SubrangeMode.ByCount ? _count : null;
+            _result = _subMode switch
+            {
+                1 => Svc.GetYearlyByDayAndMonth(_beginDate, _endDate, _interval, _dayOfMonth, _monthOfYear, _subrangeMode, _fromDate, _toDate, countArg),
+                2 => Svc.GetYearlyByDayOfWeek(_beginDate, _endDate, _interval, _dayOfWeek, _indexOfDay, _monthOfYear, _subrangeMode, _fromDate, _toDate, countArg),
+                _ => Svc.GetYearlyByDayOfYear(_beginDate, _endDate, _interval, _dayOfYear, _subrangeMode, _fromDate, _toDate, countArg),
+            };
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private static string MonthName(int month) => new DateTime(2000, month, 1).ToString("MMMM");
+
+    private bool Validate()
+    {
+        if (_subrangeMode != SubrangeMode.ByCount && _beginDate > _endDate) { _error = "Begin date must be ≤ end date."; return false; }
+        if (_interval < 1) { _error = "Interval must be ≥ 1."; return false; }
+        if (_subMode == 1 && (_dayOfMonth < 1 || _dayOfMonth > 31)) { _error = "Day of month must be 1–31."; return false; }
+        if (_subMode == 0 && (_dayOfYear < 1 || _dayOfYear > 366)) { _error = "Day of year must be 1–366."; return false; }
+        if (_subrangeMode == SubrangeMode.ByDates && _fromDate.HasValue && _toDate.HasValue && _fromDate > _toDate) { _error = "From date must be ≤ to date."; return false; }
+        if (_subrangeMode == SubrangeMode.ByCount && _count < 1) { _error = "Count must be ≥ 1."; return false; }
+        return true;
+    }
+}
