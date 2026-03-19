@@ -1,0 +1,123 @@
+@* Combined result panel: date list + calendar + C# snippet — all inline (no tabs) *@
+
+@if (Result == null)
+{
+    <div class="result-header">
+        <span class="result-header-title">// results</span>
+    </div>
+    <div class="result-empty">
+        <svg class="result-empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <div class="result-empty-text">Configure parameters and click <strong>Generate</strong> to see results.</div>
+    </div>
+}
+else
+{
+    <div class="result-header">
+        <span class="result-header-title">// results — @Result.TotalCount dates generated</span>
+    </div>
+
+    @if (Result.IsTruncated)
+    {
+        <div class="truncation-warning">
+            <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" />
+            Showing first 500 of @Result.TotalCount+ results.
+        </div>
+    }
+
+    @if (Result.Dates.Count == 0)
+    {
+        <div class="result-empty">
+            <div class="result-empty-text">No dates found for the given parameters.</div>
+        </div>
+    }
+    else
+    {
+        <div class="result-columns">
+            <div class="result-date-list">
+                <div style="overflow-x:auto;border:1px solid var(--border);">
+                    <table class="dates-table">
+                        <thead>
+                            <tr>
+                                <th class="date-index">#</th>
+                                <th>date</th>
+                                <th>day_of_week</th>
+                                @if (Result.DateSources != null)
+                                {
+                                    <th class="date-sources">patterns</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int startIndex = (_page - 1) * PageSize;
+                                var pageItems = Result.Dates.Skip(startIndex).Take(PageSize).ToList();
+                            }
+                            @foreach (var (date, localIdx) in pageItems.Select((d, i) => (d, i)))
+                            {
+                                <tr class="@(date == _selectedDate ? "row-selected" : "")"
+                                    @onclick="@(() => SelectDate(date))">
+                                    <td class="date-index">@((startIndex + localIdx + 1).ToString("000"))</td>
+                                    <td class="date-value">@date.ToString("yyyy-MM-dd")</td>
+                                    <td class="date-dow">@date.DayOfWeek.ToString().ToLowerInvariant()</td>
+                                    @if (Result.DateSources != null && Result.DateSources.TryGetValue(date, out var sources))
+                                    {
+                                        <td class="date-sources">
+                                            @foreach (var src in sources)
+                                            {
+                                                <span class="pattern-dot pattern-dot-@src" title="pattern @(src + 1)"></span>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (_totalPages > 1)
+                {
+                    <div class="pagination-row">
+                        <span>Page @_page of @_totalPages (@Result.Dates.Count dates)</span>
+                        <MudPagination Count="@_totalPages" Selected="@_page" SelectedChanged="@(p => _page = p)" Size="Size.Small" />
+                    </div>
+                }
+            </div>
+
+            <div class="result-calendar">
+                <CalendarGrid Dates="@Result.Dates" DateSources="@Result.DateSources" SelectedDate="@_selectedDate" />
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Result.CSharpSnippet))
+        {
+            <div class="result-snippet">
+                <CodeSnippetBox Code="@Result.CSharpSnippet" />
+            </div>
+        }
+    }
+}
+
+@code {
+    [Parameter] public RecurrenceResult? Result { get; set; }
+
+    private const int PageSize = 50;
+    private int _page = 1;
+    private DateOnly? _selectedDate;
+    private int _totalPages => Result == null ? 1 : (int)Math.Ceiling(Result.Dates.Count / (double)PageSize);
+
+    protected override void OnParametersSet()
+    {
+        _page = 1;
+        _selectedDate = null;
+    }
+
+    private void SelectDate(DateOnly date)
+    {
+        _selectedDate = _selectedDate == date ? null : date;
+    }
+}

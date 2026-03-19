@@ -1,0 +1,54 @@
+@inject NavigationManager Nav
+@implements IDisposable
+
+<nav class="sidebar">
+    <div class="sidebar-top">
+        <div class="sidebar-logo-row">
+            <a class="sidebar-logo" href="/" @onclick="Close">
+                <span class="sidebar-logo-prompt">></span>
+                <span class="sidebar-logo-title">DateRecurrenceR</span>
+            </a>
+            <button class="sidebar-close" @onclick="Close" aria-label="Close navigation">✕</button>
+        </div>
+
+        <div class="sidebar-nav">
+            <NavLink class="sidebar-nav-link" href="/" Match="NavLinkMatch.All" @onclick="Close">
+                <span class="sidebar-nav-dot"></span>
+                home
+            </NavLink>
+            <NavLink class="sidebar-nav-link" href="/daily" @onclick="Close">
+                <span class="sidebar-nav-dot"></span>
+                daily
+            </NavLink>
+            <NavLink class="sidebar-nav-link" href="/weekly" @onclick="Close">
+                <span class="sidebar-nav-dot"></span>
+                weekly
+            </NavLink>
+            <NavLink class="sidebar-nav-link" href="/monthly" @onclick="Close">
+                <span class="sidebar-nav-dot"></span>
+                monthly
+            </NavLink>
+            <NavLink class="sidebar-nav-link" href="/yearly" @onclick="Close">
+                <span class="sidebar-nav-dot"></span>
+                yearly
+            </NavLink>
+            <NavLink class="sidebar-nav-link" href="/union" @onclick="Close">
+                <span class="sidebar-nav-dot"></span>
+                union
+            </NavLink>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <span class="sidebar-footer-version">// v1.3.0 — .net 10</span>
+        <a href="https://github.com/Cadabra/DateRecurrenceR" target="_blank">$ github.com/cadabra</a>
+    </div>
+</nav>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private void Close() => OnClose.InvokeAsync();
+
+    public void Dispose() { }
+}

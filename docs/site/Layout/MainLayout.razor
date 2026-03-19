@@ -1,0 +1,61 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_theme" IsDarkMode="true" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="app-layout @(_navOpen ? "nav-open" : "")">
+
+    @* Backdrop — closes nav when tapped outside on mobile/tablet *@
+    <div class="nav-backdrop" @onclick="CloseNav"></div>
+
+    <NavMenu OnClose="CloseNav" />
+
+    <div class="main-content">
+        @* Mobile/tablet top bar *@
+        <header class="mobile-header">
+            <button class="hamburger" @onclick="ToggleNav" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+            <a class="mobile-logo" href="/">
+                <span class="sidebar-logo-prompt">></span>
+                <span class="sidebar-logo-title">DateRecurrenceR</span>
+            </a>
+        </header>
+
+        <div class="page-container">
+            @Body
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool _navOpen = false;
+
+    private void ToggleNav() => _navOpen = !_navOpen;
+    private void CloseNav() => _navOpen = false;
+
+    private MudTheme _theme = new MudTheme
+    {
+        PaletteDark = new PaletteDark
+        {
+            Primary = "#10b981",
+            PrimaryDarken = "#059669",
+            Secondary = "#06B6D4",
+            AppbarBackground = "#0A0A0A",
+            Background = "#0A0A0A",
+            Surface = "#141414",
+            DrawerBackground = "#0A0A0A",
+            TextPrimary = "#FAFAFA",
+            TextSecondary = "#6B7280",
+            ActionDefault = "#6B7280",
+            ActionDisabled = "#4B5563",
+            LinesDefault = "#2a2a2a",
+            LinesInputs = "#2a2a2a",
+            Divider = "#2a2a2a",
+            Dark = "#0F0F0F",
+            DarkDarken = "#0A0A0A",
+        }
+    };
+}

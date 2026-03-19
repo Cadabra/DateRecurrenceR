@@ -1,0 +1,158 @@
+@page "/weekly"
+@inject RecurrenceService Svc
+
+<PageTitle>Weekly — DateRecurrenceR Demo</PageTitle>
+
+<PageLayout Title="weekly" Description="specific days of the week with interval control" Result="@_result">
+
+        <div class="config-form">
+            <div class="panel-title">// pattern configuration</div>
+
+            <div class="form-row">
+                <MudDatePicker Label="Begin Date"
+                               Date="@_beginDateDt"
+                               DateChanged="@(d => _beginDate = d.HasValue ? DateOnly.FromDateTime(d.Value) : _beginDate)"
+                               DateFormat="yyyy-MM-dd"
+                               Margin="Margin.Dense"
+                               Variant="Variant.Outlined"
+                               Class="mb-3" />
+
+                @if (_subrangeMode != SubrangeMode.ByCount)
+                {
+                    <MudDatePicker Label="End Date"
+                                   Date="@_endDateDt"
+                                   DateChanged="@(d => _endDate = d.HasValue ? DateOnly.FromDateTime(d.Value) : _endDate)"
+                                   DateFormat="yyyy-MM-dd"
+                                   Margin="Margin.Dense"
+                                   Variant="Variant.Outlined"
+                                   Class="mb-3" />
+                }
+            </div>
+
+            <MudNumericField T="int" Label="Interval (weeks)" @bind-Value="_interval"
+                             Min="1" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-3"
+                             Style="max-width:160px;" />
+
+            <MudText Typo="Typo.caption" Style="font-weight:400;color:var(--text-secondary);font-family:'JetBrains Mono',monospace;font-size:11px;">// week days</MudText>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 16px;">
+                @foreach (var (label, prop) in _weekDayDefs)
+                {
+                    var captured = prop;
+                    <MudChip T="string"
+                             Color="@(_weekDayValues[captured] ? Color.Primary : Color.Default)"
+                             Variant="@(_weekDayValues[captured] ? Variant.Filled : Variant.Outlined)"
+                             Size="Size.Small"
+                             OnClick="@(() => _weekDayValues[captured] = !_weekDayValues[captured])">
+                        @label
+                    </MudChip>
+                }
+            </div>
+
+            <MudSelect T="DayOfWeek" Label="First Day of Week" @bind-Value="_firstDayOfWeek"
+                       Margin="Margin.Dense" Variant="Variant.Outlined" Class="mb-4">
+                <MudSelectItem Value="DayOfWeek.Monday">Monday</MudSelectItem>
+                <MudSelectItem Value="DayOfWeek.Sunday">Sunday</MudSelectItem>
+                <MudSelectItem Value="DayOfWeek.Saturday">Saturday</MudSelectItem>
+            </MudSelect>
+
+            <SubrangeSelector Mode="@_subrangeMode" ModeChanged="@(m => _subrangeMode = m)"
+                              FromDate="@_fromDate" FromDateChanged="@(d => _fromDate = d)"
+                              ToDate="@_toDate" ToDateChanged="@(d => _toDate = d)"
+                              Count="@_count" CountChanged="@(c => _count = c)" />
+
+            @if (_error != null)
+            {
+                <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+            }
+
+            <button class="btn-generate" @onclick="Generate">generate</button>
+        </div>
+
+</PageLayout>
+
+@code {
+    private DateOnly _beginDate = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
+    private int _interval = 1;
+    private DayOfWeek _firstDayOfWeek = DayOfWeek.Monday;
+    private SubrangeMode _subrangeMode = SubrangeMode.None;
+    private DateOnly? _fromDate;
+    private DateOnly? _toDate;
+    private int _count = 10;
+    private string? _error;
+    private RecurrenceResult? _result;
+
+    private DateTime? _beginDateDt => _beginDate.ToDateTime(TimeOnly.MinValue);
+    private DateTime? _endDateDt => _endDate.ToDateTime(TimeOnly.MinValue);
+
+    // weekday label → DayOfWeek key
+    private readonly (string Label, DayOfWeek Day)[] _weekDayDefs =
+    {
+        ("Mon", DayOfWeek.Monday),
+        ("Tue", DayOfWeek.Tuesday),
+        ("Wed", DayOfWeek.Wednesday),
+        ("Thu", DayOfWeek.Thursday),
+        ("Fri", DayOfWeek.Friday),
+        ("Sat", DayOfWeek.Saturday),
+        ("Sun", DayOfWeek.Sunday),
+    };
+
+    private readonly Dictionary<DayOfWeek, bool> _weekDayValues = new()
+    {
+        [DayOfWeek.Monday] = true,
+        [DayOfWeek.Tuesday] = false,
+        [DayOfWeek.Wednesday] = false,
+        [DayOfWeek.Thursday] = false,
+        [DayOfWeek.Friday] = false,
+        [DayOfWeek.Saturday] = false,
+        [DayOfWeek.Sunday] = false,
+    };
+
+    private void Generate()
+    {
+        _error = null;
+        if (!Validate()) return;
+
+        try
+        {
+            _result = Svc.GetWeekly(
+                _beginDate, _endDate, _interval,
+                _weekDayValues[DayOfWeek.Sunday],
+                _weekDayValues[DayOfWeek.Monday],
+                _weekDayValues[DayOfWeek.Tuesday],
+                _weekDayValues[DayOfWeek.Wednesday],
+                _weekDayValues[DayOfWeek.Thursday],
+                _weekDayValues[DayOfWeek.Friday],
+                _weekDayValues[DayOfWeek.Saturday],
+                _firstDayOfWeek,
+                _subrangeMode, _fromDate, _toDate,
+                _subrangeMode == SubrangeMode.ByCount ? _count : null);
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private bool Validate()
+    {
+        if (!_weekDayValues.Values.Any(v => v))
+        {
+            _error = "Select at least one weekday.";
+            return false;
+        }
+        if (_subrangeMode != SubrangeMode.ByCount && _beginDate > _endDate)
+        {
+            _error = "Begin date must be ≤ end date.";
+            return false;
+        }
+        if (_interval < 1) { _error = "Interval must be ≥ 1."; return false; }
+        if (_subrangeMode == SubrangeMode.ByDates && _fromDate.HasValue && _toDate.HasValue && _fromDate > _toDate)
+        {
+            _error = "From date must be ≤ to date.";
+            return false;
+        }
+        if (_subrangeMode == SubrangeMode.ByCount && _count < 1) { _error = "Count must be ≥ 1."; return false; }
+        return true;
+    }
+}

@@ -1,0 +1,135 @@
+@* Monthly calendar view highlighting recurrence dates *@
+
+<div class="calendar-grid">
+    <div class="calendar-nav">
+        <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                       Size="Size.Small"
+                       OnClick="PrevMonth" />
+        <span class="calendar-month-label">@_current.ToString("MMMM yyyy")</span>
+        <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                       Size="Size.Small"
+                       OnClick="NextMonth" />
+    </div>
+
+    <div class="calendar-days-header">
+        @foreach (var name in _dayNames)
+        {
+            <div class="calendar-day-name">@name</div>
+        }
+    </div>
+
+    <div class="calendar-weeks">
+        @foreach (var cell in _cells)
+        {
+            var sources = cell.HasValue ? GetSources(cell.Value) : null;
+            <div class="calendar-cell @GetCellClass(cell, sources)">
+                @if (cell.HasValue)
+                {
+                    <span>@cell.Value.Day</span>
+                    @if (sources != null && sources.Count > 1)
+                    {
+                        <div class="calendar-cell-dots">
+                            @foreach (var src in sources)
+                            {
+                                <span class="pattern-dot pattern-dot-@src"></span>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public IReadOnlyCollection<DateOnly> Dates { get; set; } = Array.Empty<DateOnly>();
+    [Parameter] public Dictionary<DateOnly, List<int>>? DateSources { get; set; }
+    [Parameter] public DateOnly? SelectedDate { get; set; }
+
+    private static readonly string[] _dayNames = { "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su" };
+    private DateOnly _today = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly _current;
+    private List<DateOnly?> _cells = new();
+    private HashSet<DateOnly> _dateSet = new();
+    private IReadOnlyCollection<DateOnly> _prevDates = Array.Empty<DateOnly>();
+    private DateOnly? _prevSelectedDate;
+
+    protected override void OnInitialized()
+    {
+        _current = new DateOnly(_today.Year, _today.Month, 1);
+        BuildCalendar();
+    }
+
+    protected override void OnParametersSet()
+    {
+        _dateSet = new HashSet<DateOnly>(Dates);
+
+        bool datesChanged = !ReferenceEquals(Dates, _prevDates);
+        bool selectedChanged = SelectedDate != _prevSelectedDate;
+        _prevDates = Dates;
+        _prevSelectedDate = SelectedDate;
+
+        if (selectedChanged && SelectedDate.HasValue)
+            _current = new DateOnly(SelectedDate.Value.Year, SelectedDate.Value.Month, 1);
+        else if (datesChanged && Dates.Count > 0)
+        {
+            var first = Dates.Min();
+            _current = new DateOnly(first.Year, first.Month, 1);
+        }
+
+        BuildCalendar();
+    }
+
+    private List<int>? GetSources(DateOnly date)
+    {
+        if (DateSources != null && DateSources.TryGetValue(date, out var s)) return s;
+        return null;
+    }
+
+    private void PrevMonth()
+    {
+        _current = _current.AddMonths(-1);
+        BuildCalendar();
+    }
+
+    private void NextMonth()
+    {
+        _current = _current.AddMonths(1);
+        BuildCalendar();
+    }
+
+    private void BuildCalendar()
+    {
+        _cells = new List<DateOnly?>();
+        var firstDay = _current;
+        var lastDay = new DateOnly(_current.Year, _current.Month, DateTime.DaysInMonth(_current.Year, _current.Month));
+
+        int startOffset = ((int)firstDay.DayOfWeek + 6) % 7;
+        for (int i = 0; i < startOffset; i++)
+            _cells.Add(null);
+
+        for (var d = firstDay; d <= lastDay; d = d.AddDays(1))
+            _cells.Add(d);
+
+        while (_cells.Count % 7 != 0)
+            _cells.Add(null);
+    }
+
+    private string GetCellClass(DateOnly? cell, List<int>? sources)
+    {
+        if (!cell.HasValue) return "other-month";
+        var classes = new List<string>();
+        if (_dateSet.Contains(cell.Value))
+        {
+            if (sources != null && sources.Count == 1)
+                classes.Add($"pattern-bg-{sources[0]}");
+            else if (sources != null && sources.Count > 1)
+                classes.Add("highlighted-multi");
+            else
+                classes.Add("highlighted");
+        }
+        if (cell.Value == _today) classes.Add("today");
+        if (cell.Value == SelectedDate) classes.Add("selected");
+        return string.Join(" ", classes);
+    }
+}
