@@ -6,14 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <BlazorWasmBaseHref>/DateRecurrenceR/</BlazorWasmBaseHref>
-    </PropertyGroup>
-
-    <Target Name="SetBlazorWasmBaseHref" AfterTargets="Publish" Condition="'$(BlazorWasmBaseHref)' != ''">
-        <Exec Command="sed -i 's|&lt;base href=&quot;/&quot; /&gt;|&lt;base href=&quot;$(BlazorWasmBaseHref)&quot; /&gt;|g' $(PublishDir)wwwroot/index.html" />
-    </Target>
-
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.5" PrivateAssets="all" />
