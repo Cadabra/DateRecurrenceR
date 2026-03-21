@@ -22,7 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Setup .NET
@@ -37,7 +36,7 @@ jobs:
           upload-result: true
           results-dir: ${{ runner.temp }}/qodana-results
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_1279554767 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
 
       - name: Upload SARIF to GitHub Code Scanning
