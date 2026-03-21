@@ -2,6 +2,9 @@ using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
+/// <summary>
+/// Enumerates dates in a daily recurrence pattern.
+/// </summary>
 public struct DailyEnumerator : IEnumerator<DateOnly>
 {
     private readonly int _interval;

@@ -4,6 +4,9 @@ using Range = DateRecurrenceR.Core.Range;
 
 namespace DateRecurrenceR.Recurrences;
 
+/// <summary>
+/// Represents a monthly recurrence based on a specific day of the week.
+/// </summary>
 public readonly struct MonthlyByDayOfWeekRecurrence : IRecurrence<MonthlyByDayOfWeekRecurrence, MonthlyEnumerator>
 {
     private readonly MonthlyByDayOfWeekPattern _pattern;
@@ -11,6 +14,12 @@ public readonly struct MonthlyByDayOfWeekRecurrence : IRecurrence<MonthlyByDayOf
     private readonly DateOnly _stopDate;
     private readonly int _count;
 
+    /// <summary>
+    /// Creates a new <see cref="MonthlyByDayOfWeekRecurrence"/> from the specified range and pattern.
+    /// </summary>
+    /// <param name="range">The date range for the recurrence.</param>
+    /// <param name="pattern">The monthly recurrence pattern.</param>
+    /// <returns>A new <see cref="MonthlyByDayOfWeekRecurrence"/> instance.</returns>
     public static MonthlyByDayOfWeekRecurrence New(Range range, MonthlyByDayOfWeekPattern pattern)
     {
         if (range.Count is not null)

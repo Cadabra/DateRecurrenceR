@@ -3,6 +3,9 @@ using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Collections;
 
+/// <summary>
+/// Enumerates dates in a weekly recurrence pattern.
+/// </summary>
 public struct WeeklyEnumerator : IEnumerator<DateOnly>
 {
     private readonly DateOnly _start;
@@ -17,6 +20,7 @@ public struct WeeklyEnumerator : IEnumerator<DateOnly>
         _hash = hash;
     }
 
+    /// <inheritdoc />
     public bool MoveNext()
     {
         if (_count >= _takeCount)
@@ -39,15 +43,18 @@ public struct WeeklyEnumerator : IEnumerator<DateOnly>
         return true;
     }
 
+    /// <inheritdoc />
     public void Reset()
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public DateOnly Current { get; private set; }
 
     object IEnumerator.Current => Current;
 
+    /// <inheritdoc />
     public void Dispose()
     {
     }

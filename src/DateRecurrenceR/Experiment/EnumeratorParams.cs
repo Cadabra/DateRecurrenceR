@@ -4,12 +4,22 @@ namespace DateRecurrenceR.Experiment;
 
 internal delegate DateOnly GetNewNextDateDelegate(DateOnly date);
 
+/// <summary>
+/// Experimental parameters used to configure a <see cref="DateEnumerator"/>.
+/// </summary>
 public struct EnumeratorParams
 {
     // public int[] Params { get; set; }
+    /// <summary>Gets or sets the first parameter (start date day number).</summary>
     public int P1 { get; init; }
+
+    /// <summary>Gets or sets the second parameter (take count).</summary>
     public int P2 { get; init; }
+
+    /// <summary>Gets or sets the third parameter (interval or initial count).</summary>
     public int P3 { get; init; }
+
+    /// <summary>Gets or sets the fourth parameter (auxiliary value).</summary>
     public int P4 { get; init; }
     internal GetNewNextDateDelegate GetNextDate { get; init; }
 

@@ -6,6 +6,9 @@ using Range = DateRecurrenceR.Core.Range;
 
 namespace DateRecurrenceR.Recurrences;
 
+/// <summary>
+/// Represents a weekly recurrence based on specific days of the week.
+/// </summary>
 public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDaysRecurrence, WeeklyEnumerator>
 {
     private readonly WeeklyByWeekDaysPattern _pattern;
@@ -14,6 +17,12 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
     private readonly DateOnly _stopDate;
     private readonly int _count;
 
+    /// <summary>
+    /// Creates a new <see cref="WeeklyByWeekDaysRecurrence"/> from the specified range and pattern.
+    /// </summary>
+    /// <param name="range">The date range for the recurrence.</param>
+    /// <param name="pattern">The weekly recurrence pattern.</param>
+    /// <returns>A new <see cref="WeeklyByWeekDaysRecurrence"/> instance.</returns>
     public static WeeklyByWeekDaysRecurrence New(Range range, WeeklyByWeekDaysPattern pattern)
     {
         if (range.Count is not null)

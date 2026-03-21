@@ -4,6 +4,9 @@ using Range = DateRecurrenceR.Core.Range;
 
 namespace DateRecurrenceR.Recurrences;
 
+/// <summary>
+/// Represents a yearly recurrence based on a specific day of the month within a year.
+/// </summary>
 public readonly struct YearlyByDayOfMonthRecurrence : IRecurrence<YearlyByDayOfMonthRecurrence, YearlyEnumerator>
 {
     private readonly YearlyByDayOfMonthPattern _pattern;
@@ -11,6 +14,12 @@ public readonly struct YearlyByDayOfMonthRecurrence : IRecurrence<YearlyByDayOfM
     private readonly DateOnly _stopDate;
     private readonly int _count;
 
+    /// <summary>
+    /// Creates a new <see cref="YearlyByDayOfMonthRecurrence"/> from the specified range and pattern.
+    /// </summary>
+    /// <param name="range">The date range for the recurrence.</param>
+    /// <param name="pattern">The yearly recurrence pattern.</param>
+    /// <returns>A new <see cref="YearlyByDayOfMonthRecurrence"/> instance.</returns>
     public static YearlyByDayOfMonthRecurrence New(Range range, YearlyByDayOfMonthPattern pattern)
     {
         if (range.Count is not null)

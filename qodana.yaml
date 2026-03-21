@@ -1,0 +1,12 @@
+version: "1.0"
+linter: jetbrains/qodana-dotnet:latest
+
+include:
+  - name: DotNetDiagnostics
+
+exclude:
+  - name: All
+    paths:
+      - samples
+      - docs
+      - test

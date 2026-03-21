@@ -2,6 +2,9 @@ using System.Collections;
 
 namespace DateRecurrenceR.Experiment;
 
+/// <summary>
+/// Experimental date enumerator that uses <see cref="EnumeratorParams"/> to configure iteration.
+/// </summary>
 public struct DateEnumerator : IEnumerator<DateOnly>
 {
     // private readonly GetNextMonthDateDelegate _getNextDate;
@@ -12,6 +15,10 @@ public struct DateEnumerator : IEnumerator<DateOnly>
     private DateOnly _iterator;
     private EnumeratorParams _enumeratorParams;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="DateEnumerator"/> with the specified parameters.
+    /// </summary>
+    /// <param name="enumeratorParams">The parameters that configure the enumerator.</param>
     public DateEnumerator(EnumeratorParams enumeratorParams)
     {
         _count = enumeratorParams.P3;
@@ -21,8 +28,7 @@ public struct DateEnumerator : IEnumerator<DateOnly>
         _canMoveNext = _count < _takeCount;
     }
 
-    private DateOnly _current;
-
+    /// <inheritdoc />
     public bool MoveNext()
     {
         if (!_canMoveNext)
@@ -39,17 +45,22 @@ public struct DateEnumerator : IEnumerator<DateOnly>
         return true;
     }
 
+    /// <summary>
+    /// Resets the enumerator to its initial position.
+    /// </summary>
+    /// <exception cref="NotSupportedException">Always thrown.</exception>
     public void Reset()
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public DateOnly Current { get; private set; }
 
     object IEnumerator.Current => Current;
 
+    /// <inheritdoc />
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }

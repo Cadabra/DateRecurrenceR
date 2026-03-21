@@ -150,6 +150,10 @@ public readonly struct WeekDays
         CountOfSelected = GetCountOfSelected();
     }
 
+    /// <summary>
+    /// Converts the weekdays to a bit-flag integer representation.
+    /// </summary>
+    /// <returns>An integer where each bit corresponds to a day of the week (bit 0 = Sunday, bit 6 = Saturday).</returns>
     public int ToFlag()
     {
         var result = 0;
@@ -219,6 +223,9 @@ public readonly struct WeekDays
         return (DayOfWeek)shift;
     }
 
+    /// <summary>
+    /// Gets the total number of selected days in the week.
+    /// </summary>
     public int CountOfSelected { get; }
 
     private int GetCountOfSelected()
@@ -232,6 +239,12 @@ public readonly struct WeekDays
                + (_ds[6] ? 1 : 0);
     }
 
+    /// <summary>
+    /// Returns the count of selected days up to and including the specified maximum day.
+    /// </summary>
+    /// <param name="maxDay">The maximum day of the week to count up to.</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
+    /// <returns>The count of selected days within the range.</returns>
     public int GetCountOfSelected(DayOfWeek maxDay, DayOfWeek firstDayOfWeek)
     {
         var fdwIndex = (int)firstDayOfWeek;
@@ -245,6 +258,12 @@ public readonly struct WeekDays
                + (_ds[(7 + fdwIndex + 6) % 7] ? (7 + 6) % 7 <= maxDayIndex ? 1 : 0 : 0);
     }
 
+    /// <summary>
+    /// Returns the count of selected days up to and including the specified maximum day index.
+    /// </summary>
+    /// <param name="maxDayIndex">The maximum day index (shifted from the first day of week).</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
+    /// <returns>The count of selected days within the range.</returns>
     public int GetCountOfSelected(int maxDayIndex, DayOfWeek firstDayOfWeek)
     {
         var fdwIndex = (int)firstDayOfWeek;
@@ -263,6 +282,13 @@ public readonly struct WeekDays
     /// <param name="dayOfWeek"></param>
     public bool this[DayOfWeek dayOfWeek] => _ds[(int)dayOfWeek];
 
+    /// <summary>
+    /// Tries to get the day of the week at the specified selection index.
+    /// </summary>
+    /// <param name="selectedIndex">The zero-based index of the selected day.</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
+    /// <param name="result">When this method returns, contains the day of the week at the specified index.</param>
+    /// <returns><see langword="true"/> if a selected day was found at the given index; otherwise, <see langword="false"/>.</returns>
     public bool TryGet(int selectedIndex, DayOfWeek firstDayOfWeek, out DayOfWeek result)
     {
         var day = (DayOfWeek)((7 + (int)firstDayOfWeek) % 7);

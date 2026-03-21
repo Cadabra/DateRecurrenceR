@@ -4,15 +4,26 @@ using DateRecurrenceR.Recurrences;
 
 namespace DateRecurrenceR.Core;
 
+/// <summary>
+/// Represents a date range with a start and end date.
+/// </summary>
 public readonly struct DateRange
 {
+    /// <summary>
+    /// Initializes a new instance of <see cref="DateRange"/> with the specified start and end dates.
+    /// </summary>
+    /// <param name="from">The start date of the range.</param>
+    /// <param name="to">The end date of the range.</param>
     public DateRange(DateOnly from, DateOnly to)
     {
         From = from;
         To = to;
     }
 
+    /// <summary>Gets the start date of the range.</summary>
     public DateOnly From { get; init; }
+
+    /// <summary>Gets the end date of the range.</summary>
     public DateOnly To { get; init; }
 }
 
