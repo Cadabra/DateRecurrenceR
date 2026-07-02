@@ -1,6 +1,7 @@
 using DateRecurrenceR.Collections;
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
+using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Recurrences;
 
@@ -156,18 +157,11 @@ public readonly struct YearlyByDayOfMonthRecurrence : IRecurrence<YearlyByDayOfM
     /// <inheritdoc />
     public YearlyEnumerator GetEnumerator()
     {
-        var numberOfMonth = _pattern.MonthOfYear;
-        var dayOfMonth = _pattern.DayOfMonth;
         return new YearlyEnumerator(
             _startDate.Year,
             _count,
             _pattern.Interval,
-            GetNextDate);
-
-        DateOnly GetNextDate(int year)
-        {
-            return DateOnlyHelper.GetDateByDayOfMonth(year, numberOfMonth, dayOfMonth);
-        }
+            YearlyDateResolver.ByDayOfMonth(_pattern.MonthOfYear, _pattern.DayOfMonth));
     }
 
     IEnumerator<DateOnly> IRecurrence.GetEnumerator()

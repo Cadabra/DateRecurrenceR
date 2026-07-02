@@ -1,6 +1,7 @@
 using DateRecurrenceR.Collections;
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
+using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR;
 
@@ -67,12 +68,7 @@ public partial struct Recurrence
             startDate,
             safeCount,
             interval,
-            GetNextDate);
-
-        DateOnly GetNextDate(int year, int month)
-        {
-            return DateOnlyHelper.GetDateByDayOfMonth(year, month, dayOfMonth);
-        }
+            MonthlyDateResolver.ByDayOfMonth(dayOfMonth));
     }
 
     /// <summary>
@@ -134,12 +130,7 @@ public partial struct Recurrence
             startDate,
             safeCount,
             interval,
-            GetNextDate);
-
-        DateOnly GetNextDate(int year, int month)
-        {
-            return DateOnlyHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
-        }
+            MonthlyDateResolver.ByDayOfWeek(dayOfWeek, indexOfDay));
     }
 
     /// <summary>
@@ -210,12 +201,7 @@ public partial struct Recurrence
             startDate,
             safeCount,
             interval,
-            GetNextDate);
-
-        DateOnly GetNextDate(int year, int month)
-        {
-            return DateOnlyHelper.GetDateByDayOfMonth(year, month, dayOfMonth);
-        }
+            MonthlyDateResolver.ByDayOfMonth(dayOfMonth));
     }
 
     /// <summary>
@@ -286,11 +272,6 @@ public partial struct Recurrence
             startDate,
             safeCount,
             interval,
-            GetNextDate);
-
-        DateOnly GetNextDate(int year, int month)
-        {
-            return DateOnlyHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
-        }
+            MonthlyDateResolver.ByDayOfWeek(dayOfWeek, indexOfDay));
     }
 }

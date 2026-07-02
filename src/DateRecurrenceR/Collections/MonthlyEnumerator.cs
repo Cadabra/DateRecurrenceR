@@ -9,17 +9,17 @@ namespace DateRecurrenceR.Collections;
 public struct MonthlyEnumerator : IEnumerator<DateOnly>
 {
     private readonly DateOnly _start;
-    private readonly GetNextMonthDateDelegate _getNextDate;
+    private readonly MonthlyDateResolver _resolver;
     private readonly int _takeCount;
     private readonly int _interval = 0;
     private int _count = 0;
 
-    internal MonthlyEnumerator(DateOnly startDate, int takeCount, int interval, GetNextMonthDateDelegate getNextDate)
+    internal MonthlyEnumerator(DateOnly startDate, int takeCount, int interval, MonthlyDateResolver resolver)
     {
         _start = startDate;
         _takeCount = takeCount;
         _interval = interval;
-        _getNextDate = getNextDate;
+        _resolver = resolver;
     }
 
     /// <inheritdoc />
@@ -38,7 +38,7 @@ public struct MonthlyEnumerator : IEnumerator<DateOnly>
         else
         {
             Current = Current.AddMonths(_interval);
-            Current = _getNextDate(Current.Year, Current.Month);
+            Current = _resolver.GetDate(Current.Year, Current.Month);
         }
 
         _count++;
@@ -57,7 +57,7 @@ public struct MonthlyEnumerator : IEnumerator<DateOnly>
 
     object IEnumerator.Current => Current;
 
-    internal static MonthlyEnumerator Empty = new(default, 0, 0, (_, _) => default);
+    internal static MonthlyEnumerator Empty = new(default, 0, 0, default);
 
     /// <inheritdoc />
     public void Dispose()

@@ -8,19 +8,19 @@ namespace DateRecurrenceR.Collections;
 /// </summary>
 public struct YearlyEnumerator : IEnumerator<DateOnly>
 {
-    private readonly GetNextDateDelegate _getNextDate;
+    private readonly YearlyDateResolver _resolver;
     private readonly int _interval;
     private readonly int _takeCount;
     private bool _canMoveNext = true;
     private int _count = 0;
     private int _iterator = 0;
 
-    internal YearlyEnumerator(int year, int takeCount, int interval, GetNextDateDelegate getNextDate)
+    internal YearlyEnumerator(int year, int takeCount, int interval, YearlyDateResolver resolver)
     {
         _iterator = year;
         _takeCount = takeCount;
         _interval = interval;
-        _getNextDate = getNextDate;
+        _resolver = resolver;
     }
 
     /// <inheritdoc />
@@ -32,7 +32,7 @@ public struct YearlyEnumerator : IEnumerator<DateOnly>
             return false;
         }
 
-        Current = _getNextDate(_iterator);
+        Current = _resolver.GetDate(_iterator);
         _count++;
 
         if (DateOnly.MaxValue.Year - _iterator < _interval)
@@ -54,7 +54,7 @@ public struct YearlyEnumerator : IEnumerator<DateOnly>
 
     object IEnumerator.Current => Current;
 
-    internal static YearlyEnumerator Empty = new(0, 0, 0, _ => default);
+    internal static YearlyEnumerator Empty = new(0, 0, 0, default);
 
     /// <inheritdoc />
     public void Dispose()

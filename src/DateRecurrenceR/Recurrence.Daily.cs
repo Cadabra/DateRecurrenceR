@@ -46,7 +46,6 @@ public partial struct Recurrence
         if (!canStart) return DailyEnumerator.Empty;
 
         return new DailyEnumerator(startDate, count, interval);
-        // return new DailyEnumeratorLimitByCount(startDate, count, interval);
     }
 
     /// <summary>
