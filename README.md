@@ -1,7 +1,6 @@
 # DateRecurrenceR
 
 [![Release](https://github.com/Cadabra/DateRecurrenceR/actions/workflows/release.yml/badge.svg)](https://github.com/Cadabra/DateRecurrenceR/actions/workflows/release.yml) [![Nuget](https://img.shields.io/nuget/v/DateRecurrenceR?logo=NuGet)](https://www.nuget.org/packages/DateRecurrenceR) [![Qodana](https://github.com/Cadabra/DateRecurrenceR/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/Cadabra/DateRecurrenceR/actions/workflows/qodana_code_quality.yml)
-_No AI, just math._
 
 ## Efficient Date Recurrence Library for .NET
 
