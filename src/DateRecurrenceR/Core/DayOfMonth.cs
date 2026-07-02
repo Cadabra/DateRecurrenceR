@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace DateRecurrenceR.Core;
 
 /// <summary>
@@ -15,7 +17,7 @@ public readonly struct DayOfMonth : IEquatable<DayOfMonth>
     private readonly int _value;
 
     /// <summary>
-    ///     Create an instance of <see cref="T:DateRecurrenceR.Core.DayOfMonth" /> with minimal value
+    ///     Create an instance of <see cref="DayOfMonth" /> with minimal value
     /// </summary>
     public DayOfMonth()
     {
@@ -23,7 +25,7 @@ public readonly struct DayOfMonth : IEquatable<DayOfMonth>
     }
 
     /// <summary>
-    ///     Create an instance of <see cref="T:DateRecurrenceR.Core.DayOfMonth" /> with specified value
+    ///     Create an instance of <see cref="DayOfMonth" /> with specified value
     /// </summary>
     public DayOfMonth(int value)
     {
@@ -32,10 +34,10 @@ public readonly struct DayOfMonth : IEquatable<DayOfMonth>
         _value = value;
     }
 
-    /// <summary>Represents the smallest possible value of <see cref="T:DateRecurrenceR.Core.DayOfMonth" />.</summary>
+    /// <summary>Represents the smallest possible value of <see cref="DayOfMonth" />.</summary>
     public static DayOfMonth MinValue { get; } = new(MinVal);
 
-    /// <summary>Represents the largest possible value of an <see cref="T:DateRecurrenceR.Core.DayOfMonth" />.</summary>
+    /// <summary>Represents the largest possible value of <see cref="DayOfMonth" />.</summary>
     public static DayOfMonth MaxValue { get; } = new(MaxVal);
 
     /// <inheritdoc />
@@ -66,14 +68,14 @@ public readonly struct DayOfMonth : IEquatable<DayOfMonth>
     /// <returns>The string representation of the value of this instance, consisting of a sequence of digits ranging from 0 to 9 with no leading zeroes.</returns>
     public override string ToString()
     {
-        return _value.ToString();
+        return _value.ToString(CultureInfo.InvariantCulture);
     }
 
     /// <summary>
-    ///     Convert <see cref="T:DateRecurrenceR.Core.DayOfMonth" /> to <see cref="T:System.Int32" />
+    ///     Convert <see cref="DayOfMonth" /> to <see cref="int" />
     /// </summary>
-    /// <param name="dayOfMonth"><see cref="T:System.Int32" /> representation of the value</param>
-    /// <returns><see cref="T:DateRecurrenceR.Core.DayOfMonth" /> representation of the value</returns>
+    /// <param name="dayOfMonth"><see cref="int" /> representation of the value</param>
+    /// <returns><see cref="DayOfMonth" /> representation of the value</returns>
     public static implicit operator int(DayOfMonth dayOfMonth)
     {
         return dayOfMonth._value;

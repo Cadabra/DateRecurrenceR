@@ -105,13 +105,13 @@ public readonly struct YearlyByDayOfYearRecurrence : IRecurrence<YearlyByDayOfYe
     public int Count => _count;
 
     /// <inheritdoc />
-    public bool Contains(DateOnly date)
+    public bool Contains(DateOnly dateToCheck)
     {
-        if (date.DayOfYear != _pattern.DayOfYear) return false;
+        if (dateToCheck.DayOfYear != _pattern.DayOfYear) return false;
 
-        if (date < _startDate || _stopDate < date) return false;
+        if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
 
-        return (date.Year - _startDate.Year) % _pattern.Interval == 0;
+        return (dateToCheck.Year - _startDate.Year) % _pattern.Interval == 0;
     }
 
     /// <inheritdoc />

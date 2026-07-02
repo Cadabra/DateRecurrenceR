@@ -105,14 +105,14 @@ public readonly struct MonthlyByDayOfMonthRecurrence : IRecurrence<MonthlyByDayO
     public int Count => _count;
 
     /// <inheritdoc />
-    public bool Contains(DateOnly date)
+    public bool Contains(DateOnly dateToCheck)
     {
-        if (date < _startDate || _stopDate < date) return false;
+        if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
 
-        if (date.Day != Math.Min(DateTime.DaysInMonth(date.Year, date.Month), _pattern.DayOfMonth))
+        if (dateToCheck.Day != Math.Min(DateTime.DaysInMonth(dateToCheck.Year, dateToCheck.Month), _pattern.DayOfMonth))
             return false;
 
-        if (((date.Year * 12 + date.Month) - (_startDate.Year * 12 + _startDate.Month)) % _pattern.Interval <=
+        if (((dateToCheck.Year * 12 + dateToCheck.Month) - (_startDate.Year * 12 + _startDate.Month)) % _pattern.Interval <=
             0) return true;
         return false;
     }

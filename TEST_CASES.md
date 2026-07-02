@@ -275,7 +275,7 @@ construction time, before any recurrence is produced.
 | VAL-DOY-367 | Corner | `new DayOfYear(367)` | throws `ArgumentOutOfRangeException` |
 | VAL-MOY-0   | Corner | `new MonthOfYear(0)` | throws `ArgumentOutOfRangeException` |
 | VAL-MOY-13  | Corner | `new MonthOfYear(13)` | throws `ArgumentOutOfRangeException` |
-| VAL-RANGE-NEG | Corner | `new DateRange(new DateOnly(2024,1,1), count: -1)` | throws `ArgumentException` |
+| VAL-RANGE-NEG | Corner | `new DateRange(new DateOnly(2024,1,1), count: -1)` | throws `ArgumentOutOfRangeException` |
 
 Valid boundary values (should **not** throw): `new Interval(1)`, `new DayOfMonth(1)`,
 `new DayOfMonth(31)`, `new DayOfYear(1)`, `new DayOfYear(366)`, `new MonthOfYear(1)`,

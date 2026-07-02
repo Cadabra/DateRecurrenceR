@@ -119,17 +119,17 @@ public readonly struct YearlyByDayOfWeekRecurrence : IRecurrence<YearlyByDayOfWe
     public int Count => _count;
 
     /// <inheritdoc />
-    public bool Contains(DateOnly date)
+    public bool Contains(DateOnly dateToCheck)
     {
-        if (date.DayOfWeek != _pattern.DayOfWeek) return false;
+        if (dateToCheck.DayOfWeek != _pattern.DayOfWeek) return false;
 
-        if (date.Month != _pattern.MonthOfYear) return false;
+        if (dateToCheck.Month != _pattern.MonthOfYear) return false;
 
-        if (date < _startDate || _stopDate < date) return false;
+        if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
 
-        if ((_pattern.Interval - 1) * 7 < date.Day || date.Day < _pattern.Interval * 7) return true;
+        if ((_pattern.Interval - 1) * 7 < dateToCheck.Day || dateToCheck.Day < _pattern.Interval * 7) return true;
 
-        return (date.Year - _startDate.Year) % _pattern.Interval == 0;
+        return (dateToCheck.Year - _startDate.Year) % _pattern.Interval == 0;
     }
 
     /// <inheritdoc />

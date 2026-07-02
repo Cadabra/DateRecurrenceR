@@ -15,9 +15,9 @@ public interface IRecurrence
     int Count { get; }
 
     /// <summary>Determines whether the specified date falls within the recurrence.</summary>
-    /// <param name="date">The date to check.</param>
+    /// <param name="dateToCheck">The date to check.</param>
     /// <returns><see langword="true"/> if the date is part of the recurrence; otherwise, <see langword="false"/>.</returns>
-    bool Contains(DateOnly date);
+    bool Contains(DateOnly dateToCheck);
 
     /// <summary>Returns a sub-range of the recurrence limited to the specified count from the start.</summary>
     /// <param name="takeCount">The maximum number of occurrences.</param>

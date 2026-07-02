@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace DateRecurrenceR.Core;
 
 /// <summary>
@@ -15,7 +17,7 @@ public readonly struct Interval : IEquatable<Interval>
     private readonly int _value;
 
     /// <summary>
-    ///     Create an instance of <see cref="T:DateRecurrenceR.Core.Interval" /> with minimal value
+    ///     Create an instance of <see cref="Interval" /> with minimal value
     /// </summary>
     public Interval()
     {
@@ -23,7 +25,7 @@ public readonly struct Interval : IEquatable<Interval>
     }
 
     /// <summary>
-    ///     Create an instance of <see cref="T:DateRecurrenceR.Core.Interval" /> with specified value
+    ///     Create an instance of <see cref="Interval" /> with specified value
     /// </summary>
     public Interval(int value)
     {
@@ -32,10 +34,10 @@ public readonly struct Interval : IEquatable<Interval>
         _value = value;
     }
 
-    /// <summary>Represents the smallest possible value of <see cref="T:DateRecurrenceR.Core.Interval" />.</summary>
+    /// <summary>Represents the smallest possible value of <see cref="Interval" />.</summary>
     public static Interval MinValue { get; } = new(MinVal);
 
-    /// <summary>Represents the largest possible value of an <see cref="T:DateRecurrenceR.Core.Interval" />.</summary>
+    /// <summary>Represents the largest possible value of <see cref="Interval" />.</summary>
     public static Interval MaxValue { get; } = new(MaxVal);
 
     /// <inheritdoc />
@@ -66,14 +68,14 @@ public readonly struct Interval : IEquatable<Interval>
     /// <returns>The string representation of the value of this instance, consisting of a sequence of digits ranging from 0 to 9 with no leading zeroes.</returns>
     public override string ToString()
     {
-        return _value.ToString();
+        return _value.ToString(CultureInfo.InvariantCulture);
     }
-    
+
     /// <summary>
-    ///     Convert <see cref="T:DateRecurrenceR.Core.Interval" /> to <see cref="T:System.Int32" />
+    ///     Convert <see cref="Interval" /> to <see cref="int" />
     /// </summary>
-    /// <param name="interval"><see cref="T:System.Int32" /> representation of the value</param>
-    /// <returns><see cref="T:DateRecurrenceR.Core.Interval" /> representation of the value</returns>
+    /// <param name="interval"><see cref="int" /> representation of the value</param>
+    /// <returns><see cref="Interval" /> representation of the value</returns>
     public static implicit operator int(Interval interval)
     {
         return interval._value;

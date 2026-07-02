@@ -46,7 +46,7 @@ public class WeekDaysTest
     public void METHOD()
     {
         WeekDaysArray weekDaysArray = default;
-        var combinationCount = Math.Pow(2, weekDaysArray.Length);
+        var combinationCount = Math.Pow(2, WeekDaysArray.Length);
 
         for (var i = 1; i <= combinationCount; i++)
         {

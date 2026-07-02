@@ -34,9 +34,9 @@ public sealed class PublicApiValidationTests
         FluentActions.Invoking(() => new MonthOfYear(value)).Should().Throw<ArgumentOutOfRangeException>();
 
     [Fact] // VAL-RANGE-NEG
-    public void Range_with_negative_count_throws() =>
+    public void DateRange_with_negative_count_throws() =>
         FluentActions.Invoking(() => new DateRange(new DateOnly(2024, 1, 1), -1))
-            .Should().Throw<ArgumentException>();
+            .Should().Throw<ArgumentOutOfRangeException>();
 
     [Theory] // valid boundary values must not throw
     [InlineData(1)]

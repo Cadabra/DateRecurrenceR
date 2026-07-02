@@ -33,13 +33,10 @@ public readonly struct DateRange
     /// </summary>
     /// <param name="beginDate">The start date of the range.</param>
     /// <param name="count">The number of occurrences.</param>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="count"/> is negative.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="count"/> is negative.</exception>
     public DateRange(DateOnly beginDate, int count)
     {
-        if (count < 0)
-        {
-            throw new ArgumentException();
-        }
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
 
         BeginDate = beginDate;
         EndDate = null;

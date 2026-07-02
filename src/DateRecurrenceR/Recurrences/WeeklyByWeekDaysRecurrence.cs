@@ -123,14 +123,14 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
     public int Count => _count;
 
     /// <inheritdoc />
-    public bool Contains(DateOnly date)
+    public bool Contains(DateOnly dateToCheck)
     {
-        if (!_pattern.WeekDays[date.DayOfWeek]) return false;
+        if (!_pattern.WeekDays[dateToCheck.DayOfWeek]) return false;
 
-        if (date < _startDate || _stopDate < date) return false;
+        if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
 
         var fwdI = WeekDaysHelper.DayToIndex(_startDate.DayOfWeek, _pattern.FirstDayOfWeek);
-        if ((date.DayNumber - _startDate.DayNumber + fwdI) % (_pattern.Interval * 7) > 7) return false;
+        if ((dateToCheck.DayNumber - _startDate.DayNumber + fwdI) % (_pattern.Interval * 7) > 7) return false;
 
         return true;
     }

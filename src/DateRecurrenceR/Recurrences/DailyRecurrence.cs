@@ -64,11 +64,11 @@ public readonly struct DailyRecurrence : IRecurrence<DailyRecurrence, DailyEnume
     public int Count => _count;
 
     /// <inheritdoc />
-    public bool Contains(DateOnly date)
+    public bool Contains(DateOnly dateToCheck)
     {
-        if (date < _startDate || _stopDate < date) return false;
+        if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
 
-        return (date.DayNumber - _startDate.DayNumber) % _pattern.Interval == 0;
+        return (dateToCheck.DayNumber - _startDate.DayNumber) % _pattern.Interval == 0;
     }
 
     /// <inheritdoc />
