@@ -280,7 +280,7 @@ public sealed class RecurrenceMonthlyTests
     }
 
     // ========================================================================
-    // Enumerator advances correctly (regression for AddMonths bug)
+    // Enumerator advances correctly (AddMonths regression guard)
     // ========================================================================
 
     /// <summary>

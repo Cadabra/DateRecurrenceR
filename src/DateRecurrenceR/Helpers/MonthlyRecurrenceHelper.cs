@@ -33,7 +33,7 @@ internal struct MonthlyRecurrenceHelper
         var startMonthNumber = 12 * startDate.Year + startDate.Month;
         var maxMonthNumber = 12 * DateOnly.MaxValue.Year + DateOnly.MaxValue.Month;
 
-        var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval, count);
+        var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval + 1, count);
         var endMonthNumber = startMonthNumber + (safeCount - 1) * interval;
 
         var endYear = (endMonthNumber - 1) / 12;
@@ -76,7 +76,7 @@ internal struct MonthlyRecurrenceHelper
         var startMonthNumber = 12 * startDate.Year + startDate.Month;
         var maxMonthNumber = 12 * DateOnly.MaxValue.Year + DateOnly.MaxValue.Month;
 
-        var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval, count);
+        var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval + 1, count);
         var endMonthNumber = startMonthNumber + (safeCount - 1) * interval;
 
         var endYear = (endMonthNumber - 1) / 12;

@@ -34,11 +34,13 @@ internal struct YearlyRecurrenceHelper
         Interval interval,
         int count)
     {
+        if (count < 1) return (startDate, 0);
+
         var yearsDiff = DateOnly.MaxValue.Year - startDate.Year;
 
-        var actualCount = Math.Min(yearsDiff / interval, count);
+        var actualCount = Math.Min(yearsDiff / interval + 1, count);
 
-        var stopDateYear = startDate.Year + actualCount * interval;
+        var stopDateYear = startDate.Year + (actualCount - 1) * interval;
 
         return (new DateOnly(stopDateYear, 1, 1).AddDays(dayOfYear - 1), actualCount);
     }
@@ -71,10 +73,12 @@ internal struct YearlyRecurrenceHelper
         Interval interval,
         int count)
     {
-        var yearsDiff = DateOnly.MaxValue.Year - startDate.Year;
-        var actualCount = Math.Min(yearsDiff / interval, count);
+        if (count < 1) return (startDate, 0);
 
-        var stopDateYear = startDate.Year + actualCount * interval;
+        var yearsDiff = DateOnly.MaxValue.Year - startDate.Year;
+        var actualCount = Math.Min(yearsDiff / interval + 1, count);
+
+        var stopDateYear = startDate.Year + (actualCount - 1) * interval;
         var stopDate = DateOnlyHelper.GetDateByDayOfMonth(stopDateYear, monthOfYear, dayOfMonth);
 
         return (stopDate, actualCount);
@@ -110,10 +114,12 @@ internal struct YearlyRecurrenceHelper
         Interval interval,
         int count)
     {
-        var yearsDiff = DateOnly.MaxValue.Year - startDate.Year;
-        var actualCount = Math.Min(yearsDiff / interval, count);
+        if (count < 1) return (startDate, 0);
 
-        var stopDateYear = startDate.Year + actualCount * interval;
+        var yearsDiff = DateOnly.MaxValue.Year - startDate.Year;
+        var actualCount = Math.Min(yearsDiff / interval + 1, count);
+
+        var stopDateYear = startDate.Year + (actualCount - 1) * interval;
         var stopDate = DateOnlyHelper.GetDateByDayOfMonth(stopDateYear, monthOfYear, dayOfWeek, indexOfDay);
 
         return (stopDate, actualCount);

@@ -80,7 +80,7 @@ public sealed class YearlyRecurrenceHelperTests
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, 1, new Interval(1), 5);
 
         count.Should().Be(5);
-        stopDate.Should().Be(new DateOnly(2025, 1, 1));
+        stopDate.Should().Be(new DateOnly(2024, 1, 1)); // last occurrence: 2020..2024
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public sealed class YearlyRecurrenceHelperTests
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, 1, new Interval(2), 3);
 
         count.Should().Be(3);
-        stopDate.Should().Be(new DateOnly(2026, 1, 1));
+        stopDate.Should().Be(new DateOnly(2024, 1, 1)); // last occurrence: 2020, 2022, 2024
     }
 
     // ========================================================================
@@ -158,7 +158,7 @@ public sealed class YearlyRecurrenceHelperTests
             start, new MonthOfYear(6), new DayOfMonth(15), new Interval(1), 3);
 
         count.Should().Be(3);
-        stopDate.Should().Be(new DateOnly(2023, 6, 15));
+        stopDate.Should().Be(new DateOnly(2022, 6, 15)); // last occurrence: 2020..2022
     }
 
     /// <summary>
@@ -173,7 +173,7 @@ public sealed class YearlyRecurrenceHelperTests
             start, new MonthOfYear(12), new DayOfMonth(25), new Interval(1), 4);
 
         count.Should().Be(4);
-        stopDate.Should().Be(new DateOnly(2024, 12, 25));
+        stopDate.Should().Be(new DateOnly(2023, 12, 25)); // last occurrence: 2020..2023
     }
 
     // ========================================================================
@@ -261,8 +261,8 @@ public sealed class YearlyRecurrenceHelperTests
     // ========================================================================
 
     /// <summary>
-    /// CRITICAL: dayOfWeek variant with endDate before occurrence — same
-    /// inverted condition bug applied here.
+    /// CRITICAL: dayOfWeek variant with endDate before occurrence — must exclude
+    /// that year, same rule as the dayOfMonth variant.
     /// </summary>
     [Fact]
     public void GetEndDateAndCount_DayOfWeek_ByEndDate_endDate_before_occurrence_excludes()

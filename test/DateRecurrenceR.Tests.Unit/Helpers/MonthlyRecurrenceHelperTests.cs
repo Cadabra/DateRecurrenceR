@@ -222,13 +222,13 @@ public sealed class MonthlyRecurrenceHelperTests
     [Fact]
     public void GetEndDateAndCount_ByCount_safeCount_is_clamped_near_MaxValue()
     {
-        // Oct 9999: only 2 months left (Nov, Dec)
+        // Oct 9999: 3 representable occurrences remain (Oct, Nov, Dec)
         var start = new DateOnly(9999, 10, 1);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 1, 1, 1000);
 
-        count.Should().Be(2);
-        endDate.Should().Be(new DateOnly(9999, 11, 1));
+        count.Should().Be(3);
+        endDate.Should().Be(new DateOnly(9999, 12, 1));
     }
 
     // ========================================================================
