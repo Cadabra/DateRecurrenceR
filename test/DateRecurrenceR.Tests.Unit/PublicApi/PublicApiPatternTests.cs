@@ -23,7 +23,7 @@ public sealed class PublicApiPatternTests
     {
         var pattern = new YearlyByDayOfYearPattern(new Interval(1), new DayOfYear(1));
         var recurrence = YearlyByDayOfYearRecurrence.New(
-            new global::DateRecurrenceR.Core.Range(new DateOnly(2020, 1, 1), 5), pattern);
+            new DateRange(new DateOnly(2020, 1, 1), 5), pattern);
 
         var yielded = Collect(recurrence.GetEnumerator());
 

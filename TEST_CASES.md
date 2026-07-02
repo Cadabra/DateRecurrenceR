@@ -275,11 +275,7 @@ construction time, before any recurrence is produced.
 | VAL-DOY-367 | Corner | `new DayOfYear(367)` | throws `ArgumentOutOfRangeException` |
 | VAL-MOY-0   | Corner | `new MonthOfYear(0)` | throws `ArgumentOutOfRangeException` |
 | VAL-MOY-13  | Corner | `new MonthOfYear(13)` | throws `ArgumentOutOfRangeException` |
-| VAL-RANGE-NEG | Corner | `new DateRecurrenceR.Core.Range(new DateOnly(2024,1,1), count: -1)` | throws `ArgumentException` |
-
-> ⚠️ `DateRecurrenceR.Core.Range` collides with `System.Range` when `ImplicitUsings` is
-> enabled, so `new Range(…)` is ambiguous — fully-qualify it (or add a `using` alias) in
-> tests, as shown above.
+| VAL-RANGE-NEG | Corner | `new DateRange(new DateOnly(2024,1,1), count: -1)` | throws `ArgumentException` |
 
 Valid boundary values (should **not** throw): `new Interval(1)`, `new DayOfMonth(1)`,
 `new DayOfMonth(31)`, `new DayOfYear(1)`, `new DayOfYear(366)`, `new MonthOfYear(1)`,

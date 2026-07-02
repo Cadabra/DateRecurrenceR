@@ -2,7 +2,6 @@ using BenchmarkDotNet.Attributes;
 using DateRecurrenceR;
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Recurrences;
-using Range = DateRecurrenceR.Core.Range;
 
 namespace Benchmarks;
 
@@ -47,7 +46,7 @@ public class Benchmark
         var sum = 0L;
         var pattern = new WeeklyByWeekDaysPattern(_interval, _weekDays, DayOfWeek.Monday);
     
-        var sut = WeeklyByWeekDaysRecurrence.New(new Range(DateOnly.MinValue, Count), pattern);
+        var sut = WeeklyByWeekDaysRecurrence.New(new DateRange(DateOnly.MinValue, Count), pattern);
 
         sut.Contains(DateOnly.MinValue);
             

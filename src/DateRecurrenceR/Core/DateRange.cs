@@ -3,13 +3,13 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 /// Represents a recurrence range defined by a start date and either an end date or a count of occurrences.
 /// </summary>
-public readonly struct Range
+public readonly struct DateRange
 {
     /// <summary>
-    /// Initializes a new instance of <see cref="Range"/> with the specified start date and no defined end.
+    /// Initializes a new instance of <see cref="DateRange"/> with the specified start date and no defined end.
     /// </summary>
     /// <param name="beginDate">The start date of the range.</param>
-    public Range(DateOnly beginDate)
+    public DateRange(DateOnly beginDate)
     {
         BeginDate = beginDate;
         EndDate = DateOnly.MaxValue;
@@ -17,11 +17,11 @@ public readonly struct Range
     }
 
     /// <summary>
-    /// Initializes a new instance of <see cref="Range"/> with the specified start date and optional end date.
+    /// Initializes a new instance of <see cref="DateRange"/> with the specified start date and optional end date.
     /// </summary>
     /// <param name="beginDate">The start date of the range.</param>
     /// <param name="endDate">The optional end date of the range.</param>
-    public Range(DateOnly beginDate, DateOnly? endDate)
+    public DateRange(DateOnly beginDate, DateOnly? endDate)
     {
         BeginDate = beginDate;
         EndDate = endDate;
@@ -29,12 +29,12 @@ public readonly struct Range
     }
 
     /// <summary>
-    /// Initializes a new instance of <see cref="Range"/> with the specified start date and occurrence count.
+    /// Initializes a new instance of <see cref="DateRange"/> with the specified start date and occurrence count.
     /// </summary>
     /// <param name="beginDate">The start date of the range.</param>
     /// <param name="count">The number of occurrences.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="count"/> is negative.</exception>
-    public Range(DateOnly beginDate, int count)
+    public DateRange(DateOnly beginDate, int count)
     {
         if (count < 0)
         {

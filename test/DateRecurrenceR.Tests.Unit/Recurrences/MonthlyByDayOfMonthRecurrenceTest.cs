@@ -2,7 +2,6 @@ using DateRecurrenceR.Core;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Range = DateRecurrenceR.Core.Range;
 
 namespace DateRecurrenceR.Tests.Unit.Recurrences;
 
@@ -17,7 +16,7 @@ public class MonthlyByDayOfMonthRecurrenceTest
         var interval = new Interval(7);
         var count = 200;
         var dayOfMonth = new DayOfMonth(1);
-        var range = new Range(beginDate, count);
+        var range = new DateRange(beginDate, count);
         var pattern = new MonthlyByDayOfMonthPattern(interval, dayOfMonth);
         var enumerator = Recurrence.Monthly(beginDate, count, dayOfMonth, interval);
         var sut = MonthlyByDayOfMonthRecurrence.New(range, pattern);
@@ -46,7 +45,7 @@ public class MonthlyByDayOfMonthRecurrenceTest
         var interval = new Interval(7);
         var endDate = beginDate.AddMonths(2000);
         var dayOfMonth = new DayOfMonth(1);
-        var range = new Range(beginDate, endDate);
+        var range = new DateRange(beginDate, endDate);
         var pattern = new MonthlyByDayOfMonthPattern(interval, dayOfMonth);
         var enumerator = Recurrence.Monthly(beginDate, endDate, dayOfMonth, interval);
         var sut = MonthlyByDayOfMonthRecurrence.New(range, pattern);
@@ -78,7 +77,7 @@ public class MonthlyByDayOfMonthRecurrenceTest
         var interval = new Interval(12);
         var count = 10;
         var dayOfMonth = new DayOfMonth(25);
-        var range = new Range(beginDate, count);
+        var range = new DateRange(beginDate, count);
         var pattern = new MonthlyByDayOfMonthPattern(interval, dayOfMonth);
         var enumerator = Recurrence.Monthly(beginDate, count, dayOfMonth, interval);
         var sut = MonthlyByDayOfMonthRecurrence.New(range, pattern);

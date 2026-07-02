@@ -35,7 +35,7 @@ public sealed class PublicApiValidationTests
 
     [Fact] // VAL-RANGE-NEG
     public void Range_with_negative_count_throws() =>
-        FluentActions.Invoking(() => new global::DateRecurrenceR.Core.Range(new DateOnly(2024, 1, 1), -1))
+        FluentActions.Invoking(() => new DateRange(new DateOnly(2024, 1, 1), -1))
             .Should().Throw<ArgumentException>();
 
     [Theory] // valid boundary values must not throw

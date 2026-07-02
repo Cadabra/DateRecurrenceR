@@ -2,7 +2,6 @@ using DateRecurrenceR.Core;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Range = DateRecurrenceR.Core.Range;
 
 namespace DateRecurrenceR.Tests.Unit.Recurrences;
 
@@ -16,7 +15,7 @@ public class DailyRecurrenceTest
         var beginDate = new DateOnly(1, 1, 1);
         var endDate = beginDate.AddDays(1000);
         var interval = new Interval(3);
-        var range = new Range(beginDate, endDate);
+        var range = new DateRange(beginDate, endDate);
         var pattern = new DailyPattern(interval);
         var enumerator = Recurrence.Daily(beginDate, endDate, interval);
         var sut = DailyRecurrence.New(range, pattern);
@@ -44,7 +43,7 @@ public class DailyRecurrenceTest
         var beginDate = new DateOnly(1, 1, 1);
         var interval = new Interval(3);
         var count = 200;
-        var range = new Range(beginDate, count);
+        var range = new DateRange(beginDate, count);
         var pattern = new DailyPattern(interval);
         var enumerator = Recurrence.Daily(beginDate, count, interval);
         var sut = DailyRecurrence.New(range, pattern);

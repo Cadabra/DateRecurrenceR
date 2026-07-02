@@ -2,7 +2,6 @@ using DateRecurrenceR.Core;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Range = DateRecurrenceR.Core.Range;
 
 namespace DateRecurrenceR.Tests.Unit;
 
@@ -20,7 +19,7 @@ public class WeeklyRecurrenceTest
         var interval = new Interval(110);
         var weeklyPattern = new WeeklyByWeekDaysPattern(interval, weekDays, firstDayOfWeek);
         var enumerator = Recurrence.Weekly(beginDate, endDate, weekDays, firstDayOfWeek, interval);
-        var sut = WeeklyByWeekDaysRecurrence.New(new Range(beginDate, endDate), weeklyPattern);
+        var sut = WeeklyByWeekDaysRecurrence.New(new DateRange(beginDate, endDate), weeklyPattern);
 
         // Act
         var list = new List<DateOnly>();
@@ -55,7 +54,7 @@ public class WeeklyRecurrenceTest
         var interval = new Interval(1);
         var weeklyPattern = new WeeklyByWeekDaysPattern(interval, weekDays, firstDayOfWeek);
         var enumerator = Recurrence.Weekly(beginDate, endDate, weekDays, firstDayOfWeek, interval);
-        var sut = WeeklyByWeekDaysRecurrence.New(new Range(beginDate, endDate), weeklyPattern);
+        var sut = WeeklyByWeekDaysRecurrence.New(new DateRange(beginDate, endDate), weeklyPattern);
 
         // Act
         var list = new List<DateOnly>();
@@ -85,7 +84,7 @@ public class WeeklyRecurrenceTest
         var interval = new Interval(1);
         var weeklyPattern = new WeeklyByWeekDaysPattern(interval, weekDays, firstDayOfWeek);
         var enumerator = Recurrence.Weekly(beginDate, endDate, weekDays, firstDayOfWeek, interval);
-        var sut = WeeklyByWeekDaysRecurrence.New(new Range(beginDate, endDate), weeklyPattern);
+        var sut = WeeklyByWeekDaysRecurrence.New(new DateRange(beginDate, endDate), weeklyPattern);
 
         // Act
         var list = new List<DateOnly>();
@@ -114,7 +113,7 @@ public class WeeklyRecurrenceTest
         var interval = new Interval(110);
         var weeklyPattern = new WeeklyByWeekDaysPattern(interval, weekDays, firstDayOfWeek);
         var enumerator = Recurrence.Weekly(beginDate, endDate, weekDays, firstDayOfWeek, interval);
-        var sut = WeeklyByWeekDaysRecurrence.New(new Range(beginDate, endDate), weeklyPattern);
+        var sut = WeeklyByWeekDaysRecurrence.New(new DateRange(beginDate, endDate), weeklyPattern);
 
         // Act
         var list = new List<DateOnly>();
@@ -144,7 +143,7 @@ public class WeeklyRecurrenceTest
         var interval = new Interval(110);
         var weeklyPattern = new WeeklyByWeekDaysPattern(interval, weekDays, firstDayOfWeek);
         var enumerator = Recurrence.Weekly(beginDate, endDate, weekDays, firstDayOfWeek, interval);
-        var sut = WeeklyByWeekDaysRecurrence.New(new Range(beginDate, endDate), weeklyPattern);
+        var sut = WeeklyByWeekDaysRecurrence.New(new DateRange(beginDate, endDate), weeklyPattern);
 
         // Act
         var list = new List<DateOnly>();

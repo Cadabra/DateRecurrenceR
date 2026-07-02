@@ -1,6 +1,6 @@
 using DateRecurrenceR.Collections;
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
-using Range = DateRecurrenceR.Core.Range;
 
 namespace DateRecurrenceR.Recurrences;
 
@@ -17,19 +17,19 @@ public readonly struct YearlyByDayOfMonthRecurrence : IRecurrence<YearlyByDayOfM
     /// <summary>
     /// Creates a new <see cref="YearlyByDayOfMonthRecurrence"/> from the specified range and pattern.
     /// </summary>
-    /// <param name="range">The date range for the recurrence.</param>
+    /// <param name="dateRange">The date range for the recurrence.</param>
     /// <param name="pattern">The yearly recurrence pattern.</param>
     /// <returns>A new <see cref="YearlyByDayOfMonthRecurrence"/> instance.</returns>
-    public static YearlyByDayOfMonthRecurrence New(Range range, YearlyByDayOfMonthPattern pattern)
+    public static YearlyByDayOfMonthRecurrence New(DateRange dateRange, YearlyByDayOfMonthPattern pattern)
     {
-        if (range.Count is not null)
+        if (dateRange.Count is not null)
         {
-            return New(range.BeginDate, range.BeginDate, range.Count.Value, pattern);
+            return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.Count.Value, pattern);
         }
 
-        if (range.EndDate is not null)
+        if (dateRange.EndDate is not null)
         {
-            return New(range.BeginDate, range.BeginDate, range.EndDate.Value, pattern);
+            return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.EndDate.Value, pattern);
         }
 
         return new YearlyByDayOfMonthRecurrence();

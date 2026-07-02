@@ -1,7 +1,7 @@
 using DateRecurrenceR.Collections;
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 using DateRecurrenceR.Internals;
-using Range = DateRecurrenceR.Core.Range;
 
 namespace DateRecurrenceR.Recurrences;
 
@@ -19,19 +19,19 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
     /// <summary>
     /// Creates a new <see cref="WeeklyByWeekDaysRecurrence"/> from the specified range and pattern.
     /// </summary>
-    /// <param name="range">The date range for the recurrence.</param>
+    /// <param name="dateRange">The date range for the recurrence.</param>
     /// <param name="pattern">The weekly recurrence pattern.</param>
     /// <returns>A new <see cref="WeeklyByWeekDaysRecurrence"/> instance.</returns>
-    public static WeeklyByWeekDaysRecurrence New(Range range, WeeklyByWeekDaysPattern pattern)
+    public static WeeklyByWeekDaysRecurrence New(DateRange dateRange, WeeklyByWeekDaysPattern pattern)
     {
-        if (range.Count is not null)
+        if (dateRange.Count is not null)
         {
-            return New(range.BeginDate, range.BeginDate, range.Count.Value, pattern);
+            return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.Count.Value, pattern);
         }
 
-        if (range.EndDate is not null)
+        if (dateRange.EndDate is not null)
         {
-            return New(range.BeginDate, range.BeginDate, range.EndDate.Value, pattern);
+            return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.EndDate.Value, pattern);
         }
 
         return new WeeklyByWeekDaysRecurrence();
