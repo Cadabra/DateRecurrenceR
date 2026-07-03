@@ -74,8 +74,17 @@ public readonly struct MonthlyByDayOfMonthRecurrence : IRecurrence<MonthlyByDayO
 
     private MonthlyByDayOfMonthRecurrence(DateOnly startDate, int count, MonthlyByDayOfMonthPattern pattern)
     {
-        _startDate = startDate;
         _pattern = pattern;
+
+        if (count < 1)
+        {
+            _startDate = DateOnly.MaxValue;
+            _stopDate = DateOnly.MinValue;
+            _count = 0;
+            return;
+        }
+
+        _startDate = startDate;
 
         (_stopDate, _count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
             _startDate,

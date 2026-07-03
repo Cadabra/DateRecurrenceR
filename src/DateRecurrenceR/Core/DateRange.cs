@@ -17,11 +17,11 @@ public readonly struct DateRange
     }
 
     /// <summary>
-    /// Initializes a new instance of <see cref="DateRange"/> with the specified start date and optional end date.
+    /// Initializes a new instance of <see cref="DateRange"/> with the specified start date and end date.
     /// </summary>
     /// <param name="beginDate">The start date of the range.</param>
-    /// <param name="endDate">The optional end date of the range.</param>
-    public DateRange(DateOnly beginDate, DateOnly? endDate)
+    /// <param name="endDate">The end date of the range.</param>
+    public DateRange(DateOnly beginDate, DateOnly endDate)
     {
         BeginDate = beginDate;
         EndDate = endDate;

@@ -10,10 +10,11 @@ internal struct YearlyRecurrenceHelper
         int interval,
         out DateOnly startDate)
     {
+        if (fromDate < beginDate) fromDate = beginDate;
+
         var deltaToStartYear = fromDate.Year - beginDate.Year;
         var yearsDiff = deltaToStartYear / interval * interval;
-
-        if (deltaToStartYear % interval > 0 || fromDate.DayOfYear > dayOfYear) yearsDiff += interval;
+        if (deltaToStartYear % interval > 0) yearsDiff += interval;
 
         if (DateOutOfRangeByYear(beginDate, yearsDiff))
         {
@@ -21,9 +22,95 @@ internal struct YearlyRecurrenceHelper
             return false;
         }
 
-        beginDate = beginDate.AddYears(yearsDiff);
+        startDate = DateOnlyHelper.GetDateByDayOfYear(beginDate.Year + yearsDiff, dayOfYear);
 
-        startDate = DateOnlyHelper.GetDateByDayOfYear(beginDate.Year, dayOfYear);
+        if (startDate < fromDate)
+        {
+            yearsDiff += interval;
+
+            if (DateOutOfRangeByYear(beginDate, yearsDiff))
+            {
+                startDate = default;
+                return false;
+            }
+
+            startDate = DateOnlyHelper.GetDateByDayOfYear(beginDate.Year + yearsDiff, dayOfYear);
+        }
+
+        return true;
+    }
+
+    public static bool TryGetStartDate(DateOnly beginDate,
+        DateOnly fromDate,
+        MonthOfYear monthOfYear,
+        DayOfMonth dayOfMonth,
+        int interval,
+        out DateOnly startDate)
+    {
+        if (fromDate < beginDate) fromDate = beginDate;
+
+        var deltaToStartYear = fromDate.Year - beginDate.Year;
+        var yearsDiff = deltaToStartYear / interval * interval;
+        if (deltaToStartYear % interval > 0) yearsDiff += interval;
+
+        if (DateOutOfRangeByYear(beginDate, yearsDiff))
+        {
+            startDate = default;
+            return false;
+        }
+
+        startDate = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year + yearsDiff, monthOfYear, dayOfMonth);
+
+        if (startDate < fromDate)
+        {
+            yearsDiff += interval;
+
+            if (DateOutOfRangeByYear(beginDate, yearsDiff))
+            {
+                startDate = default;
+                return false;
+            }
+
+            startDate = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year + yearsDiff, monthOfYear, dayOfMonth);
+        }
+
+        return true;
+    }
+
+    public static bool TryGetStartDate(DateOnly beginDate,
+        DateOnly fromDate,
+        MonthOfYear monthOfYear,
+        DayOfWeek dayOfWeek,
+        IndexOfDay indexOfDay,
+        int interval,
+        out DateOnly startDate)
+    {
+        if (fromDate < beginDate) fromDate = beginDate;
+
+        var deltaToStartYear = fromDate.Year - beginDate.Year;
+        var yearsDiff = deltaToStartYear / interval * interval;
+        if (deltaToStartYear % interval > 0) yearsDiff += interval;
+
+        if (DateOutOfRangeByYear(beginDate, yearsDiff))
+        {
+            startDate = default;
+            return false;
+        }
+
+        startDate = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year + yearsDiff, monthOfYear, dayOfWeek, indexOfDay);
+
+        if (startDate < fromDate)
+        {
+            yearsDiff += interval;
+
+            if (DateOutOfRangeByYear(beginDate, yearsDiff))
+            {
+                startDate = default;
+                return false;
+            }
+
+            startDate = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year + yearsDiff, monthOfYear, dayOfWeek, indexOfDay);
+        }
 
         return true;
     }

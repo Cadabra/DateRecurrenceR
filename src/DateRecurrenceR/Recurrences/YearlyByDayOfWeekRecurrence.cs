@@ -39,15 +39,12 @@ public readonly struct YearlyByDayOfWeekRecurrence : IRecurrence<YearlyByDayOfWe
     private static YearlyByDayOfWeekRecurrence New(DateOnly beginDate, DateOnly fromDate, DateOnly toDate,
         YearlyByDayOfWeekPattern pattern)
     {
-        var date = DateOnlyHelper.GetDateByDayOfMonth(
-            beginDate.Year,
-            pattern.MonthOfYear,
-            pattern.DayOfWeek,
-            pattern.IndexOfDay);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            date.DayOfYear,
+            pattern.MonthOfYear,
+            pattern.DayOfWeek,
+            pattern.IndexOfDay,
             pattern.Interval,
             out var startDate);
 
@@ -62,15 +59,12 @@ public readonly struct YearlyByDayOfWeekRecurrence : IRecurrence<YearlyByDayOfWe
     private static YearlyByDayOfWeekRecurrence New(DateOnly beginDate, DateOnly fromDate, int count,
         YearlyByDayOfWeekPattern pattern)
     {
-        var date = DateOnlyHelper.GetDateByDayOfMonth(
-            beginDate.Year,
-            pattern.MonthOfYear,
-            pattern.DayOfWeek,
-            pattern.IndexOfDay);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            date.DayOfYear,
+            pattern.MonthOfYear,
+            pattern.DayOfWeek,
+            pattern.IndexOfDay,
             pattern.Interval,
             out var startDate);
 
@@ -84,8 +78,17 @@ public readonly struct YearlyByDayOfWeekRecurrence : IRecurrence<YearlyByDayOfWe
 
     private YearlyByDayOfWeekRecurrence(DateOnly startDate, int count, YearlyByDayOfWeekPattern pattern)
     {
-        _startDate = startDate;
         _pattern = pattern;
+
+        if (count < 1)
+        {
+            _startDate = DateOnly.MaxValue;
+            _stopDate = DateOnly.MinValue;
+            _count = 0;
+            return;
+        }
+
+        _startDate = startDate;
 
         (_stopDate, _count) = YearlyRecurrenceHelper.GetEndDateAndCount(
             _startDate,

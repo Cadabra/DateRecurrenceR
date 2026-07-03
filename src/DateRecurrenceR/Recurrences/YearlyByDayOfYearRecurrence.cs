@@ -74,8 +74,17 @@ public readonly struct YearlyByDayOfYearRecurrence : IRecurrence<YearlyByDayOfYe
 
     private YearlyByDayOfYearRecurrence(DateOnly startDate, int count, YearlyByDayOfYearPattern pattern)
     {
-        _startDate = startDate;
         _pattern = pattern;
+
+        if (count < 1)
+        {
+            _startDate = DateOnly.MaxValue;
+            _stopDate = DateOnly.MinValue;
+            _count = 0;
+            return;
+        }
+
+        _startDate = startDate;
 
         (_stopDate, _count) = YearlyRecurrenceHelper.GetEndDateAndCount(
             _startDate,
@@ -108,7 +117,10 @@ public readonly struct YearlyByDayOfYearRecurrence : IRecurrence<YearlyByDayOfYe
     /// <inheritdoc />
     public bool Contains(DateOnly dateToCheck)
     {
-        if (dateToCheck.DayOfYear != _pattern.DayOfYear) return false;
+        var dayOfYear = (int)_pattern.DayOfYear;
+        if (dayOfYear > 365 && !DateTime.IsLeapYear(dateToCheck.Year)) dayOfYear = 365;
+
+        if (dateToCheck.DayOfYear != dayOfYear) return false;
 
         if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
 

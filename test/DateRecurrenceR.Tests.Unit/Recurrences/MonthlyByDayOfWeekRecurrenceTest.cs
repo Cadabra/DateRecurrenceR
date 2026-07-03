@@ -17,6 +17,33 @@ public class MonthlyByDayOfWeekRecurrenceTest
     }
 
     /// <summary>
+    /// Regression: <see cref="MonthlyByDayOfWeekRecurrence.New(DateRange, MonthlyByDayOfWeekPattern)"/>
+    /// resolved the day of the Nth weekday only for the begin month and reused that fixed day number
+    /// in the actual start month. When the begin date was after the occurrence in its month, the
+    /// recurrence started on a date that is not an occurrence of the pattern at all.
+    /// </summary>
+    [Fact]
+    public void New_with_beginDate_after_occurrence_starts_at_next_real_occurrence()
+    {
+        // Arrange: 2nd Tuesday of every month; Jan 2026's is Jan 13, begin date is after it.
+        // The 2nd Tuesdays that follow: Feb 10, Mar 10, Apr 14.
+        var pattern = new MonthlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second);
+        var sut = MonthlyByDayOfWeekRecurrence.New(new DateRange(new DateOnly(2026, 1, 20), 3), pattern);
+
+        // Act
+        var dates = Collect(sut);
+
+        // Assert
+        dates.Should().Equal(
+            new DateOnly(2026, 2, 10),
+            new DateOnly(2026, 3, 10),
+            new DateOnly(2026, 4, 14));
+        sut.StartDate.Should().Be(new DateOnly(2026, 2, 10));
+        dates.Should().OnlyContain(date => sut.Contains(date),
+            "every enumerated date must be an occurrence of the pattern");
+    }
+
+    /// <summary>
     /// Regression: <see cref="MonthlyByDayOfWeekRecurrence.Contains"/> ignored the index of the day,
     /// so any Tuesday of a matching month was reported as an occurrence.
     /// </summary>
@@ -64,9 +91,12 @@ public class MonthlyByDayOfWeekRecurrenceTest
         var expected = new HashSet<DateOnly>(dates);
 
         // Assert
-        for (var date = dates.First().AddMonths(-interval); date <= dates.Last().AddMonths(interval); date = date.AddDays(1))
+        for (var date = dates.First().AddMonths(-interval);
+             date <= dates.Last().AddMonths(interval);
+             date = date.AddDays(1))
         {
-            sut.Contains(date).Should().Be(expected.Contains(date), $"Contains({date:yyyy-MM-dd}) must agree with the enumerator");
+            sut.Contains(date).Should().Be(expected.Contains(date),
+                $"Contains({date:yyyy-MM-dd}) must agree with the enumerator");
         }
     }
 }

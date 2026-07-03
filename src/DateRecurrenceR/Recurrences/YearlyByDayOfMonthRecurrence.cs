@@ -39,11 +39,11 @@ public readonly struct YearlyByDayOfMonthRecurrence : IRecurrence<YearlyByDayOfM
     private static YearlyByDayOfMonthRecurrence New(DateOnly beginDate, DateOnly fromDate, DateOnly toDate,
         YearlyByDayOfMonthPattern pattern)
     {
-        var date = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year, pattern.MonthOfYear, pattern.DayOfMonth);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            date.DayOfYear,
+            pattern.MonthOfYear,
+            pattern.DayOfMonth,
             pattern.Interval,
             out var startDate);
 
@@ -58,11 +58,11 @@ public readonly struct YearlyByDayOfMonthRecurrence : IRecurrence<YearlyByDayOfM
     private static YearlyByDayOfMonthRecurrence New(DateOnly beginDate, DateOnly fromDate, int count,
         YearlyByDayOfMonthPattern pattern)
     {
-        var date = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year, pattern.MonthOfYear, pattern.DayOfMonth);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            date.DayOfYear,
+            pattern.MonthOfYear,
+            pattern.DayOfMonth,
             pattern.Interval,
             out var startDate);
 
@@ -76,8 +76,17 @@ public readonly struct YearlyByDayOfMonthRecurrence : IRecurrence<YearlyByDayOfM
 
     private YearlyByDayOfMonthRecurrence(DateOnly startDate, int count, YearlyByDayOfMonthPattern pattern)
     {
-        _startDate = startDate;
         _pattern = pattern;
+
+        if (count < 1)
+        {
+            _startDate = DateOnly.MaxValue;
+            _stopDate = DateOnly.MinValue;
+            _count = 0;
+            return;
+        }
+
+        _startDate = startDate;
 
         (_stopDate, _count) = YearlyRecurrenceHelper.GetEndDateAndCount(
             _startDate,

@@ -10,9 +10,11 @@ internal struct MonthlyRecurrenceHelper
         int interval,
         out DateOnly startDate)
     {
+        if (fromDate < beginDate) fromDate = beginDate;
+
         var deltaToStartMonth = SubtractMonth(fromDate, beginDate);
 
-        var monthsDiff = Math.Max(deltaToStartMonth / interval * interval, 0);
+        var monthsDiff = deltaToStartMonth / interval * interval;
         if (deltaToStartMonth % interval > 0 || fromDate.Day > dayOfMonth) monthsDiff += interval;
 
         if (DateOutOfRangeByMonth(beginDate, monthsDiff))
@@ -24,6 +26,46 @@ internal struct MonthlyRecurrenceHelper
         beginDate = beginDate.AddMonths(monthsDiff);
 
         startDate = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfMonth);
+
+        return true;
+    }
+
+    public static bool TryGetStartDate(DateOnly beginDate,
+        DateOnly fromDate,
+        DayOfWeek dayOfWeek,
+        IndexOfDay indexOfDay,
+        int interval,
+        out DateOnly startDate)
+    {
+        if (fromDate < beginDate) fromDate = beginDate;
+
+        var deltaToStartMonth = SubtractMonth(fromDate, beginDate);
+
+        var monthsDiff = deltaToStartMonth / interval * interval;
+        if (deltaToStartMonth % interval > 0) monthsDiff += interval;
+
+        if (DateOutOfRangeByMonth(beginDate, monthsDiff))
+        {
+            startDate = default;
+            return false;
+        }
+
+        var monthDate = beginDate.AddMonths(monthsDiff);
+        startDate = DateOnlyHelper.GetDateByDayOfMonth(monthDate.Year, monthDate.Month, dayOfWeek, indexOfDay);
+
+        if (startDate < fromDate)
+        {
+            monthsDiff += interval;
+
+            if (DateOutOfRangeByMonth(beginDate, monthsDiff))
+            {
+                startDate = default;
+                return false;
+            }
+
+            monthDate = beginDate.AddMonths(monthsDiff);
+            startDate = DateOnlyHelper.GetDateByDayOfMonth(monthDate.Year, monthDate.Month, dayOfWeek, indexOfDay);
+        }
 
         return true;
     }

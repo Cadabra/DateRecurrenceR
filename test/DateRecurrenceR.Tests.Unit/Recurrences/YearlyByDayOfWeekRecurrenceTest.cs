@@ -17,6 +17,28 @@ public class YearlyByDayOfWeekRecurrenceTest
     }
 
     /// <summary>
+    /// Regression: <see cref="YearlyByDayOfWeekRecurrence.New(DateRange, YearlyByDayOfWeekPattern)"/>
+    /// converted the occurrence of the begin year to a day-of-year number and reused it for the
+    /// actual start year, so <see cref="YearlyByDayOfWeekRecurrence.StartDate"/> pointed to a date
+    /// that is not an occurrence and disagreed with the first enumerated date.
+    /// </summary>
+    [Fact]
+    public void StartDate_equals_first_enumerated_date()
+    {
+        // Arrange: 2nd Tuesday of March every year, begin date is after March 2026.
+        // The 2nd Tuesday of March 2027 is March 9.
+        var pattern = new YearlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second, new MonthOfYear(3));
+        var sut = YearlyByDayOfWeekRecurrence.New(new DateRange(new DateOnly(2026, 4, 1), 3), pattern);
+
+        // Act
+        var dates = Collect(sut);
+
+        // Assert
+        dates.First().Should().Be(new DateOnly(2027, 3, 9), "it is the 2nd Tuesday of March 2027");
+        sut.StartDate.Should().Be(dates.First(), "StartDate must be the first occurrence");
+    }
+
+    /// <summary>
     /// Regression: <see cref="YearlyByDayOfWeekRecurrence.Contains"/> ignored the index of the day,
     /// so any Friday of the matching month was reported as an occurrence.
     /// </summary>
