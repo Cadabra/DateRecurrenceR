@@ -128,9 +128,14 @@ public readonly struct YearlyByDayOfWeekRecurrence : IRecurrence<YearlyByDayOfWe
 
         if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
 
-        if ((_pattern.Interval - 1) * 7 < dateToCheck.Day || dateToCheck.Day < _pattern.Interval * 7) return true;
+        if ((dateToCheck.Year - _startDate.Year) % _pattern.Interval != 0) return false;
 
-        return (dateToCheck.Year - _startDate.Year) % _pattern.Interval == 0;
+        if (_pattern.IndexOfDay == IndexOfDay.Last)
+        {
+            return dateToCheck.Day + DaysInWeek > DateTime.DaysInMonth(dateToCheck.Year, dateToCheck.Month);
+        }
+
+        return (int)_pattern.IndexOfDay == (dateToCheck.Day - 1) / DaysInWeek;
     }
 
     /// <inheritdoc />

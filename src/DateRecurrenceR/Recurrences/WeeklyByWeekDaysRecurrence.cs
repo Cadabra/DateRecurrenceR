@@ -130,7 +130,8 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
         if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
 
         var fwdI = WeekDaysHelper.DayToIndex(_startDate.DayOfWeek, _pattern.FirstDayOfWeek);
-        if ((dateToCheck.DayNumber - _startDate.DayNumber + fwdI) % (_pattern.Interval * 7) > 7) return false;
+        if ((dateToCheck.DayNumber - _startDate.DayNumber + fwdI) % (_pattern.Interval * DaysInWeek) >= DaysInWeek)
+            return false;
 
         return true;
     }

@@ -127,9 +127,12 @@ public readonly struct MonthlyByDayOfWeekRecurrence : IRecurrence<MonthlyByDayOf
         if (((dateToCheck.Year * 12 + dateToCheck.Month) - (_startDate.Year * 12 + _startDate.Month)) % _pattern.Interval >
             0) return false;
 
-        if ((_pattern.Interval - 1) * 7 < dateToCheck.Day || dateToCheck.Day < _pattern.Interval * 7) return true;
+        if (_pattern.IndexOfDay == IndexOfDay.Last)
+        {
+            return dateToCheck.Day + DaysInWeek > DateTime.DaysInMonth(dateToCheck.Year, dateToCheck.Month);
+        }
 
-        return false;
+        return (int)_pattern.IndexOfDay == (dateToCheck.Day - 1) / DaysInWeek;
     }
 
     /// <inheritdoc />

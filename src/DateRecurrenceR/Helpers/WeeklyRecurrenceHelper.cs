@@ -1,5 +1,4 @@
 using DateRecurrenceR.Core;
-using DateRecurrenceR.Extensions;
 using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Helpers;
@@ -155,11 +154,10 @@ internal struct WeeklyRecurrenceHelper
         int interval,
         int count)
     {
-        var testCount = GetCount(startDate, weekDays, interval, count);
+        var daysCount = GetCount(startDate, weekDays, interval, count);
+        var endDayNumber = GetEndDateNumber(startDate, weekDays, firstDayOfWeek, interval, daysCount);
 
-        var endDayNumber = GetEndDateNumber(startDate, weekDays, interval, testCount);
-
-        return (DateOnly.FromDayNumber(endDayNumber), testCount);
+        return (DateOnly.FromDayNumber(endDayNumber), daysCount);
     }
 
     public static (DateOnly, int) GetEndDateAndCount(
@@ -169,115 +167,71 @@ internal struct WeeklyRecurrenceHelper
         int interval,
         DateOnly endDate)
     {
-        var testCount = GetCount(startDate, weekDays, firstDayOfWeek, interval, endDate);
-        var endDayNumber = GetEndDateNumber(startDate, weekDays, interval, testCount);
+        var daysCount = GetCount(startDate, weekDays, firstDayOfWeek, interval, endDate);
+        var endDayNumber = GetEndDateNumber(startDate, weekDays, firstDayOfWeek, interval, daysCount);
 
-        return (DateOnly.FromDayNumber(endDayNumber), testCount);
+        return (DateOnly.FromDayNumber(endDayNumber), daysCount);
     }
 
-    internal static int GetEndDateNumber(in DateOnly startDate, in WeekDays weekDays, in int interval, in int daysCount)
+    internal static int GetEndDateNumber(in DateOnly startDate, in WeekDays weekDays, DayOfWeek firstDayOfWeek,
+        in int interval, in int daysCount)
     {
         if (daysCount == 1)
         {
             return startDate.DayNumber;
         }
 
-        var endDayNumber = startDate.DayNumber;
-        var periodDays = DaysInWeek * interval;
-        var periodsCount = daysCount / weekDays.CountOfSelected;
-        var tailDaysCount = daysCount % weekDays.CountOfSelected;
+        var lastIndex = daysCount - 1;
+        var periodsCount = lastIndex / weekDays.CountOfSelected;
+        var tailIndex = lastIndex % weekDays.CountOfSelected;
 
-        if (periodsCount > 1)
-        {
-            endDayNumber += (periodsCount - 1) * periodDays;
-        }
-
-        int selectedIndex;
-        if (tailDaysCount == 0)
-        {
-            selectedIndex = weekDays.GetCountOfSelected(6, startDate.DayOfWeek) - 1;
-        }
-        else
-        {
-            selectedIndex = tailDaysCount - 1;
-            endDayNumber += periodDays;
-        }
-
-        weekDays.TryGet(selectedIndex, startDate.DayOfWeek, out var x);
-        var xx = WeekDaysHelper.GetDiffToDay(startDate.DayOfWeek, x);
-        return endDayNumber + xx;
+        return startDate.DayNumber
+               + periodsCount * DaysInWeek * interval
+               + GetSelectedDayOffset(weekDays, startDate.DayOfWeek, firstDayOfWeek, interval, tailIndex);
     }
 
-    internal static int GetEndDateNumber(in DateOnly startDate, in WeekDays weekDays, DayOfWeek firstDayOfWeek,
-        in int interval, in DateOnly endDate)
+    /// <summary>
+    /// Returns the offset in days from the start day to the occurrence at <paramref name="selectedIndex"/>
+    /// (zero-based, in enumeration order starting at the start day). Wrapping past the end of the week lands
+    /// in the next on-grid week, skipping the off-grid weeks.
+    /// </summary>
+    private static int GetSelectedDayOffset(in WeekDays weekDays, DayOfWeek startDayOfWeek, DayOfWeek firstDayOfWeek,
+        int interval, int selectedIndex)
     {
-        if (startDate == endDate)
+        weekDays.TryGet(selectedIndex, startDayOfWeek, out var day);
+        var diff = WeekDaysHelper.GetDiffToDay(startDayOfWeek, day);
+
+        if (WeekDaysHelper.DayToIndex(startDayOfWeek, firstDayOfWeek) + diff >= DaysInWeek)
         {
-            return startDate.DayNumber;
+            diff += (interval - 1) * DaysInWeek;
         }
 
-        var endDayNumber = startDate.DayNumber;
-        var periodDays = DaysInWeek * interval;
-        var daysCount = endDate.DayNumber - startDate.DayNumber + 1;
-        var periodsCount = daysCount / periodDays;
-        var tailDaysCount = daysCount % periodDays;
-
-        if (periodsCount > 1)
-        {
-            endDayNumber += (periodsCount - 1) * periodDays;
-        }
-
-        DayOfWeek selectedIndexA;
-        int selectedIndex;
-        if (tailDaysCount == 0)
-        {
-            selectedIndex = weekDays.GetCountOfSelected(6, startDate.DayOfWeek);
-        }
-        else if (tailDaysCount >= DaysInWeek)
-        {
-            endDayNumber += periodDays;
-            var di = WeekDaysHelper.DayToIndex(firstDayOfWeek.Prev(), startDate.DayOfWeek);
-            selectedIndex = weekDays.GetCountOfSelected(di, startDate.DayOfWeek);
-        }
-        else
-        {
-            endDayNumber += periodDays;
-            selectedIndex = weekDays.GetCountOfSelected(tailDaysCount, startDate.DayOfWeek);
-        }
-
-        weekDays.TryGet(selectedIndex - 1, startDate.DayOfWeek, out selectedIndexA);
-        var xx = WeekDaysHelper.GetDiffToDay(startDate.DayOfWeek, selectedIndexA);
-        return endDayNumber + xx;
+        return diff;
     }
 
     internal static int GetCount(DateOnly startDate, WeekDays weekDays, DayOfWeek firstDayOfWeek, int interval,
         DateOnly endDate)
     {
-        var actualCount = 0;
+        if (endDate < startDate)
+        {
+            return 0;
+        }
 
         var periodDays = DaysInWeek * interval;
         var rangeDaysCount = endDate.DayNumber - startDate.DayNumber + 1;
 
-        var desiredPeriodCount = rangeDaysCount / periodDays;
+        var actualCount = rangeDaysCount / periodDays * weekDays.CountOfSelected;
         var tailDaysCount = rangeDaysCount % periodDays;
 
-        actualCount += desiredPeriodCount * weekDays.CountOfSelected;
-
-        if (tailDaysCount == 0)
+        for (var i = 0; i < weekDays.CountOfSelected; i++)
         {
-            return actualCount;
+            if (GetSelectedDayOffset(weekDays, startDate.DayOfWeek, firstDayOfWeek, interval, i) < tailDaysCount)
+            {
+                actualCount++;
+            }
         }
 
-        if (tailDaysCount < DaysInWeek)
-        {
-            var c = weekDays.GetCountOfSelected(tailDaysCount - 1, startDate.DayOfWeek);
-
-            return actualCount + c;
-        }
-
-        var cc = weekDays.GetCountOfSelected(firstDayOfWeek.Prev(), startDate.DayOfWeek);
-
-        return actualCount + cc;
+        return actualCount;
     }
 
     internal static int GetCount(DateOnly startDate, WeekDays weekDays, int interval, int expectedCount)
