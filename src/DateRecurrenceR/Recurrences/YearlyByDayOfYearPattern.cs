@@ -6,7 +6,7 @@ namespace DateRecurrenceR.Recurrences;
 /// <summary>
 /// Represents the pattern for a yearly recurrence based on a specific day of the year.
 /// </summary>
-public readonly struct YearlyByDayOfYearPattern : ISpanParsable<YearlyByDayOfYearPattern>
+public readonly struct YearlyByDayOfYearPattern : ISpanParsable<YearlyByDayOfYearPattern>, IPatternParsable<YearlyByDayOfYearPattern>
 {
     /// <summary>
     /// Initializes a new instance of <see cref="YearlyByDayOfYearPattern"/> with the specified parameters.
@@ -54,20 +54,13 @@ public readonly struct YearlyByDayOfYearPattern : ISpanParsable<YearlyByDayOfYea
     /// <exception cref="FormatException">Thrown when <paramref name="s"/> is not a valid pattern string for this pattern.</exception>
     public static YearlyByDayOfYearPattern Parse(string s, IFormatProvider? provider = null)
     {
-        ArgumentNullException.ThrowIfNull(s);
-
-        return Parse(s.AsSpan(), provider);
+        return PatternParser.Parse<YearlyByDayOfYearPattern>(s);
     }
 
     /// <inheritdoc cref="Parse(string, IFormatProvider?)"/>
     public static YearlyByDayOfYearPattern Parse(ReadOnlySpan<char> s, IFormatProvider? provider = null)
     {
-        if (!TryParse(s, provider, out var result))
-        {
-            throw new FormatException($"The input is not a valid pattern string for {nameof(YearlyByDayOfYearPattern)}.");
-        }
-
-        return result;
+        return PatternParser.Parse<YearlyByDayOfYearPattern>(s);
     }
 
     /// <summary>
@@ -79,20 +72,19 @@ public readonly struct YearlyByDayOfYearPattern : ISpanParsable<YearlyByDayOfYea
     /// <returns><see langword="true"/> if the string was parsed successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(string? s, IFormatProvider? provider, out YearlyByDayOfYearPattern result)
     {
-        return TryParse(s.AsSpan(), provider, out result);
+        return PatternParser.TryParse(s.AsSpan(), out result);
     }
 
     /// <inheritdoc cref="TryParse(string?, IFormatProvider?, out YearlyByDayOfYearPattern)"/>
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out YearlyByDayOfYearPattern result)
     {
-        if (PatternSerializer.TryParse(s, allowRangeParts: false, out var components) &&
-            components.Kind == PatternKind.YearlyByDayOfYear)
-        {
-            result = new YearlyByDayOfYearPattern(components.Interval, components.DayOfYear);
-            return true;
-        }
+        return PatternParser.TryParse(s, out result);
+    }
 
-        result = default;
-        return false;
+    static PatternKind IPatternParsable<YearlyByDayOfYearPattern>.Kind => PatternKind.YearlyByDayOfYear;
+
+    static YearlyByDayOfYearPattern IPatternParsable<YearlyByDayOfYearPattern>.FromComponents(in PatternComponents components)
+    {
+        return new YearlyByDayOfYearPattern(components.Interval, components.DayOfYear);
     }
 }

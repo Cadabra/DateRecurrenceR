@@ -6,7 +6,7 @@ namespace DateRecurrenceR.Recurrences;
 /// <summary>
 /// Represents the pattern for a monthly recurrence based on a specific day of the month.
 /// </summary>
-public readonly struct MonthlyByDayOfMonthPattern : ISpanParsable<MonthlyByDayOfMonthPattern>
+public readonly struct MonthlyByDayOfMonthPattern : ISpanParsable<MonthlyByDayOfMonthPattern>, IPatternParsable<MonthlyByDayOfMonthPattern>
 {
     /// <summary>
     /// Initializes a new instance of <see cref="MonthlyByDayOfMonthPattern"/> with the specified interval and day of month.
@@ -54,20 +54,13 @@ public readonly struct MonthlyByDayOfMonthPattern : ISpanParsable<MonthlyByDayOf
     /// <exception cref="FormatException">Thrown when <paramref name="s"/> is not a valid pattern string for this pattern.</exception>
     public static MonthlyByDayOfMonthPattern Parse(string s, IFormatProvider? provider = null)
     {
-        ArgumentNullException.ThrowIfNull(s);
-
-        return Parse(s.AsSpan(), provider);
+        return PatternParser.Parse<MonthlyByDayOfMonthPattern>(s);
     }
 
     /// <inheritdoc cref="Parse(string, IFormatProvider?)"/>
     public static MonthlyByDayOfMonthPattern Parse(ReadOnlySpan<char> s, IFormatProvider? provider = null)
     {
-        if (!TryParse(s, provider, out var result))
-        {
-            throw new FormatException($"The input is not a valid pattern string for {nameof(MonthlyByDayOfMonthPattern)}.");
-        }
-
-        return result;
+        return PatternParser.Parse<MonthlyByDayOfMonthPattern>(s);
     }
 
     /// <summary>
@@ -79,20 +72,19 @@ public readonly struct MonthlyByDayOfMonthPattern : ISpanParsable<MonthlyByDayOf
     /// <returns><see langword="true"/> if the string was parsed successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(string? s, IFormatProvider? provider, out MonthlyByDayOfMonthPattern result)
     {
-        return TryParse(s.AsSpan(), provider, out result);
+        return PatternParser.TryParse(s.AsSpan(), out result);
     }
 
     /// <inheritdoc cref="TryParse(string?, IFormatProvider?, out MonthlyByDayOfMonthPattern)"/>
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out MonthlyByDayOfMonthPattern result)
     {
-        if (PatternSerializer.TryParse(s, allowRangeParts: false, out var components) &&
-            components.Kind == PatternKind.MonthlyByDayOfMonth)
-        {
-            result = new MonthlyByDayOfMonthPattern(components.Interval, components.DayOfMonth);
-            return true;
-        }
+        return PatternParser.TryParse(s, out result);
+    }
 
-        result = default;
-        return false;
+    static PatternKind IPatternParsable<MonthlyByDayOfMonthPattern>.Kind => PatternKind.MonthlyByDayOfMonth;
+
+    static MonthlyByDayOfMonthPattern IPatternParsable<MonthlyByDayOfMonthPattern>.FromComponents(in PatternComponents components)
+    {
+        return new MonthlyByDayOfMonthPattern(components.Interval, components.DayOfMonth);
     }
 }

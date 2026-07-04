@@ -10,8 +10,8 @@ Toolchain=InProcessEmitToolchain
 ```
 | Method        | Mean        | Error    | StdDev   | Allocated |
 |-------------- |------------:|---------:|---------:|----------:|
-| DailyStruct   |    25.45 ns | 0.077 ns | 0.064 ns |         - |
-| WeeklyStruct  |   128.13 ns | 0.249 ns | 0.221 ns |         - |
-| MonthlyStruct | 1,080.20 ns | 1.520 ns | 1.269 ns |         - |
-| YearlyStruct  |   119.71 ns | 0.206 ns | 0.192 ns |         - |
-| DailyBoxed    |    25.45 ns | 0.065 ns | 0.058 ns |         - |
+| DailyStruct   |    25.47 ns | 0.060 ns | 0.050 ns |         - |
+| WeeklyStruct  |   119.58 ns | 0.066 ns | 0.059 ns |         - |
+| MonthlyStruct | 1,079.47 ns | 0.677 ns | 0.566 ns |         - |
+| YearlyStruct  |   106.12 ns | 0.264 ns | 0.206 ns |         - |
+| DailyBoxed    |    25.38 ns | 0.057 ns | 0.051 ns |         - |

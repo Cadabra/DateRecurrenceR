@@ -6,7 +6,7 @@ namespace DateRecurrenceR.Recurrences;
 /// <summary>
 /// Represents the pattern for a daily recurrence.
 /// </summary>
-public readonly struct DailyPattern : ISpanParsable<DailyPattern>
+public readonly struct DailyPattern : ISpanParsable<DailyPattern>, IPatternParsable<DailyPattern>
 {
     /// <summary>
     /// Initializes a new instance of <see cref="DailyPattern"/> with the specified interval.
@@ -47,20 +47,13 @@ public readonly struct DailyPattern : ISpanParsable<DailyPattern>
     /// <exception cref="FormatException">Thrown when <paramref name="s"/> is not a valid pattern string for this pattern.</exception>
     public static DailyPattern Parse(string s, IFormatProvider? provider = null)
     {
-        ArgumentNullException.ThrowIfNull(s);
-
-        return Parse(s.AsSpan(), provider);
+        return PatternParser.Parse<DailyPattern>(s);
     }
 
     /// <inheritdoc cref="Parse(string, IFormatProvider?)"/>
     public static DailyPattern Parse(ReadOnlySpan<char> s, IFormatProvider? provider = null)
     {
-        if (!TryParse(s, provider, out var result))
-        {
-            throw new FormatException($"The input is not a valid pattern string for {nameof(DailyPattern)}.");
-        }
-
-        return result;
+        return PatternParser.Parse<DailyPattern>(s);
     }
 
     /// <summary>
@@ -72,20 +65,19 @@ public readonly struct DailyPattern : ISpanParsable<DailyPattern>
     /// <returns><see langword="true"/> if the string was parsed successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(string? s, IFormatProvider? provider, out DailyPattern result)
     {
-        return TryParse(s.AsSpan(), provider, out result);
+        return PatternParser.TryParse(s.AsSpan(), out result);
     }
 
     /// <inheritdoc cref="TryParse(string?, IFormatProvider?, out DailyPattern)"/>
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out DailyPattern result)
     {
-        if (PatternSerializer.TryParse(s, allowRangeParts: false, out var components) &&
-            components.Kind == PatternKind.Daily)
-        {
-            result = new DailyPattern(components.Interval);
-            return true;
-        }
+        return PatternParser.TryParse(s, out result);
+    }
 
-        result = default;
-        return false;
+    static PatternKind IPatternParsable<DailyPattern>.Kind => PatternKind.Daily;
+
+    static DailyPattern IPatternParsable<DailyPattern>.FromComponents(in PatternComponents components)
+    {
+        return new DailyPattern(components.Interval);
     }
 }

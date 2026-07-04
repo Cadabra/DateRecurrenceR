@@ -6,7 +6,7 @@ namespace DateRecurrenceR.Recurrences;
 /// <summary>
 /// Represents the pattern for a weekly recurrence based on specific days of the week.
 /// </summary>
-public readonly struct WeeklyByWeekDaysPattern : ISpanParsable<WeeklyByWeekDaysPattern>
+public readonly struct WeeklyByWeekDaysPattern : ISpanParsable<WeeklyByWeekDaysPattern>, IPatternParsable<WeeklyByWeekDaysPattern>
 {
     /// <summary>
     /// Initializes a new instance of <see cref="WeeklyByWeekDaysPattern"/> with the specified parameters.
@@ -62,20 +62,13 @@ public readonly struct WeeklyByWeekDaysPattern : ISpanParsable<WeeklyByWeekDaysP
     /// <exception cref="FormatException">Thrown when <paramref name="s"/> is not a valid pattern string for this pattern.</exception>
     public static WeeklyByWeekDaysPattern Parse(string s, IFormatProvider? provider = null)
     {
-        ArgumentNullException.ThrowIfNull(s);
-
-        return Parse(s.AsSpan(), provider);
+        return PatternParser.Parse<WeeklyByWeekDaysPattern>(s);
     }
 
     /// <inheritdoc cref="Parse(string, IFormatProvider?)"/>
     public static WeeklyByWeekDaysPattern Parse(ReadOnlySpan<char> s, IFormatProvider? provider = null)
     {
-        if (!TryParse(s, provider, out var result))
-        {
-            throw new FormatException($"The input is not a valid pattern string for {nameof(WeeklyByWeekDaysPattern)}.");
-        }
-
-        return result;
+        return PatternParser.Parse<WeeklyByWeekDaysPattern>(s);
     }
 
     /// <summary>
@@ -87,20 +80,19 @@ public readonly struct WeeklyByWeekDaysPattern : ISpanParsable<WeeklyByWeekDaysP
     /// <returns><see langword="true"/> if the string was parsed successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(string? s, IFormatProvider? provider, out WeeklyByWeekDaysPattern result)
     {
-        return TryParse(s.AsSpan(), provider, out result);
+        return PatternParser.TryParse(s.AsSpan(), out result);
     }
 
     /// <inheritdoc cref="TryParse(string?, IFormatProvider?, out WeeklyByWeekDaysPattern)"/>
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out WeeklyByWeekDaysPattern result)
     {
-        if (PatternSerializer.TryParse(s, allowRangeParts: false, out var components) &&
-            components.Kind == PatternKind.WeeklyByWeekDays)
-        {
-            result = new WeeklyByWeekDaysPattern(components.Interval, components.WeekDays, components.FirstDayOfWeek);
-            return true;
-        }
+        return PatternParser.TryParse(s, out result);
+    }
 
-        result = default;
-        return false;
+    static PatternKind IPatternParsable<WeeklyByWeekDaysPattern>.Kind => PatternKind.WeeklyByWeekDays;
+
+    static WeeklyByWeekDaysPattern IPatternParsable<WeeklyByWeekDaysPattern>.FromComponents(in PatternComponents components)
+    {
+        return new WeeklyByWeekDaysPattern(components.Interval, components.WeekDays, components.FirstDayOfWeek);
     }
 }
