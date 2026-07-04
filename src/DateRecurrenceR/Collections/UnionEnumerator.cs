@@ -10,30 +10,9 @@ internal struct UnionEnumerator : IEnumerator<DateOnly>
     public UnionEnumerator(IEnumerator<DateOnly> e1, IEnumerator<DateOnly> e2)
     {
         var hash = new HashSet<EWrapper>();
-        
-        if (e1 is UnionEnumerator ue1)
-        {
-            for (var j = 0; j < ue1._enumerators.Length; j++)
-            {
-                hash.Add(ue1._enumerators[j]);
-            }
-        }
-        else
-        {
-            hash.Add(new EWrapper(e1));
-        }
-        
-        if (e2 is UnionEnumerator ue2)
-        {
-            for (var j = 0; j < ue2._enumerators.Length; j++)
-            {
-                hash.Add(ue2._enumerators[j]);
-            }
-        }
-        else
-        {
-            hash.Add(new EWrapper(e2));
-        }
+
+        Add(hash, e1);
+        Add(hash, e2);
 
         _enumerators = hash.ToArray();
 
@@ -43,42 +22,10 @@ internal struct UnionEnumerator : IEnumerator<DateOnly>
     public UnionEnumerator(IEnumerator<DateOnly> e1, IEnumerator<DateOnly> e2, IEnumerator<DateOnly> e3)
     {
         var hash = new HashSet<EWrapper>();
-        
-        if (e1 is UnionEnumerator ue1)
-        {
-            for (var j = 0; j < ue1._enumerators.Length; j++)
-            {
-                hash.Add(ue1._enumerators[j]);
-            }
-        }
-        else
-        {
-            hash.Add(new EWrapper(e1));
-        }
-        
-        if (e2 is UnionEnumerator ue2)
-        {
-            for (var j = 0; j < ue2._enumerators.Length; j++)
-            {
-                hash.Add(ue2._enumerators[j]);
-            }
-        }
-        else
-        {
-            hash.Add(new EWrapper(e2));
-        }
-        
-        if (e3 is UnionEnumerator ue3)
-        {
-            for (var j = 0; j < ue3._enumerators.Length; j++)
-            {
-                hash.Add(ue3._enumerators[j]);
-            }
-        }
-        else
-        {
-            hash.Add(new EWrapper(e3));
-        }
+
+        Add(hash, e1);
+        Add(hash, e2);
+        Add(hash, e3);
 
         _enumerators = hash.ToArray();
 
@@ -91,17 +38,7 @@ internal struct UnionEnumerator : IEnumerator<DateOnly>
 
         for (var i = 0; i < enumerators.Count; i++)
         {
-            if (enumerators[i] is UnionEnumerator ue)
-            {
-                for (var j = 0; j < ue._enumerators.Length; j++)
-                {
-                    hash.Add(ue._enumerators[j]);
-                }
-            }
-            else
-            {
-                hash.Add(new EWrapper(enumerators[i]));
-            }
+            Add(hash, enumerators[i]);
         }
 
         _enumerators = hash.ToArray();
@@ -115,22 +52,27 @@ internal struct UnionEnumerator : IEnumerator<DateOnly>
 
         foreach (var enumerator in enumerators)
         {
-            if (enumerator is UnionEnumerator ue)
-            {
-                for (var j = 0; j < ue._enumerators.Length; j++)
-                {
-                    hash.Add(ue._enumerators[j]);
-                }
-            }
-            else
-            {
-                hash.Add(new EWrapper(enumerator));
-            }
+            Add(hash, enumerator);
         }
 
         _enumerators = hash.ToArray();
 
         Current = default;
+    }
+
+    private static void Add(HashSet<EWrapper> hash, IEnumerator<DateOnly> enumerator)
+    {
+        if (enumerator is UnionEnumerator ue)
+        {
+            for (var j = 0; j < ue._enumerators.Length; j++)
+            {
+                hash.Add(ue._enumerators[j]);
+            }
+        }
+        else
+        {
+            hash.Add(new EWrapper(enumerator));
+        }
     }
 
     public bool MoveNext()

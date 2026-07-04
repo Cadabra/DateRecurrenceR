@@ -43,7 +43,7 @@ public readonly struct Interval : IEquatable<Interval>
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        return obj is Interval other && Equals(other);
     }
 
     /// <summary>

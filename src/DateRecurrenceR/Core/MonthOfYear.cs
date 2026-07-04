@@ -43,7 +43,7 @@ public readonly struct MonthOfYear : IEquatable<MonthOfYear>
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        return obj is MonthOfYear other && Equals(other);
     }
 
     /// <summary>
