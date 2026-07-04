@@ -1,5 +1,6 @@
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
+using DateRecurrenceR.Internals;
 using FluentAssertions;
 
 namespace DateRecurrenceR.Tests.Unit.Helpers;
@@ -14,7 +15,7 @@ public sealed class YearlyRecurrenceHelperTests
     public void TryGetStartDate_returns_true_when_fromDate_equals_beginDate()
     {
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
-            DateOnly.MinValue, DateOnly.MinValue, 1, 1, out _);
+            DateOnly.MinValue, DateOnly.MinValue, YearlyDateResolver.ByDayOfYear(1), 1, out _);
 
         canStart.Should().BeTrue();
     }
@@ -23,7 +24,7 @@ public sealed class YearlyRecurrenceHelperTests
     public void TryGetStartDate_returns_true_when_fromDate_after_beginDate()
     {
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2020, 1, 1), new DateOnly(2023, 6, 1), 100, 1, out var startDate);
+            new DateOnly(2020, 1, 1), new DateOnly(2023, 6, 1), YearlyDateResolver.ByDayOfYear(100), 1, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Year.Should().BeGreaterThanOrEqualTo(2023);
@@ -33,7 +34,7 @@ public sealed class YearlyRecurrenceHelperTests
     public void TryGetStartDate_returns_false_at_MaxValue()
     {
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
-            DateOnly.MaxValue, DateOnly.MaxValue, 1, 1, out _);
+            DateOnly.MaxValue, DateOnly.MaxValue, YearlyDateResolver.ByDayOfYear(1), 1, out _);
 
         canStart.Should().BeFalse();
     }
@@ -42,7 +43,7 @@ public sealed class YearlyRecurrenceHelperTests
     public void TryGetStartDate_returns_false_when_out_of_range()
     {
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(9999, 1, 1), new DateOnly(9999, 1, 2), 1, 1, out _);
+            new DateOnly(9999, 1, 1), new DateOnly(9999, 1, 2), YearlyDateResolver.ByDayOfYear(1), 1, out _);
 
         canStart.Should().BeFalse();
     }
@@ -51,7 +52,7 @@ public sealed class YearlyRecurrenceHelperTests
     public void TryGetStartDate_skips_to_next_year_when_fromDate_past_dayOfYear()
     {
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2020, 1, 1), new DateOnly(2020, 6, 1), 100, 1, out var startDate);
+            new DateOnly(2020, 1, 1), new DateOnly(2020, 6, 1), YearlyDateResolver.ByDayOfYear(100), 1, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Year.Should().Be(2021);
@@ -61,7 +62,7 @@ public sealed class YearlyRecurrenceHelperTests
     public void TryGetStartDate_respects_interval()
     {
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2020, 1, 1), new DateOnly(2021, 1, 1), 1, 3, out var startDate);
+            new DateOnly(2020, 1, 1), new DateOnly(2021, 1, 1), YearlyDateResolver.ByDayOfYear(1), 3, out var startDate);
 
         canStart.Should().BeTrue();
         // From 2020 with interval=3, next aligned year >= 2021 is 2023
@@ -77,7 +78,7 @@ public sealed class YearlyRecurrenceHelperTests
     {
         var start = new DateOnly(2020, 1, 1);
 
-        var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, 1, new Interval(1), 5);
+        var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, YearlyDateResolver.ByDayOfYear(1), new Interval(1), 5);
 
         count.Should().Be(5);
         stopDate.Should().Be(new DateOnly(2024, 1, 1)); // last occurrence: 2020..2024
@@ -88,7 +89,7 @@ public sealed class YearlyRecurrenceHelperTests
     {
         var start = new DateOnly(2020, 1, 1);
 
-        var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, 1, new Interval(2), 3);
+        var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, YearlyDateResolver.ByDayOfYear(1), new Interval(2), 3);
 
         count.Should().Be(3);
         stopDate.Should().Be(new DateOnly(2024, 1, 1)); // last occurrence: 2020, 2022, 2024
@@ -110,7 +111,7 @@ public sealed class YearlyRecurrenceHelperTests
         // endDate in 2023 but before day 100
         var end = new DateOnly(2023, 4, 9);
 
-        var (_, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, 100, new Interval(1), end);
+        var (_, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, YearlyDateResolver.ByDayOfYear(100), new Interval(1), end);
 
         count.Should().Be(3); // 2020, 2021, 2022 — day 100 of 2023 is after endDate (Apr 9), so 2023 excluded
     }
@@ -125,7 +126,7 @@ public sealed class YearlyRecurrenceHelperTests
 
         var end = new DateOnly(2023, 4, 10); // exactly day 100
 
-        var (_, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, 100, new Interval(1), end);
+        var (_, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, YearlyDateResolver.ByDayOfYear(100), new Interval(1), end);
 
         count.Should().Be(4); // 2020, 2021, 2022, 2023 all included
     }
@@ -140,7 +141,7 @@ public sealed class YearlyRecurrenceHelperTests
 
         var end = new DateOnly(2023, 4, 11);
 
-        var (_, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, 100, new Interval(1), end);
+        var (_, count) = YearlyRecurrenceHelper.GetEndDateAndCount(start, YearlyDateResolver.ByDayOfYear(100), new Interval(1), end);
 
         count.Should().Be(4); // 2020, 2021, 2022, 2023 all included
     }
@@ -155,7 +156,7 @@ public sealed class YearlyRecurrenceHelperTests
         var start = new DateOnly(2020, 6, 15);
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(6), new DayOfMonth(15), new Interval(1), 3);
+            start, YearlyDateResolver.ByDayOfMonth(6, 15), new Interval(1), 3);
 
         count.Should().Be(3);
         stopDate.Should().Be(new DateOnly(2022, 6, 15)); // last occurrence: 2020..2022
@@ -170,7 +171,7 @@ public sealed class YearlyRecurrenceHelperTests
         var start = new DateOnly(2020, 12, 25);
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(12), new DayOfMonth(25), new Interval(1), 4);
+            start, YearlyDateResolver.ByDayOfMonth(12, 25), new Interval(1), 4);
 
         count.Should().Be(4);
         stopDate.Should().Be(new DateOnly(2023, 12, 25)); // last occurrence: 2020..2023
@@ -191,7 +192,7 @@ public sealed class YearlyRecurrenceHelperTests
         var end = new DateOnly(2023, 6, 14); // one day before recurrence
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(6), new DayOfMonth(15), new Interval(1), end);
+            start, YearlyDateResolver.ByDayOfMonth(6, 15), new Interval(1), end);
 
         stopDate.Should().BeOnOrBefore(end);
         count.Should().Be(3); // 2020, 2021, 2022 — Jun 15 2023 is after endDate (Jun 14), so 2023 excluded
@@ -207,7 +208,7 @@ public sealed class YearlyRecurrenceHelperTests
         var end = new DateOnly(2023, 6, 15);
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(6), new DayOfMonth(15), new Interval(1), end);
+            start, YearlyDateResolver.ByDayOfMonth(6, 15), new Interval(1), end);
 
         stopDate.Should().Be(new DateOnly(2023, 6, 15));
         count.Should().Be(4); // 2020, 2021, 2022, 2023 all included
@@ -223,7 +224,7 @@ public sealed class YearlyRecurrenceHelperTests
         var end = new DateOnly(2023, 6, 16);
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(6), new DayOfMonth(15), new Interval(1), end);
+            start, YearlyDateResolver.ByDayOfMonth(6, 15), new Interval(1), end);
 
         stopDate.Should().Be(new DateOnly(2023, 6, 15));
         count.Should().Be(4); // 2020, 2021, 2022, 2023 all included
@@ -239,7 +240,7 @@ public sealed class YearlyRecurrenceHelperTests
         var end = new DateOnly(2023, 12, 24); // one day before
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(12), new DayOfMonth(25), new Interval(1), end);
+            start, YearlyDateResolver.ByDayOfMonth(12, 25), new Interval(1), end);
 
         stopDate.Should().BeOnOrBefore(end);
     }
@@ -251,7 +252,7 @@ public sealed class YearlyRecurrenceHelperTests
         var end = new DateOnly(2023, 12, 25);
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(12), new DayOfMonth(25), new Interval(1), end);
+            start, YearlyDateResolver.ByDayOfMonth(12, 25), new Interval(1), end);
 
         stopDate.Should().Be(new DateOnly(2023, 12, 25));
     }
@@ -273,7 +274,7 @@ public sealed class YearlyRecurrenceHelperTests
         var end = new DateOnly(2023, 3, 5);
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(3), DayOfWeek.Monday, IndexOfDay.First, new Interval(1), end);
+            start, YearlyDateResolver.ByDayOfWeek(3, DayOfWeek.Monday, IndexOfDay.First), new Interval(1), end);
 
         stopDate.Should().BeOnOrBefore(end);
     }
@@ -285,7 +286,7 @@ public sealed class YearlyRecurrenceHelperTests
         var end = new DateOnly(2023, 3, 10);
 
         var (stopDate, count) = YearlyRecurrenceHelper.GetEndDateAndCount(
-            start, new MonthOfYear(3), DayOfWeek.Monday, IndexOfDay.First, new Interval(1), end);
+            start, YearlyDateResolver.ByDayOfWeek(3, DayOfWeek.Monday, IndexOfDay.First), new Interval(1), end);
 
         stopDate.Should().BeOnOrBefore(end);
         stopDate.Year.Should().Be(2023);

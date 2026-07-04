@@ -386,4 +386,23 @@ public sealed class RecurrenceMonthlyTests
             new DateOnly(2026, 1, 1),
             new DateOnly(2026, 2, 1));
     }
+
+    /// <summary>
+    /// Regression: the by-dayOfWeek overloads resolved the Nth weekday only for the begin month
+    /// and reused that fixed day number in the actual start month, so the first yielded date
+    /// could be a non-occurrence and the real first occurrence was skipped.
+    /// </summary>
+    [Fact]
+    public void Monthly_ByDayOfWeek_with_beginDate_after_occurrence_starts_at_next_real_occurrence()
+    {
+        // 2nd Tuesday of Jan 2026 is Jan 13; begin date is after it.
+        // The 2nd Tuesdays that follow: Feb 10, Mar 10, Apr 14.
+        var dates = Collect(Recurrence.Monthly(
+            new DateOnly(2026, 1, 20), 3, DayOfWeek.Tuesday, IndexOfDay.Second, new Interval(1)));
+
+        dates.Should().Equal(
+            new DateOnly(2026, 2, 10),
+            new DateOnly(2026, 3, 10),
+            new DateOnly(2026, 4, 14));
+    }
 }

@@ -49,10 +49,11 @@ public partial struct Recurrence
     {
         if (count < 1) return MonthlyEnumerator.Empty;
 
+        var resolver = MonthlyDateResolver.ByDayOfMonth(dayOfMonth);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            dayOfMonth,
+            resolver,
             interval,
             out var startDate);
 
@@ -60,7 +61,7 @@ public partial struct Recurrence
 
         var (_, safeCount) = MonthlyRecurrenceHelper.GetEndDateAndCount(
             startDate,
-            dayOfMonth,
+            resolver,
             interval,
             count);
 
@@ -68,7 +69,7 @@ public partial struct Recurrence
             startDate,
             safeCount,
             interval,
-            MonthlyDateResolver.ByDayOfMonth(dayOfMonth));
+            resolver);
     }
 
     /// <summary>
@@ -109,11 +110,11 @@ public partial struct Recurrence
         IndexOfDay indexOfDay,
         Interval interval)
     {
-        var date = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
+        var resolver = MonthlyDateResolver.ByDayOfWeek(dayOfWeek, indexOfDay);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            date.Day,
+            resolver,
             interval,
             out var startDate);
 
@@ -121,8 +122,7 @@ public partial struct Recurrence
 
         var (_, safeCount) = MonthlyRecurrenceHelper.GetEndDateAndCount(
             startDate,
-            dayOfWeek,
-            indexOfDay,
+            resolver,
             interval,
             count);
 
@@ -130,7 +130,7 @@ public partial struct Recurrence
             startDate,
             safeCount,
             interval,
-            MonthlyDateResolver.ByDayOfWeek(dayOfWeek, indexOfDay));
+            resolver);
     }
 
     /// <summary>
@@ -180,10 +180,11 @@ public partial struct Recurrence
         DayOfMonth dayOfMonth,
         Interval interval)
     {
+        var resolver = MonthlyDateResolver.ByDayOfMonth(dayOfMonth);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            dayOfMonth,
+            resolver,
             interval,
             out var startDate);
 
@@ -193,7 +194,7 @@ public partial struct Recurrence
 
         var (_, safeCount) = MonthlyRecurrenceHelper.GetEndDateAndCount(
             startDate,
-            dayOfMonth,
+            resolver,
             interval,
             stopDate);
 
@@ -201,7 +202,7 @@ public partial struct Recurrence
             startDate,
             safeCount,
             interval,
-            MonthlyDateResolver.ByDayOfMonth(dayOfMonth));
+            resolver);
     }
 
     /// <summary>
@@ -249,11 +250,11 @@ public partial struct Recurrence
         IndexOfDay indexOfDay,
         Interval interval)
     {
-        var date = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
-        bool canStart = MonthlyRecurrenceHelper.TryGetStartDate(
+        var resolver = MonthlyDateResolver.ByDayOfWeek(dayOfWeek, indexOfDay);
+        var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            date.Day,
+            resolver,
             interval,
             out var startDate);
 
@@ -263,8 +264,7 @@ public partial struct Recurrence
 
         var (_, safeCount) = MonthlyRecurrenceHelper.GetEndDateAndCount(
             startDate,
-            dayOfWeek,
-            indexOfDay,
+            resolver,
             interval,
             stopDate);
 
@@ -272,6 +272,6 @@ public partial struct Recurrence
             startDate,
             safeCount,
             interval,
-            MonthlyDateResolver.ByDayOfWeek(dayOfWeek, indexOfDay));
+            resolver);
     }
 }

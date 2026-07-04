@@ -38,6 +38,8 @@ public class YearlyByDayOfYearRecurrenceTest
             new DateOnly(2026, 12, 31));
         dates.Should().OnlyContain(date => sut.Contains(date),
             "Contains must accept every date the enumerator produces");
+        sut.StopDate.Should().Be(dates.Last(),
+            "StopDate must be the last occurrence, clamped the same way as the enumerator");
     }
 
     /// <summary>

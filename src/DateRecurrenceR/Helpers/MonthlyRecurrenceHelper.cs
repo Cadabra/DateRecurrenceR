@@ -1,4 +1,4 @@
-using DateRecurrenceR.Core;
+using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Helpers;
 
@@ -6,34 +6,7 @@ internal struct MonthlyRecurrenceHelper
 {
     public static bool TryGetStartDate(DateOnly beginDate,
         DateOnly fromDate,
-        int dayOfMonth,
-        int interval,
-        out DateOnly startDate)
-    {
-        if (fromDate < beginDate) fromDate = beginDate;
-
-        var deltaToStartMonth = SubtractMonth(fromDate, beginDate);
-
-        var monthsDiff = deltaToStartMonth / interval * interval;
-        if (deltaToStartMonth % interval > 0 || fromDate.Day > dayOfMonth) monthsDiff += interval;
-
-        if (DateOutOfRangeByMonth(beginDate, monthsDiff))
-        {
-            startDate = default;
-            return false;
-        }
-
-        beginDate = beginDate.AddMonths(monthsDiff);
-
-        startDate = DateOnlyHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfMonth);
-
-        return true;
-    }
-
-    public static bool TryGetStartDate(DateOnly beginDate,
-        DateOnly fromDate,
-        DayOfWeek dayOfWeek,
-        IndexOfDay indexOfDay,
+        MonthlyDateResolver resolver,
         int interval,
         out DateOnly startDate)
     {
@@ -51,7 +24,7 @@ internal struct MonthlyRecurrenceHelper
         }
 
         var monthDate = beginDate.AddMonths(monthsDiff);
-        startDate = DateOnlyHelper.GetDateByDayOfMonth(monthDate.Year, monthDate.Month, dayOfWeek, indexOfDay);
+        startDate = resolver.GetDate(monthDate.Year, monthDate.Month);
 
         if (startDate < fromDate)
         {
@@ -64,98 +37,56 @@ internal struct MonthlyRecurrenceHelper
             }
 
             monthDate = beginDate.AddMonths(monthsDiff);
-            startDate = DateOnlyHelper.GetDateByDayOfMonth(monthDate.Year, monthDate.Month, dayOfWeek, indexOfDay);
+            startDate = resolver.GetDate(monthDate.Year, monthDate.Month);
         }
 
         return true;
     }
 
-    public static (DateOnly, int) GetEndDateAndCount(DateOnly startDate, int dayOfMonth, int interval, int count)
+    public static (DateOnly, int) GetEndDateAndCount(DateOnly startDate,
+        MonthlyDateResolver resolver,
+        int interval,
+        int count)
     {
-        var startMonthNumber = 12 * startDate.Year + startDate.Month;
-        var maxMonthNumber = 12 * DateOnly.MaxValue.Year + DateOnly.MaxValue.Month;
+        if (count < 1) return (startDate, 0);
+
+        var startMonthNumber = MonthsInYear * (startDate.Year - 1) + startDate.Month;
+        var maxMonthNumber = MonthsInYear * (DateOnly.MaxValue.Year - 1) + DateOnly.MaxValue.Month;
 
         var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval + 1, count);
         var endMonthNumber = startMonthNumber + (safeCount - 1) * interval;
 
-        var endYear = (endMonthNumber - 1) / 12;
-        var endMonth = (endMonthNumber - 1) % 12 + 1;
+        var endYear = (endMonthNumber - 1) / MonthsInYear + 1;
+        var endMonth = (endMonthNumber - 1) % MonthsInYear + 1;
 
-        return (DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfMonth), safeCount);
+        return (resolver.GetDate(endYear, endMonth), safeCount);
     }
 
-    public static (DateOnly, int) GetEndDateAndCount(DateOnly startDate, int dayOfMonth, int interval, DateOnly endDate)
+    public static (DateOnly, int) GetEndDateAndCount(DateOnly startDate,
+        MonthlyDateResolver resolver,
+        int interval,
+        DateOnly endDate)
     {
-        var startMonthNumber = 12 * (startDate.Year - 1) + startDate.Month;
-        var endMonthNumber = 12 * (endDate.Year - 1) + endDate.Month;
+        var startMonthNumber = MonthsInYear * (startDate.Year - 1) + startDate.Month;
+        var endMonthNumber = MonthsInYear * (endDate.Year - 1) + endDate.Month;
         var count = (endMonthNumber - startMonthNumber) / interval + 1;
         var actualEndMonthNumber = startMonthNumber + (count - 1) * interval;
 
-        var endYear = (actualEndMonthNumber - 1) / 12 + 1;
-        var endMonth = (actualEndMonthNumber - 1) % 12 + 1;
+        var endYear = (actualEndMonthNumber - 1) / MonthsInYear + 1;
+        var endMonth = (actualEndMonthNumber - 1) % MonthsInYear + 1;
 
-        var actualDate = DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfMonth);
+        var actualDate = resolver.GetDate(endYear, endMonth);
 
         if (actualDate > endDate)
         {
             count--;
             actualEndMonthNumber -= interval;
-            endYear = (actualEndMonthNumber - 1) / 12 + 1;
-            endMonth = (actualEndMonthNumber - 1) % 12 + 1;
-            actualDate = DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfMonth);
+            endYear = (actualEndMonthNumber - 1) / MonthsInYear + 1;
+            endMonth = (actualEndMonthNumber - 1) % MonthsInYear + 1;
+            actualDate = resolver.GetDate(endYear, endMonth);
         }
 
         return (actualDate, count);
-    }
-
-    public static (DateOnly, int) GetEndDateAndCount(
-        DateOnly startDate,
-        DayOfWeek dayOfWeek,
-        IndexOfDay indexOfDay,
-        int interval,
-        int count)
-    {
-        var startMonthNumber = 12 * startDate.Year + startDate.Month;
-        var maxMonthNumber = 12 * DateOnly.MaxValue.Year + DateOnly.MaxValue.Month;
-
-        var safeCount = Math.Min((maxMonthNumber - startMonthNumber) / interval + 1, count);
-        var endMonthNumber = startMonthNumber + (safeCount - 1) * interval;
-
-        var endYear = (endMonthNumber - 1) / 12;
-        var endMonth = (endMonthNumber - 1) % 12 + 1;
-
-        var date = DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfWeek, indexOfDay);
-
-        return (date, safeCount);
-    }
-
-    public static (DateOnly, int) GetEndDateAndCount(
-        DateOnly startDate,
-        DayOfWeek dayOfWeek,
-        IndexOfDay indexOfDay,
-        int interval,
-        DateOnly endDate)
-    {
-        var startMonthNumber = 12 * (startDate.Year - 1) + startDate.Month;
-        var endMonthNumber = 12 * (endDate.Year - 1) + endDate.Month;
-        var count = (endMonthNumber - startMonthNumber) / interval + 1;
-        var actualEndMonthNumber = startMonthNumber + (count - 1) * interval;
-
-        var endYear = (actualEndMonthNumber - 1) / 12 + 1;
-        var endMonth = (actualEndMonthNumber - 1) % 12 + 1;
-
-        var date = DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfWeek, indexOfDay);
-
-        if (date > endDate)
-        {
-            count--;
-            actualEndMonthNumber -= interval;
-            endYear = (actualEndMonthNumber - 1) / 12 + 1;
-            endMonth = (actualEndMonthNumber - 1) % 12 + 1;
-            date = DateOnlyHelper.GetDateByDayOfMonth(endYear, endMonth, dayOfWeek, indexOfDay);
-        }
-
-        return (date, count);
     }
 
     private static bool DateOutOfRangeByMonth(DateOnly beginDate, int addMonth)

@@ -1,5 +1,6 @@
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
+using DateRecurrenceR.Internals;
 using FluentAssertions;
 using JetBrains.Annotations;
 
@@ -16,7 +17,7 @@ public sealed class MonthlyRecurrenceHelperTests
     public void TryGetStartDate_returns_true_and_sets_startDate_when_fromDate_equals_beginDate()
     {
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2025, 3, 15), new DateOnly(2025, 3, 15), 15, 1, out var startDate);
+            new DateOnly(2025, 3, 15), new DateOnly(2025, 3, 15), MonthlyDateResolver.ByDayOfMonth(15), 1, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Should().Be(new DateOnly(2025, 3, 15));
@@ -27,7 +28,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         // fromDate.Day < dayOfMonth → lands on dayOfMonth in the same month
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2025, 1, 1), new DateOnly(2025, 1, 10), 15, 1, out var startDate);
+            new DateOnly(2025, 1, 1), new DateOnly(2025, 1, 10), MonthlyDateResolver.ByDayOfMonth(15), 1, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Should().Be(new DateOnly(2025, 1, 15));
@@ -38,7 +39,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         // fromDate.Day == dayOfMonth → must NOT skip to next month
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2025, 1, 1), new DateOnly(2025, 1, 15), 15, 1, out var startDate);
+            new DateOnly(2025, 1, 1), new DateOnly(2025, 1, 15), MonthlyDateResolver.ByDayOfMonth(15), 1, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Should().Be(new DateOnly(2025, 1, 15));
@@ -50,7 +51,7 @@ public sealed class MonthlyRecurrenceHelperTests
         // beginDate=Jan 1, fromDate=Jan 20, dayOfMonth=15 → fromDate is past the 15th,
         // so should skip to Feb 15
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2025, 1, 1), new DateOnly(2025, 1, 20), 15, 1, out var startDate);
+            new DateOnly(2025, 1, 1), new DateOnly(2025, 1, 20), MonthlyDateResolver.ByDayOfMonth(15), 1, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Should().Be(new DateOnly(2025, 2, 15));
@@ -60,7 +61,7 @@ public sealed class MonthlyRecurrenceHelperTests
     public void TryGetStartDate_returns_true_when_fromDate_after_beginDate()
     {
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2025, 1, 1), new DateOnly(2025, 3, 1), 1, 1, out var startDate);
+            new DateOnly(2025, 1, 1), new DateOnly(2025, 3, 1), MonthlyDateResolver.ByDayOfMonth(1), 1, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Should().Be(new DateOnly(2025, 3, 1));
@@ -72,7 +73,7 @@ public sealed class MonthlyRecurrenceHelperTests
         // Aligned months from Jan with interval=3: Jan, Apr, Jul, ...
         // fromDate=Mar is between Jan and Apr → must skip to Apr
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2025, 1, 1), new DateOnly(2025, 3, 1), 1, 3, out var startDate);
+            new DateOnly(2025, 1, 1), new DateOnly(2025, 3, 1), MonthlyDateResolver.ByDayOfMonth(1), 3, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Should().Be(new DateOnly(2025, 4, 1));
@@ -83,7 +84,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         // fromDate=Apr 1 is exactly 3 months from beginDate=Jan 1 → land on Apr 1
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2025, 1, 1), new DateOnly(2025, 4, 1), 1, 3, out var startDate);
+            new DateOnly(2025, 1, 1), new DateOnly(2025, 4, 1), MonthlyDateResolver.ByDayOfMonth(1), 3, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Should().Be(new DateOnly(2025, 4, 1));
@@ -95,7 +96,7 @@ public sealed class MonthlyRecurrenceHelperTests
         // fromDate=Apr 20 is exactly on the 3-month boundary but past dayOfMonth=15
         // → must advance one more interval to Jul 15
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(2025, 1, 1), new DateOnly(2025, 4, 20), 15, 3, out var startDate);
+            new DateOnly(2025, 1, 1), new DateOnly(2025, 4, 20), MonthlyDateResolver.ByDayOfMonth(15), 3, out var startDate);
 
         canStart.Should().BeTrue();
         startDate.Should().Be(new DateOnly(2025, 7, 15));
@@ -105,7 +106,7 @@ public sealed class MonthlyRecurrenceHelperTests
     public void TryGetStartDate_returns_false_at_MaxValue()
     {
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            DateOnly.MaxValue, DateOnly.MaxValue, 1, 1, out _);
+            DateOnly.MaxValue, DateOnly.MaxValue, MonthlyDateResolver.ByDayOfMonth(1), 1, out _);
 
         canStart.Should().BeFalse();
     }
@@ -115,7 +116,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         // beginDate=Dec 9999, fromDate past dayOfMonth=1 → adding 1 month overflows
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
-            new DateOnly(9999, 12, 1), new DateOnly(9999, 12, 2), 1, 1, out _);
+            new DateOnly(9999, 12, 1), new DateOnly(9999, 12, 2), MonthlyDateResolver.ByDayOfMonth(1), 1, out _);
 
         canStart.Should().BeFalse();
     }
@@ -129,7 +130,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         var start = new DateOnly(2025, 1, 15);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 15, 1, 5);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(15), 1, 5);
 
         count.Should().Be(5);
         endDate.Should().Be(new DateOnly(2025, 5, 15));
@@ -140,7 +141,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         var start = new DateOnly(2025, 1, 1);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 1, 3, 4);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(1), 3, 4);
 
         count.Should().Be(4);
         endDate.Should().Be(new DateOnly(2025, 10, 1));
@@ -152,7 +153,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         var start = new DateOnly(2025, 1, 1);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 1, 1, 12);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(1), 1, 12);
 
         count.Should().Be(12);
         endDate.Should().Be(new DateOnly(2025, 12, 1));
@@ -164,7 +165,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         var start = new DateOnly(2025, 12, 15);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 15, 1, 1);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(15), 1, 1);
 
         count.Should().Be(1);
         endDate.Should().Be(new DateOnly(2025, 12, 15));
@@ -176,7 +177,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         var start = new DateOnly(2025, 12, 1);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 1, 1, 3);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(1), 1, 3);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(2026, 2, 1));
@@ -188,7 +189,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         var start = new DateOnly(2020, 12, 25);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 25, 12, 4);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(25), 12, 4);
 
         count.Should().Be(4);
         endDate.Should().Be(new DateOnly(2023, 12, 25));
@@ -200,7 +201,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         var start = new DateOnly(2025, 1, 31);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 31, 1, 2);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(31), 1, 2);
 
         count.Should().Be(2);
         endDate.Should().Be(new DateOnly(2025, 2, 28)); // 2025 is not a leap year
@@ -212,7 +213,7 @@ public sealed class MonthlyRecurrenceHelperTests
     {
         var start = new DateOnly(2025, 3, 31);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 31, 1, 2);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(31), 1, 2);
 
         count.Should().Be(2);
         endDate.Should().Be(new DateOnly(2025, 4, 30));
@@ -225,7 +226,7 @@ public sealed class MonthlyRecurrenceHelperTests
         // Oct 9999: 3 representable occurrences remain (Oct, Nov, Dec)
         var start = new DateOnly(9999, 10, 1);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 1, 1, 1000);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(1), 1, 1000);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(9999, 12, 1));
@@ -241,7 +242,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 1, 1);
         var end = new DateOnly(2025, 4, 1);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 1, 1, end);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(1), 1, end);
 
         count.Should().Be(4);
         endDate.Should().Be(new DateOnly(2025, 4, 1));
@@ -254,7 +255,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 1, 15);
         var end = new DateOnly(2025, 12, 15);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 15, 1, end);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(15), 1, end);
 
         count.Should().Be(12);
         endDate.Should().Be(new DateOnly(2025, 12, 15));
@@ -267,7 +268,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 1, 1);
         var end = new DateOnly(2025, 7, 1);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 1, 3, end);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(1), 3, end);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(2025, 7, 1));
@@ -282,7 +283,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 1, 1);
         var end = new DateOnly(2025, 5, 1);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 1, 3, end);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(1), 3, end);
 
         count.Should().Be(2);
         endDate.Should().Be(new DateOnly(2025, 4, 1));
@@ -294,7 +295,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 11, 15);
         var end = new DateOnly(2026, 2, 15);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 15, 1, end);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(15), 1, end);
 
         count.Should().Be(4); // Nov, Dec, Jan, Feb
         endDate.Should().Be(new DateOnly(2026, 2, 15));
@@ -306,7 +307,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 11, 15);
         var end = new DateOnly(2026, 2, 14);
 
-        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, 15, 1, end);
+        var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(start, MonthlyDateResolver.ByDayOfMonth(15), 1, end);
 
         count.Should().Be(3); // Nov, Dec, Jan — Feb 15 > Feb 14, so Feb is excluded
         endDate.Should().Be(new DateOnly(2026, 1, 15));
@@ -324,7 +325,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 1, 6);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Monday, IndexOfDay.First, 1, 3);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Monday, IndexOfDay.First), 1, 3);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(2025, 3, 3));
@@ -338,7 +339,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 1, 6);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Monday, IndexOfDay.First, 1, 12);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Monday, IndexOfDay.First), 1, 12);
 
         count.Should().Be(12);
         endDate.Should().Be(new DateOnly(2025, 12, 1)); // First Monday of Dec 2025
@@ -352,7 +353,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 1, 6);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Monday, IndexOfDay.First, 3, 3);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Monday, IndexOfDay.First), 3, 3);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(2025, 7, 7)); // First Monday of Jul 2025
@@ -367,7 +368,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var start = new DateOnly(2025, 1, 31);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Friday, IndexOfDay.Last, 1, 3);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Friday, IndexOfDay.Last), 1, 3);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(2025, 3, 28)); // Last Friday of Mar 2025
@@ -386,7 +387,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var end = new DateOnly(2025, 3, 31);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Monday, IndexOfDay.First, 1, end);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Monday, IndexOfDay.First), 1, end);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(2025, 3, 3)); // First Monday of Mar 2025
@@ -401,7 +402,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var end = new DateOnly(2025, 12, 31);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Monday, IndexOfDay.First, 1, end);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Monday, IndexOfDay.First), 1, end);
 
         count.Should().Be(12);
         endDate.Should().Be(new DateOnly(2025, 12, 1)); // First Monday of Dec 2025
@@ -416,7 +417,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var end = new DateOnly(2025, 9, 30);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Monday, IndexOfDay.First, 3, end);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Monday, IndexOfDay.First), 3, end);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(2025, 7, 7)); // First Monday of Jul 2025
@@ -433,7 +434,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var end = new DateOnly(2025, 5, 31);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Monday, IndexOfDay.First, 3, end);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Monday, IndexOfDay.First), 3, end);
 
         count.Should().Be(2); // Jan and Apr only
         endDate.Should().Be(new DateOnly(2025, 4, 7)); // First Monday of Apr 2025
@@ -449,7 +450,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var end = new DateOnly(2025, 3, 31);
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Friday, IndexOfDay.Last, 1, end);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Friday, IndexOfDay.Last), 1, end);
 
         count.Should().Be(3);
         endDate.Should().Be(new DateOnly(2025, 3, 28)); // Last Friday of Mar 2025
@@ -467,7 +468,7 @@ public sealed class MonthlyRecurrenceHelperTests
         var end = new DateOnly(2025, 11, 2);  // before First Monday of Nov (Nov 3)
 
         var (endDate, count) = MonthlyRecurrenceHelper.GetEndDateAndCount(
-            start, DayOfWeek.Monday, IndexOfDay.First, 1, end);
+            start, MonthlyDateResolver.ByDayOfWeek(DayOfWeek.Monday, IndexOfDay.First), 1, end);
 
         count.Should().Be(10); // Jan through Oct
         endDate.Should().Be(new DateOnly(2025, 10, 6)); // First Monday of Oct 2025

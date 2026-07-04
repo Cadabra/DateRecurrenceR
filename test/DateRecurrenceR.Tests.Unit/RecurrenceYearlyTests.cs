@@ -412,4 +412,33 @@ public sealed class RecurrenceYearlyTests
             (dates[i].Year - dates[i - 1].Year).Should().Be(interval);
         }
     }
+
+    /// <summary>
+    /// Regression: the by-month overloads converted the occurrence to a day-of-year number of the
+    /// begin year and reused it for the start year, shifting the start date in leap years and
+    /// starting by-weekday recurrences on a non-occurrence date.
+    /// </summary>
+    [Fact]
+    public void Yearly_ByDayOfWeek_with_beginDate_after_occurrence_starts_at_next_real_occurrence()
+    {
+        // 2nd Tuesday of March 2027 is March 9; begin date is after March 2026.
+        var dates = Collect(Recurrence.Yearly(
+            new DateOnly(2026, 4, 1), 2, DayOfWeek.Tuesday, IndexOfDay.Second, new MonthOfYear(3), new Interval(1)));
+
+        dates.Should().Equal(
+            new DateOnly(2027, 3, 9),
+            new DateOnly(2028, 3, 14));
+    }
+
+    [Fact]
+    public void Yearly_ByDayOfMonth_startDate_is_not_shifted_by_leap_year()
+    {
+        // March 10 every year, begin date after March 2027; 2028 is a leap year.
+        var dates = Collect(Recurrence.Yearly(
+            new DateOnly(2027, 4, 1), 2, new DayOfMonth(10), new MonthOfYear(3), new Interval(1)));
+
+        dates.Should().Equal(
+            new DateOnly(2028, 3, 10),
+            new DateOnly(2029, 3, 10));
+    }
 }
