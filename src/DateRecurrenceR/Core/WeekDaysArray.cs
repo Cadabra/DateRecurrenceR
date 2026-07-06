@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 
-#if NET8_0_OR_GREATER
 namespace DateRecurrenceR.Core;
 
 /// <summary>
@@ -31,4 +30,3 @@ public struct WeekDaysArray
                + (this[6] ? 1 : 0);
     }
 }
-#endif

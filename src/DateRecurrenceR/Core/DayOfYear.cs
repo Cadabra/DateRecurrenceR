@@ -5,11 +5,7 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 ///     Represents a number of the day of the year
 /// </summary>
-#if NET8_0_OR_GREATER
 public readonly struct DayOfYear : IInt32Based<DayOfYear>
-#else
-public readonly struct DayOfYear : IEquatable<DayOfYear>
-#endif
 {
     private const int MinVal = 1;
     private const int MaxVal = 366;

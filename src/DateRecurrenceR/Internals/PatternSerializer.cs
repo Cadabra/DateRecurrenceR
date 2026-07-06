@@ -68,7 +68,7 @@ internal static class PatternSerializer
     public static string Format(in WeeklyByWeekDaysPattern pattern)
     {
         var sb = new StringBuilder(16);
-        sb.Append('W').Append((int)pattern.Interval).Append('D');
+        sb.Append('W').Append(pattern.Interval).Append('D');
 
         for (var i = 0; i < DaysInWeek; i++)
         {

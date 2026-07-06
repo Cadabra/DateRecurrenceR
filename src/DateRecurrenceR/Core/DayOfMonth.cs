@@ -5,11 +5,7 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 ///     Represents a number of the day of the month
 /// </summary>
-#if NET8_0_OR_GREATER
 public readonly struct DayOfMonth : IInt32Based<DayOfMonth>
-#else
-public readonly struct DayOfMonth : IEquatable<DayOfMonth>
-#endif
 {
     private const int MinVal = 1;
     private const int MaxVal = 31;

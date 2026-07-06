@@ -7,6 +7,10 @@
         <WarningsAsErrors>Nullable</WarningsAsErrors>
 
         <IsPackable>false</IsPackable>
+        <!-- Class library of shared abstract contract tests; it has no runnable tests of its
+             own. Microsoft.NET.Test.Sdk would otherwise set IsTestProject=true, making
+             solution-level `dotnet test` run it and emit an empty (0%) coverage report. -->
+        <IsTestProject>false</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>

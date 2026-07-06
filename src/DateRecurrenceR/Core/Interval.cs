@@ -5,11 +5,7 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 ///     Represents a number of the interval
 /// </summary>
-#if NET8_0_OR_GREATER
 public readonly struct Interval : IInt32Based<Interval>
-#else
-public readonly struct Interval : IEquatable<Interval>
-#endif
 {
     private const int MinVal = 1;
     private const int MaxVal = int.MaxValue;

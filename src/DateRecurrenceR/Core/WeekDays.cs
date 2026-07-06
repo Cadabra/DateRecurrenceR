@@ -7,11 +7,7 @@ namespace DateRecurrenceR.Core;
 /// </summary>
 public readonly struct WeekDays : IEquatable<WeekDays>
 {
-#if NET8_0_OR_GREATER
     private readonly WeekDaysArray _ds;
-#else
-    private readonly bool[] _ds = new bool[DaysInWeek];
-#endif
 
     /// <summary>
     /// Create an instance with one defined day of the week.
@@ -110,7 +106,6 @@ public readonly struct WeekDays : IEquatable<WeekDays>
         CountOfSelected = GetCountOfSelected();
     }
 
-#if NET8_0_OR_GREATER
     /// <summary>
     /// Create an instance with seven predefined days of the week.
     /// </summary>
@@ -120,7 +115,6 @@ public readonly struct WeekDays : IEquatable<WeekDays>
         _ds = daysArray;
         CountOfSelected = _ds.GetCountOfSelected();
     }
-#endif
 
     /// <summary>
     /// Create an instance with seven defined days of the week.
