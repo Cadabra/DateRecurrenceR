@@ -7,9 +7,9 @@
         @if (HasPattern)
         {
             <div class="code-snippet-toggle" role="group" aria-label="Code style">
-                <button class="@ToggleClass(Models.CodeStyle.Enumerator)"
+                <button type="button" class="@ToggleClass(Models.CodeStyle.Enumerator)"
                         @onclick="() => SetStyle(Models.CodeStyle.Enumerator)">enumerator</button>
-                <button class="@ToggleClass(Models.CodeStyle.Pattern)"
+                <button type="button" class="@ToggleClass(Models.CodeStyle.Pattern)"
                         @onclick="() => SetStyle(Models.CodeStyle.Pattern)">pattern</button>
             </div>
         }
