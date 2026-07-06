@@ -1,0 +1,70 @@
+using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
+using FluentAssertions;
+using JetBrains.Annotations;
+
+namespace DateRecurrenceR.Tests.Unit.Core;
+
+[TestSubject(typeof(Interval))]
+public class IntervalTests : Int32BasedContractTests<Interval>
+{
+    [Fact]
+    public void Empty_ctor_creates_minValue()
+    {
+        // Arrange
+        var sut = new Interval();
+
+        // Act
+
+        //Assert
+        sut.Should().Be(Interval.MinValue);
+    }
+
+    [Fact]
+    public void Default_instance_equals_minValue()
+    {
+        // default bypasses the constructor; the biased storage must still yield a valid interval
+        default(Interval).Should().Be(Interval.MinValue);
+        ((int)default(Interval)).Should().Be(1);
+    }
+    
+    [Fact]
+    public void Ctor_creates_specified_value()
+    {
+        // Arrange
+        const int someInterval = 1_073_741_823;
+        var sut = new Interval(someInterval);
+
+        // Act
+
+        //Assert
+        ((int)sut).Should().Be(someInterval);
+    }
+
+    [Fact]
+    public void Ctor_throws_exception_if_value_outOfRange()
+    {
+        // Arrange
+        const int invalidIntervalValue = 0;
+        var sut = () => new Interval(invalidIntervalValue);
+
+        // Act
+
+        //Assert
+        sut.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    protected override int MinAllowed => 1;
+
+    protected override int MaxAllowed => int.MaxValue;
+
+    protected override Interval Create(int value)
+    {
+        return new Interval(value);
+    }
+
+    protected override int ToInt32(Interval value)
+    {
+        return value;
+    }
+}

@@ -1,15 +1,13 @@
+using DateRecurrenceR.Extensions;
+
 namespace DateRecurrenceR.Core;
 
 /// <summary>
 /// Represents weekdays for one week.
 /// </summary>
-public readonly struct WeekDays
+public readonly struct WeekDays : IEquatable<WeekDays>
 {
-#if NET8_0_OR_GREATER
     private readonly WeekDaysArray _ds;
-#else
-    private readonly bool[] _ds = new bool[DaysInWeek];
-#endif
 
     /// <summary>
     /// Create an instance with one defined day of the week.
@@ -96,18 +94,18 @@ public readonly struct WeekDays
         DayOfWeek day4,
         DayOfWeek day5,
         DayOfWeek day6,
-        DayOfWeek day7)
+        DayOfWeek day7) : this()
     {
-        _ds[(int) day1] = true;
-        _ds[(int) day2] = true;
-        _ds[(int) day3] = true;
-        _ds[(int) day4] = true;
-        _ds[(int) day5] = true;
-        _ds[(int) day6] = true;
-        _ds[(int) day7] = true;
+        _ds[(int)day1] = true;
+        _ds[(int)day2] = true;
+        _ds[(int)day3] = true;
+        _ds[(int)day4] = true;
+        _ds[(int)day5] = true;
+        _ds[(int)day6] = true;
+        _ds[(int)day7] = true;
+        CountOfSelected = GetCountOfSelected();
     }
 
-#if NET8_0_OR_GREATER
     /// <summary>
     /// Create an instance with seven predefined days of the week.
     /// </summary>
@@ -115,8 +113,8 @@ public readonly struct WeekDays
     public WeekDays(WeekDaysArray daysArray)
     {
         _ds = daysArray;
+        CountOfSelected = _ds.GetCountOfSelected();
     }
-#endif
 
     /// <summary>
     /// Create an instance with seven defined days of the week.
@@ -134,7 +132,7 @@ public readonly struct WeekDays
         bool isWednesday,
         bool isThursday,
         bool isFriday,
-        bool isSaturday)
+        bool isSaturday) : this()
     {
         _ds[0] = isSunday;
         _ds[1] = isMonday;
@@ -143,6 +141,26 @@ public readonly struct WeekDays
         _ds[4] = isThursday;
         _ds[5] = isFriday;
         _ds[6] = isSaturday;
+        CountOfSelected = GetCountOfSelected();
+    }
+
+    /// <summary>
+    /// Converts the weekdays to a bit-flag integer representation.
+    /// </summary>
+    /// <returns>An integer where each bit corresponds to a day of the week (bit 0 = Sunday, bit 6 = Saturday).</returns>
+    public int ToFlag()
+    {
+        var result = 0;
+
+        result |= _ds[0] ? 1 << 0 : 0; // 1 Sunday
+        result |= _ds[1] ? 1 << 1 : 0; // 2 Monday
+        result |= _ds[2] ? 1 << 2 : 0; // 4 Tuesday
+        result |= _ds[3] ? 1 << 3 : 0; // 8 Wednesday
+        result |= _ds[4] ? 1 << 4 : 0; // 16 Thursday
+        result |= _ds[5] ? 1 << 5 : 0; // 32 Friday
+        result |= _ds[6] ? 1 << 6 : 0; // 64 Saturday
+
+        return result;
     }
 
     /// <summary>
@@ -150,31 +168,179 @@ public readonly struct WeekDays
     /// </summary>
     public DayOfWeek GetMinByFirstDayOfWeek(DayOfWeek firstDayOfWeek)
     {
-        var shift = (7 + (int) firstDayOfWeek) % 7;
-        if (_ds[shift]) return (DayOfWeek) shift;
+        var shift = (7 + (int)firstDayOfWeek) % 7;
+        if (_ds[shift]) return (DayOfWeek)shift;
 
-        shift = (7 + (int) firstDayOfWeek + 1) % 7;
-        if (_ds[shift]) return (DayOfWeek) shift;
+        shift = (7 + (int)firstDayOfWeek + 1) % 7;
+        if (_ds[shift]) return (DayOfWeek)shift;
 
-        shift = (7 + (int) firstDayOfWeek + 2) % 7;
-        if (_ds[shift]) return (DayOfWeek) shift;
+        shift = (7 + (int)firstDayOfWeek + 2) % 7;
+        if (_ds[shift]) return (DayOfWeek)shift;
 
-        shift = (7 + (int) firstDayOfWeek + 3) % 7;
-        if (_ds[shift]) return (DayOfWeek) shift;
+        shift = (7 + (int)firstDayOfWeek + 3) % 7;
+        if (_ds[shift]) return (DayOfWeek)shift;
 
-        shift = (7 + (int) firstDayOfWeek + 4) % 7;
-        if (_ds[shift]) return (DayOfWeek) shift;
+        shift = (7 + (int)firstDayOfWeek + 4) % 7;
+        if (_ds[shift]) return (DayOfWeek)shift;
 
-        shift = (7 + (int) firstDayOfWeek + 5) % 7;
-        if (_ds[shift]) return (DayOfWeek) shift;
+        shift = (7 + (int)firstDayOfWeek + 5) % 7;
+        if (_ds[shift]) return (DayOfWeek)shift;
 
-        shift = (7 + (int) firstDayOfWeek + 6) % 7;
-        return (DayOfWeek) shift;
+        shift = (7 + (int)firstDayOfWeek + 6) % 7;
+        return (DayOfWeek)shift;
+    }
+
+    /// <summary>
+    /// Gets the total number of selected days in the week.
+    /// </summary>
+    public int CountOfSelected { get; }
+
+    private int GetCountOfSelected()
+    {
+        return (_ds[0] ? 1 : 0)
+               + (_ds[1] ? 1 : 0)
+               + (_ds[2] ? 1 : 0)
+               + (_ds[3] ? 1 : 0)
+               + (_ds[4] ? 1 : 0)
+               + (_ds[5] ? 1 : 0)
+               + (_ds[6] ? 1 : 0);
+    }
+
+    /// <summary>
+    /// Returns the count of selected days up to and including the specified maximum day index.
+    /// </summary>
+    /// <param name="maxDayIndex">The maximum day index (shifted from the first day of week).</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
+    /// <returns>The count of selected days within the range.</returns>
+    public int GetCountOfSelected(int maxDayIndex, DayOfWeek firstDayOfWeek)
+    {
+        var fdwIndex = (int)firstDayOfWeek;
+        return (_ds[(7 + fdwIndex) % 7] ? (7 + 0) % 7 <= maxDayIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 1) % 7] ? (7 + 1) % 7 <= maxDayIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 2) % 7] ? (7 + 2) % 7 <= maxDayIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 3) % 7] ? (7 + 3) % 7 <= maxDayIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 4) % 7] ? (7 + 4) % 7 <= maxDayIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 5) % 7] ? (7 + 5) % 7 <= maxDayIndex ? 1 : 0 : 0)
+               + (_ds[(7 + fdwIndex + 6) % 7] ? (7 + 6) % 7 <= maxDayIndex ? 1 : 0 : 0);
     }
 
     /// <summary>
     /// Returns whether the day of the week has been defined.
     /// </summary>
     /// <param name="dayOfWeek"></param>
-    public bool this[DayOfWeek dayOfWeek] => _ds[(int) dayOfWeek];
+    public bool this[DayOfWeek dayOfWeek] => _ds[(int)dayOfWeek];
+
+    /// <summary>
+    /// Tries to get the day of the week at the specified selection index.
+    /// </summary>
+    /// <param name="selectedIndex">The zero-based index of the selected day.</param>
+    /// <param name="firstDayOfWeek">The first day of the week.</param>
+    /// <param name="result">When this method returns, contains the day of the week at the specified index.</param>
+    /// <returns><see langword="true"/> if a selected day was found at the given index; otherwise, <see langword="false"/>.</returns>
+    public bool TryGet(int selectedIndex, DayOfWeek firstDayOfWeek, out DayOfWeek result)
+    {
+        var day = (DayOfWeek)((7 + (int)firstDayOfWeek) % 7);
+
+        var currentIndex = 0;
+        if (_ds[(int)day])
+        {
+            if (currentIndex++ == selectedIndex)
+            {
+                result = day;
+                return true;
+            }
+        }
+
+        if (_ds[(int)(day = day.Next())])
+        {
+            if (currentIndex++ == selectedIndex)
+            {
+                result = day;
+                return true;
+            }
+        }
+
+        if (_ds[(int)(day = day.Next())])
+        {
+            if (currentIndex++ == selectedIndex)
+            {
+                result = day;
+                return true;
+            }
+        }
+
+        if (_ds[(int)(day = day.Next())])
+        {
+            if (currentIndex++ == selectedIndex)
+            {
+                result = day;
+                return true;
+            }
+        }
+
+        if (_ds[(int)(day = day.Next())])
+        {
+            if (currentIndex++ == selectedIndex)
+            {
+                result = day;
+                return true;
+            }
+        }
+
+        if (_ds[(int)(day = day.Next())])
+        {
+            if (currentIndex++ == selectedIndex)
+            {
+                result = day;
+                return true;
+            }
+        }
+
+        if (_ds[(int)(day = day.Next())])
+        {
+            if (currentIndex == selectedIndex)
+            {
+                result = day;
+                return true;
+            }
+        }
+
+        result = default;
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Indicates whether this instance and a specified other instance select the same days.
+    /// </summary>
+    /// <param name="other">The other instance to compare with the current instance.</param>
+    /// <returns>true if both instances select the same days of the week; otherwise, false.</returns>
+    public bool Equals(WeekDays other)
+    {
+        return ToFlag() == other.ToFlag();
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        return obj is WeekDays other && Equals(other);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        return ToFlag();
+    }
+
+    /// <inheritdoc cref="Equals(WeekDays)" />
+    public static bool operator ==(WeekDays left, WeekDays right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <inheritdoc cref="Equals(WeekDays)" />
+    public static bool operator !=(WeekDays left, WeekDays right)
+    {
+        return !(left == right);
+    }
 }

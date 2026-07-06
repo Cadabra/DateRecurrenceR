@@ -8,6 +8,8 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+
+        <DefineConstants>$(DefineConstants);JETBRAINS_ANNOTATIONS</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,6 +30,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\DateRecurrenceR\DateRecurrenceR.csproj"/>
+        <ProjectReference Include="..\DateRecurrenceR.Tests.Common\DateRecurrenceR.Tests.Common.csproj"/>
     </ItemGroup>
 
 </Project>

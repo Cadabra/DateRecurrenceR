@@ -1,9 +1,14 @@
 namespace DateRecurrenceR.Helpers;
 
-internal struct WeekDaysHelper
+internal static class WeekDaysHelper
 {
     public static int GetDiffToDay(DayOfWeek firstDayOfWeek, DayOfWeek dayOfWeek)
     {
         return (DaysInWeek + (int) dayOfWeek - (int) firstDayOfWeek) % DaysInWeek;
+    }
+
+    public static int DayToIndex(DayOfWeek dayOfWeek, DayOfWeek firstDayOfWeek)
+    {
+        return (DaysInWeek + (int)dayOfWeek - (int)firstDayOfWeek) % DaysInWeek;
     }
 }

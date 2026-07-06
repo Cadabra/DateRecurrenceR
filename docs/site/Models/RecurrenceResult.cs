@@ -6,6 +6,9 @@ public class RecurrenceResult
     public bool IsTruncated { get; set; }
     public int TotalCount { get; set; }
     public string CSharpSnippet { get; set; } = string.Empty;
+
+    /// <summary>The same example expressed with the pattern / <c>IRecurrence</c> object API.</summary>
+    public string PatternSnippet { get; set; } = string.Empty;
     /// <summary>Union only: maps each date to the 0-based slot indices that produced it.</summary>
     public Dictionary<DateOnly, List<int>>? DateSources { get; set; }
 }

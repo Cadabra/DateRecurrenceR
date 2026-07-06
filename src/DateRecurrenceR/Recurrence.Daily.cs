@@ -4,7 +4,7 @@ using DateRecurrenceR.Helpers;
 
 namespace DateRecurrenceR;
 
-public partial struct Recurrence
+public static partial class Recurrence
 {
     /// <summary>
     ///     Returns an enumerator for daily period for first <c>n</c> contiguous dates.
@@ -15,7 +15,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Daily(DateOnly beginDate, int count, Interval interval)
+    public static DailyEnumerator Daily(DateOnly beginDate, int count, Interval interval)
     {
         return Daily(beginDate, beginDate, count, interval);
     }
@@ -30,12 +30,12 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Daily(DateOnly beginDate,
+    public static DailyEnumerator Daily(DateOnly beginDate,
         DateOnly fromDate,
         int count,
         Interval interval)
     {
-        if (count < 1) return EmptyEnumerator;
+        if (count < 1) return DailyEnumerator.Empty;
 
         var canStart = DailyRecurrenceHelper.TryGetStartDate(
             beginDate,
@@ -43,9 +43,9 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart) return EmptyEnumerator;
+        if (!canStart) return DailyEnumerator.Empty;
 
-        return new DailyEnumeratorLimitByCount(startDate, count, interval);
+        return new DailyEnumerator(startDate, count, interval);
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Daily(DateOnly beginDate, DateOnly endDate, Interval interval)
+    public static DailyEnumerator Daily(DateOnly beginDate, DateOnly endDate, Interval interval)
     {
         return Daily(beginDate, endDate, beginDate, endDate, interval);
     }
@@ -75,7 +75,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Daily(DateOnly beginDate,
+    public static DailyEnumerator Daily(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
@@ -87,10 +87,11 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart) return EmptyEnumerator;
+        if (!canStart) return DailyEnumerator.Empty;
 
         var stopDate = DateOnlyMin(toDate, endDate);
+        var safeCount = DailyRecurrenceHelper.GetCount(startDate, stopDate, interval);
 
-        return new DailyEnumeratorLimitByDate(startDate, stopDate, interval);
+        return new DailyEnumerator(startDate, safeCount, interval);
     }
 }

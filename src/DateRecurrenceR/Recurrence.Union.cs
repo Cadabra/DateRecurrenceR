@@ -2,7 +2,7 @@ using DateRecurrenceR.Collections;
 
 namespace DateRecurrenceR;
 
-public partial struct Recurrence
+public static partial class Recurrence
 {
     /// <summary>
     ///     Produces the union enumerator of two enumerators.

@@ -1,13 +1,11 @@
+using System.Globalization;
+
 namespace DateRecurrenceR.Core;
 
 /// <summary>
 ///     Represents a number of the month of the year
 /// </summary>
-#if NET8_0_OR_GREATER
 public readonly struct MonthOfYear : IInt32Based<MonthOfYear>
-#else
-public readonly struct MonthOfYear : IEquatable<MonthOfYear>
-#endif
 {
     private const int MinVal = 1;
     private const int MaxVal = MonthsInYear;
@@ -15,7 +13,7 @@ public readonly struct MonthOfYear : IEquatable<MonthOfYear>
     private readonly int _value;
 
     /// <summary>
-    ///     Create an instance of <see cref="T:DateRecurrenceR.Core.MonthOfYear" /> with minimal value
+    ///     Create an instance of <see cref="MonthOfYear" /> with minimal value
     /// </summary>
     public MonthOfYear()
     {
@@ -23,7 +21,7 @@ public readonly struct MonthOfYear : IEquatable<MonthOfYear>
     }
 
     /// <summary>
-    ///     Create an instance of <see cref="T:DateRecurrenceR.Core.MonthOfYear" /> with specified value
+    ///     Create an instance of <see cref="MonthOfYear" /> with specified value
     /// </summary>
     public MonthOfYear(int value)
     {
@@ -32,16 +30,16 @@ public readonly struct MonthOfYear : IEquatable<MonthOfYear>
         _value = value;
     }
 
-    /// <summary>Represents the smallest possible value of <see cref="T:DateRecurrenceR.Core.MonthOfYear" />.</summary>
+    /// <summary>Represents the smallest possible value of <see cref="MonthOfYear" />.</summary>
     public static MonthOfYear MinValue { get; } = new(MinVal);
 
-    /// <summary>Represents the largest possible value of an <see cref="T:DateRecurrenceR.Core.MonthOfYear" />.</summary>
+    /// <summary>Represents the largest possible value of <see cref="MonthOfYear" />.</summary>
     public static MonthOfYear MaxValue { get; } = new(MaxVal);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        return obj is MonthOfYear other && Equals(other);
     }
 
     /// <summary>
@@ -66,14 +64,14 @@ public readonly struct MonthOfYear : IEquatable<MonthOfYear>
     /// <returns>The string representation of the value of this instance, consisting of a sequence of digits ranging from 0 to 9 with no leading zeroes.</returns>
     public override string ToString()
     {
-        return _value.ToString();
+        return _value.ToString(CultureInfo.InvariantCulture);
     }
 
     /// <summary>
-    ///     Convert <see cref="T:DateRecurrenceR.Core.MonthOfYear" /> to <see cref="T:System.Int32" />
+    ///     Convert <see cref="MonthOfYear" /> to <see cref="int" />
     /// </summary>
-    /// <param name="monthOfYear"><see cref="T:System.Int32" /> representation of the value</param>
-    /// <returns><see cref="T:DateRecurrenceR.Core.MonthOfYear" /> representation of the value</returns>
+    /// <param name="monthOfYear"><see cref="int" /> representation of the value</param>
+    /// <returns><see cref="MonthOfYear" /> representation of the value</returns>
     public static implicit operator int(MonthOfYear monthOfYear)
     {
         return monthOfYear._value;

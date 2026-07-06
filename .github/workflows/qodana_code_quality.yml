@@ -3,9 +3,10 @@ on:
   workflow_dispatch:
   pull_request:
   push:
-    branches: # Specify your branches here
-      - main # The 'main' branch
-      - 'releases/*' # The release branches
+    branches:
+      - main
+      - next
+      - 'releases/*'
 
 jobs:
   qodana:
@@ -14,15 +15,34 @@ jobs:
       contents: write
       pull-requests: write
       checks: write
+      security-events: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
           fetch-depth: 0  # a full history is required for pull request analysis
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2026.1
         with:
           pr-mode: false
+          upload-result: true
+          results-dir: ${{ runner.temp }}/qodana-results
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2141108469 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
+
+      - name: Upload SARIF to GitHub Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ runner.temp }}/qodana-results/qodana.sarif.json
+        continue-on-error: true

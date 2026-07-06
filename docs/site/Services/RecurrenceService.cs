@@ -1,5 +1,6 @@
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Docs.Models;
+using System.Text;
 
 namespace DateRecurrenceR.Docs.Services;
 
@@ -39,14 +40,22 @@ public class RecurrenceService
         }
 
         var snippet = BuildDailySnippet(beginDate, endDate, interval, subrangeMode, fromDate, toDate, count);
-        return Enumerate(enumerator, snippet);
+        var patternSnippet = BuildPatternSnippet(
+            "DailyRecurrence", "new DailyPattern(interval)",
+            sb =>
+            {
+                sb.AppendLine($"var beginDate = {Date(beginDate)};");
+                sb.AppendLine($"var interval  = new Interval({interval});");
+            },
+            subrangeMode, beginDate, endDate, fromDate, toDate, count);
+        return Enumerate(enumerator, snippet, patternSnippet);
     }
 
     private static string BuildDailySnippet(
         DateOnly beginDate, DateOnly endDate, int interval,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -121,7 +130,17 @@ public class RecurrenceService
 
         var snippet = BuildWeeklySnippet(beginDate, endDate, interval, sun, mon, tue, wed, thu, fri, sat,
             firstDayOfWeek, subrangeMode, fromDate, toDate, count);
-        return Enumerate(enumerator, snippet);
+        var patternSnippet = BuildPatternSnippet(
+            "WeeklyByWeekDaysRecurrence", "new WeeklyByWeekDaysPattern(interval, weekDays, firstDayOfWeek)",
+            sb =>
+            {
+                sb.AppendLine($"var beginDate      = {Date(beginDate)};");
+                sb.AppendLine($"var interval       = new Interval({interval});");
+                sb.AppendLine($"var weekDays       = new WeekDays({sun.ToString().ToLower()}, {mon.ToString().ToLower()}, {tue.ToString().ToLower()}, {wed.ToString().ToLower()}, {thu.ToString().ToLower()}, {fri.ToString().ToLower()}, {sat.ToString().ToLower()});");
+                sb.AppendLine($"var firstDayOfWeek = DayOfWeek.{firstDayOfWeek};");
+            },
+            subrangeMode, beginDate, endDate, fromDate, toDate, count);
+        return Enumerate(enumerator, snippet, patternSnippet);
     }
 
     private static string BuildWeeklySnippet(
@@ -130,7 +149,7 @@ public class RecurrenceService
         DayOfWeek firstDayOfWeek, SubrangeMode mode,
         DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate     = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -205,14 +224,23 @@ public class RecurrenceService
         }
 
         var snippet = BuildMonthlyDomSnippet(beginDate, endDate, interval, dayOfMonth, subrangeMode, fromDate, toDate, count);
-        return Enumerate(enumerator, snippet);
+        var patternSnippet = BuildPatternSnippet(
+            "MonthlyByDayOfMonthRecurrence", "new MonthlyByDayOfMonthPattern(interval, dayOfMonth)",
+            sb =>
+            {
+                sb.AppendLine($"var beginDate  = {Date(beginDate)};");
+                sb.AppendLine($"var interval   = new Interval({interval});");
+                sb.AppendLine($"var dayOfMonth = new DayOfMonth({dayOfMonth});");
+            },
+            subrangeMode, beginDate, endDate, fromDate, toDate, count);
+        return Enumerate(enumerator, snippet, patternSnippet);
     }
 
     private static string BuildMonthlyDomSnippet(
         DateOnly beginDate, DateOnly endDate, int interval, int dayOfMonth,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate  = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -286,7 +314,17 @@ public class RecurrenceService
         }
 
         var snippet = BuildMonthlyDowSnippet(beginDate, endDate, interval, dayOfWeek, indexOfDay, subrangeMode, fromDate, toDate, count);
-        return Enumerate(enumerator, snippet);
+        var patternSnippet = BuildPatternSnippet(
+            "MonthlyByDayOfWeekRecurrence", "new MonthlyByDayOfWeekPattern(interval, dayOfWeek, indexOfDay)",
+            sb =>
+            {
+                sb.AppendLine($"var beginDate  = {Date(beginDate)};");
+                sb.AppendLine($"var interval   = new Interval({interval});");
+                sb.AppendLine($"var dayOfWeek  = DayOfWeek.{dayOfWeek};");
+                sb.AppendLine($"var indexOfDay = IndexOfDay.{indexOfDay};");
+            },
+            subrangeMode, beginDate, endDate, fromDate, toDate, count);
+        return Enumerate(enumerator, snippet, patternSnippet);
     }
 
     private static string BuildMonthlyDowSnippet(
@@ -294,7 +332,7 @@ public class RecurrenceService
         DayOfWeek dayOfWeek, IndexOfDay indexOfDay,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate  = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -371,7 +409,17 @@ public class RecurrenceService
         }
 
         var snippet = BuildYearlyDayMonthSnippet(beginDate, endDate, interval, dayOfMonth, monthOfYear, subrangeMode, fromDate, toDate, count);
-        return Enumerate(enumerator, snippet);
+        var patternSnippet = BuildPatternSnippet(
+            "YearlyByDayOfMonthRecurrence", "new YearlyByDayOfMonthPattern(interval, dayOfMonth, monthOfYear)",
+            sb =>
+            {
+                sb.AppendLine($"var beginDate   = {Date(beginDate)};");
+                sb.AppendLine($"var interval    = new Interval({interval});");
+                sb.AppendLine($"var dayOfMonth  = new DayOfMonth({dayOfMonth});");
+                sb.AppendLine($"var monthOfYear = new MonthOfYear({monthOfYear});");
+            },
+            subrangeMode, beginDate, endDate, fromDate, toDate, count);
+        return Enumerate(enumerator, snippet, patternSnippet);
     }
 
     private static string BuildYearlyDayMonthSnippet(
@@ -379,7 +427,7 @@ public class RecurrenceService
         int dayOfMonth, int monthOfYear, SubrangeMode mode,
         DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate   = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -456,7 +504,18 @@ public class RecurrenceService
         }
 
         var snippet = BuildYearlyDowSnippet(beginDate, endDate, interval, dayOfWeek, indexOfDay, monthOfYear, subrangeMode, fromDate, toDate, count);
-        return Enumerate(enumerator, snippet);
+        var patternSnippet = BuildPatternSnippet(
+            "YearlyByDayOfWeekRecurrence", "new YearlyByDayOfWeekPattern(interval, dayOfWeek, indexOfDay, monthOfYear)",
+            sb =>
+            {
+                sb.AppendLine($"var beginDate   = {Date(beginDate)};");
+                sb.AppendLine($"var interval    = new Interval({interval});");
+                sb.AppendLine($"var dayOfWeek   = DayOfWeek.{dayOfWeek};");
+                sb.AppendLine($"var indexOfDay  = IndexOfDay.{indexOfDay};");
+                sb.AppendLine($"var monthOfYear = new MonthOfYear({monthOfYear});");
+            },
+            subrangeMode, beginDate, endDate, fromDate, toDate, count);
+        return Enumerate(enumerator, snippet, patternSnippet);
     }
 
     private static string BuildYearlyDowSnippet(
@@ -464,7 +523,7 @@ public class RecurrenceService
         DayOfWeek dayOfWeek, IndexOfDay indexOfDay, int monthOfYear,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate   = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -540,14 +599,23 @@ public class RecurrenceService
         }
 
         var snippet = BuildYearlyDoySnippet(beginDate, endDate, interval, dayOfYear, subrangeMode, fromDate, toDate, count);
-        return Enumerate(enumerator, snippet);
+        var patternSnippet = BuildPatternSnippet(
+            "YearlyByDayOfYearRecurrence", "new YearlyByDayOfYearPattern(interval, dayOfYear)",
+            sb =>
+            {
+                sb.AppendLine($"var beginDate = {Date(beginDate)};");
+                sb.AppendLine($"var interval  = new Interval({interval});");
+                sb.AppendLine($"var dayOfYear = new DayOfYear({dayOfYear});");
+            },
+            subrangeMode, beginDate, endDate, fromDate, toDate, count);
+        return Enumerate(enumerator, snippet, patternSnippet);
     }
 
     private static string BuildYearlyDoySnippet(
         DateOnly beginDate, DateOnly endDate, int interval, int dayOfYear,
         SubrangeMode mode, DateOnly? fromDate, DateOnly? toDate, int? count)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
         sb.AppendLine($"var beginDate = new DateOnly({beginDate.Year}, {beginDate.Month}, {beginDate.Day});");
@@ -614,10 +682,12 @@ public class RecurrenceService
 
         var allDates = dateSources.Keys.OrderBy(d => d).ToList();
         var snippet = BuildUnionSnippet(slots);
+        var patternSnippet = BuildUnionPatternSnippet(slots);
 
         return new RecurrenceResult
         {
             CSharpSnippet = snippet,
+            PatternSnippet = patternSnippet,
             TotalCount = allDates.Count,
             IsTruncated = allDates.Count > MaxResults,
             Dates = allDates.Take(MaxResults).ToList(),
@@ -646,7 +716,7 @@ public class RecurrenceService
 
     private static string BuildUnionSnippet(List<UnionPatternSlot> slots)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine("using DateRecurrenceR;");
         sb.AppendLine();
 
@@ -686,13 +756,57 @@ public class RecurrenceService
         return sb.ToString();
     }
 
+    private static string BuildUnionPatternSnippet(List<UnionPatternSlot> slots)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("using DateRecurrenceR;");
+        sb.AppendLine("using DateRecurrenceR.Core;");
+        sb.AppendLine("using DateRecurrenceR.Recurrences;");
+        sb.AppendLine();
+
+        for (int i = 0; i < slots.Count; i++)
+        {
+            var s = slots[i];
+            var iv = s.Interval;
+            var range = $"new DateRange({Date(s.BeginDate)}, {Date(s.EndDate)})";
+            sb.Append($"var r{i + 1} = ");
+            switch (s.PatternType)
+            {
+                case PatternType.Daily:
+                    sb.AppendLine($"DailyRecurrence.New({range}, new DailyPattern(new Interval({iv})));");
+                    break;
+                case PatternType.Weekly:
+                    sb.AppendLine($"WeeklyByWeekDaysRecurrence.New({range},");
+                    sb.AppendLine($"    new WeeklyByWeekDaysPattern(new Interval({iv}),");
+                    sb.AppendLine($"        new WeekDays({s.Sun.ToString().ToLower()}, {s.Mon.ToString().ToLower()}, {s.Tue.ToString().ToLower()}, {s.Wed.ToString().ToLower()}, {s.Thu.ToString().ToLower()}, {s.Fri.ToString().ToLower()}, {s.Sat.ToString().ToLower()}),");
+                    sb.AppendLine($"        DayOfWeek.{s.FirstDayOfWeek}));");
+                    break;
+                case PatternType.Monthly when s.MonthlySubMode == MonthlySubMode.ByDayOfMonth:
+                    sb.AppendLine($"MonthlyByDayOfMonthRecurrence.New({range}, new MonthlyByDayOfMonthPattern(new Interval({iv}), new DayOfMonth({s.DayOfMonth})));");
+                    break;
+                case PatternType.Monthly:
+                    sb.AppendLine($"MonthlyByDayOfWeekRecurrence.New({range}, new MonthlyByDayOfWeekPattern(new Interval({iv}), DayOfWeek.{s.DayOfWeek}, IndexOfDay.{s.IndexOfDay}));");
+                    break;
+                case PatternType.Yearly:
+                    sb.AppendLine($"YearlyByDayOfMonthRecurrence.New({range}, new YearlyByDayOfMonthPattern(new Interval({iv}), new DayOfMonth({s.DayOfMonth}), new MonthOfYear({s.MonthOfYear})));");
+                    break;
+            }
+        }
+
+        var args = string.Join(", ", Enumerable.Range(1, slots.Count).Select(i => $"r{i}.GetEnumerator()"));
+        sb.AppendLine();
+        sb.AppendLine($"var enumerator = Recurrence.Union({args});");
+        AppendLoop(sb);
+        return sb.ToString();
+    }
+
     // ─────────────────────────────────────────────
     // Helpers
     // ─────────────────────────────────────────────
 
-    private static RecurrenceResult Enumerate(IEnumerator<DateOnly> enumerator, string snippet)
+    private static RecurrenceResult Enumerate(IEnumerator<DateOnly> enumerator, string snippet, string patternSnippet)
     {
-        var result = new RecurrenceResult { CSharpSnippet = snippet };
+        var result = new RecurrenceResult { CSharpSnippet = snippet, PatternSnippet = patternSnippet };
         int totalCount = 0;
 
         try
@@ -714,10 +828,71 @@ public class RecurrenceService
         return result;
     }
 
-    private static void AppendLoop(System.Text.StringBuilder sb)
+    private static void AppendLoop(StringBuilder sb)
     {
         sb.AppendLine();
         sb.AppendLine("while (enumerator.MoveNext())");
         sb.AppendLine("    Console.WriteLine(enumerator.Current.ToString(\"yyyy-MM-dd\"));");
+    }
+
+    // ─────────────────────────────────────────────
+    // Pattern-API snippets
+    // ─────────────────────────────────────────────
+
+    private static string Date(DateOnly d) => $"new DateOnly({d.Year}, {d.Month}, {d.Day})";
+
+    /// <summary>
+    /// Emits the pattern-API construction and loop shared by every recurrence type.
+    /// <paramref name="declareInputs"/> writes the begin date, interval and pattern-specific
+    /// variables; <paramref name="patternExpr"/> is the <c>new XxxPattern(...)</c> expression.
+    /// </summary>
+    private static string BuildPatternSnippet(
+        string recurrenceType, string patternExpr, Action<StringBuilder> declareInputs,
+        SubrangeMode mode, DateOnly beginDate, DateOnly endDate,
+        DateOnly? fromDate, DateOnly? toDate, int? count)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("using DateRecurrenceR.Core;");
+        sb.AppendLine("using DateRecurrenceR.Recurrences;");
+        sb.AppendLine();
+        declareInputs(sb);
+
+        string target;
+        switch (mode)
+        {
+            case SubrangeMode.ByDates:
+                sb.AppendLine($"var endDate  = {Date(endDate)};");
+                sb.AppendLine($"var fromDate = {Date(fromDate!.Value)};");
+                sb.AppendLine($"var toDate   = {Date(toDate!.Value)};");
+                sb.AppendLine();
+                sb.AppendLine($"var recurrence = {recurrenceType}.New(new DateRange(beginDate, endDate), {patternExpr});");
+                sb.AppendLine("var subRange   = recurrence.GetSubRange(fromDate, toDate);");
+                target = "subRange";
+                break;
+            case SubrangeMode.ByCount when fromDate.HasValue:
+                sb.AppendLine($"var fromDate = {Date(fromDate.Value)};");
+                sb.AppendLine();
+                sb.AppendLine($"var recurrence = {recurrenceType}.New(new DateRange(beginDate), {patternExpr});");
+                sb.AppendLine($"var subRange   = recurrence.GetSubRange(fromDate, {count});");
+                target = "subRange";
+                break;
+            case SubrangeMode.ByCount:
+                sb.AppendLine();
+                sb.AppendLine($"var recurrence = {recurrenceType}.New(new DateRange(beginDate, {count}), {patternExpr});");
+                target = "recurrence";
+                break;
+            default:
+                sb.AppendLine($"var endDate    = {Date(endDate)};");
+                sb.AppendLine();
+                sb.AppendLine($"var recurrence = {recurrenceType}.New(new DateRange(beginDate, endDate), {patternExpr});");
+                target = "recurrence";
+                break;
+        }
+
+        sb.AppendLine();
+        sb.AppendLine($"var enumerator = {target}.GetEnumerator();");
+        sb.AppendLine("while (enumerator.MoveNext())");
+        sb.AppendLine("    Console.WriteLine(enumerator.Current.ToString(\"yyyy-MM-dd\"));");
+        return sb.ToString();
     }
 }

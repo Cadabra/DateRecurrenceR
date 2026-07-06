@@ -4,7 +4,7 @@ using DateRecurrenceR.Helpers;
 
 namespace DateRecurrenceR;
 
-public partial struct Recurrence
+public static partial class Recurrence
 {
     /// <summary>
     ///     Returns an enumerator for weekly period for first <c>n</c> contiguous dates.
@@ -17,7 +17,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
+    public static WeeklyEnumerator Weekly(DateOnly beginDate,
         int count,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
@@ -38,13 +38,15 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
+    public static WeeklyEnumerator Weekly(DateOnly beginDate,
         DateOnly fromDate,
         int count,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
         Interval interval)
     {
+        if (count < 1 || weekDays.CountOfSelected == 0) return WeeklyEnumerator.Empty;
+
         var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, firstDayOfWeek);
 
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
@@ -56,9 +58,16 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart) return EmptyEnumerator;
+        if (!canStart) return WeeklyEnumerator.Empty;
 
-        return new WeeklyEnumeratorLimitByCount(startDate, count, patternHash);
+        var (_, safeCount) = WeeklyRecurrenceHelper.GetEndDateAndCount(
+            startDate,
+            weekDays,
+            firstDayOfWeek,
+            interval,
+            count);
+
+        return new WeeklyEnumerator(startDate, safeCount, patternHash);
     }
 
     /// <summary>
@@ -73,7 +82,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
+    public static WeeklyEnumerator Weekly(DateOnly beginDate,
         DateOnly endDate,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
@@ -96,7 +105,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Weekly(DateOnly beginDate,
+    public static WeeklyEnumerator Weekly(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
@@ -104,6 +113,8 @@ public partial struct Recurrence
         DayOfWeek firstDayOfWeek,
         Interval interval)
     {
+        if (weekDays.CountOfSelected == 0) return WeeklyEnumerator.Empty;
+
         var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, firstDayOfWeek);
 
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
@@ -115,10 +126,17 @@ public partial struct Recurrence
             interval,
             out var startDate);
 
-        if (!canStart) return EmptyEnumerator;
+        if (!canStart) return WeeklyEnumerator.Empty;
 
         var stopDate = DateOnlyMin(toDate, endDate);
 
-        return new WeeklyEnumeratorLimitByDate(startDate, stopDate, patternHash);
+        var (_, safeCount) = WeeklyRecurrenceHelper.GetEndDateAndCount(
+            startDate,
+            weekDays,
+            firstDayOfWeek,
+            interval,
+            stopDate);
+
+        return new WeeklyEnumerator(startDate, safeCount, patternHash);
     }
 }

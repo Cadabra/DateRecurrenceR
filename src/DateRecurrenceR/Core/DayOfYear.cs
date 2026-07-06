@@ -1,13 +1,11 @@
+using System.Globalization;
+
 namespace DateRecurrenceR.Core;
 
 /// <summary>
 ///     Represents a number of the day of the year
 /// </summary>
-#if NET8_0_OR_GREATER
 public readonly struct DayOfYear : IInt32Based<DayOfYear>
-#else
-public readonly struct DayOfYear : IEquatable<DayOfYear>
-#endif
 {
     private const int MinVal = 1;
     private const int MaxVal = 366;
@@ -15,7 +13,7 @@ public readonly struct DayOfYear : IEquatable<DayOfYear>
     private readonly int _value;
 
     /// <summary>
-    ///     Create an instance of <see cref="T:DateRecurrenceR.Core.DayOfYear" /> with minimal value
+    ///     Create an instance of <see cref="DayOfYear" /> with minimal value
     /// </summary>
     public DayOfYear()
     {
@@ -23,7 +21,7 @@ public readonly struct DayOfYear : IEquatable<DayOfYear>
     }
 
     /// <summary>
-    ///     Create an instance of <see cref="T:DateRecurrenceR.Core.DayOfYear" /> with specified value
+    ///     Create an instance of <see cref="DayOfYear" /> with specified value
     /// </summary>
     public DayOfYear(int value)
     {
@@ -32,16 +30,16 @@ public readonly struct DayOfYear : IEquatable<DayOfYear>
         _value = value;
     }
 
-    /// <summary>Represents the smallest possible value of <see cref="T:DateRecurrenceR.Core.DayOfYear" />.</summary>
+    /// <summary>Represents the smallest possible value of <see cref="DayOfYear" />.</summary>
     public static DayOfYear MinValue { get; } = new(MinVal);
 
-    /// <summary>Represents the largest possible value of an <see cref="T:DateRecurrenceR.Core.DayOfYear" />.</summary>
+    /// <summary>Represents the largest possible value of an <see cref="DayOfYear" />.</summary>
     public static DayOfYear MaxValue { get; } = new(MaxVal);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        return obj is DayOfYear other && Equals(other);
     }
 
     /// <summary>
@@ -66,14 +64,14 @@ public readonly struct DayOfYear : IEquatable<DayOfYear>
     /// <returns>The string representation of the value of this instance, consisting of a sequence of digits ranging from 0 to 9 with no leading zeroes.</returns>
     public override string ToString()
     {
-        return _value.ToString();
+        return _value.ToString(CultureInfo.InvariantCulture);
     }
-    
+
     /// <summary>
-    ///     Convert <see cref="T:DateRecurrenceR.Core.DayOfYear" /> to <see cref="T:System.Int32" />
+    ///     Convert <see cref="DayOfYear" /> to <see cref="int" />
     /// </summary>
-    /// <param name="dayOfYear"><see cref="T:System.Int32" /> representation of the value</param>
-    /// <returns><see cref="T:DateRecurrenceR.Core.DayOfYear" /> representation of the value</returns>
+    /// <param name="dayOfYear"><see cref="int" /> representation of the value</param>
+    /// <returns><see cref="DayOfYear" /> representation of the value</returns>
     public static implicit operator int(DayOfYear dayOfYear)
     {
         return dayOfYear._value;

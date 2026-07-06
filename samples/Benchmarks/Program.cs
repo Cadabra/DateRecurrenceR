@@ -1,4 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
 using Benchmarks;
 
-var summary = BenchmarkRunner.Run<Benchmark>();
+BenchmarkSwitcher.FromAssembly(typeof(AllocationBenchmark).Assembly).Run(args);

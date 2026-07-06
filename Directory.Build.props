@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true' and '$(IsPackable)' != 'false'">
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+</Project>

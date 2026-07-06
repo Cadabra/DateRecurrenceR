@@ -1,10 +1,11 @@
 using DateRecurrenceR.Collections;
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
+using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR;
 
-public partial struct Recurrence
+public static partial class Recurrence
 {
     /// <summary>
     ///     Returns an enumerator for monthly period for first <c>n</c> contiguous dates.<br/>
@@ -20,7 +21,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate, int count, DayOfMonth dayOfMonth, Interval interval)
+    public static MonthlyEnumerator Monthly(DateOnly beginDate, int count, DayOfMonth dayOfMonth, Interval interval)
     {
         return Monthly(beginDate, beginDate, count, dayOfMonth, interval);
     }
@@ -40,29 +41,35 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
+    public static MonthlyEnumerator Monthly(DateOnly beginDate,
         DateOnly fromDate,
         int count,
         DayOfMonth dayOfMonth,
         Interval interval)
     {
-        if (count < 1) return EmptyEnumerator;
+        if (count < 1) return MonthlyEnumerator.Empty;
 
+        var resolver = MonthlyDateResolver.ByDayOfMonth(dayOfMonth);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            dayOfMonth,
+            resolver,
             interval,
             out var startDate);
 
-        if (!canStart) return EmptyEnumerator;
+        if (!canStart) return MonthlyEnumerator.Empty;
 
-        return new MonthlyEnumeratorLimitByCount(startDate, count, interval, GetNextDate);
+        var (_, safeCount) = MonthlyRecurrenceHelper.GetEndDateAndCount(
+            startDate,
+            resolver,
+            interval,
+            count);
 
-        DateOnly GetNextDate(int year, int month)
-        {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfMonth);
-        }
+        return new MonthlyEnumerator(
+            startDate,
+            safeCount,
+            interval,
+            resolver);
     }
 
     /// <summary>
@@ -77,7 +84,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate, int count, DayOfWeek dayOfWeek,
+    public static MonthlyEnumerator Monthly(DateOnly beginDate, int count, DayOfWeek dayOfWeek,
         IndexOfDay indexOfDay, Interval interval)
     {
         return Monthly(beginDate, beginDate, count, dayOfWeek, indexOfDay, interval);
@@ -96,29 +103,36 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
+    public static MonthlyEnumerator Monthly(DateOnly beginDate,
         DateOnly fromDate,
         int count,
         DayOfWeek dayOfWeek,
         IndexOfDay indexOfDay,
         Interval interval)
     {
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
+        if (count < 1) return MonthlyEnumerator.Empty;
+
+        var resolver = MonthlyDateResolver.ByDayOfWeek(dayOfWeek, indexOfDay);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            date.Day,
+            resolver,
             interval,
             out var startDate);
 
-        if (!canStart) return EmptyEnumerator;
+        if (!canStart) return MonthlyEnumerator.Empty;
 
-        return new MonthlyEnumeratorLimitByCount(startDate, count, interval, GetNextDate);
+        var (_, safeCount) = MonthlyRecurrenceHelper.GetEndDateAndCount(
+            startDate,
+            resolver,
+            interval,
+            count);
 
-        DateOnly GetNextDate(int year, int month)
-        {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
-        }
+        return new MonthlyEnumerator(
+            startDate,
+            safeCount,
+            interval,
+            resolver);
     }
 
     /// <summary>
@@ -136,7 +150,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
+    public static MonthlyEnumerator Monthly(DateOnly beginDate,
         DateOnly endDate,
         DayOfMonth dayOfMonth,
         Interval interval)
@@ -161,30 +175,36 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
+    public static MonthlyEnumerator Monthly(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
         DayOfMonth dayOfMonth,
         Interval interval)
     {
+        var resolver = MonthlyDateResolver.ByDayOfMonth(dayOfMonth);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            dayOfMonth,
+            resolver,
             interval,
             out var startDate);
 
-        if (!canStart) return EmptyEnumerator;
+        if (!canStart) return MonthlyEnumerator.Empty;
 
         var stopDate = DateOnlyMin(toDate, endDate);
 
-        return new MonthlyEnumeratorLimitByDate(startDate, stopDate, interval, GetNextDate);
+        var (_, safeCount) = MonthlyRecurrenceHelper.GetEndDateAndCount(
+            startDate,
+            resolver,
+            interval,
+            stopDate);
 
-        DateOnly GetNextDate(int year, int month)
-        {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfMonth);
-        }
+        return new MonthlyEnumerator(
+            startDate,
+            safeCount,
+            interval,
+            resolver);
     }
 
     /// <summary>
@@ -200,7 +220,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
+    public static MonthlyEnumerator Monthly(DateOnly beginDate,
         DateOnly endDate,
         DayOfWeek dayOfWeek,
         IndexOfDay indexOfDay,
@@ -224,7 +244,7 @@ public partial struct Recurrence
     /// <returns>
     ///     <see cref="IEnumerator{T}" /> type of <see cref="DateOnly" />
     /// </returns>
-    public static IEnumerator<DateOnly> Monthly(DateOnly beginDate,
+    public static MonthlyEnumerator Monthly(DateOnly beginDate,
         DateOnly endDate,
         DateOnly fromDate,
         DateOnly toDate,
@@ -232,27 +252,28 @@ public partial struct Recurrence
         IndexOfDay indexOfDay,
         Interval interval)
     {
-        var date = DateHelper.GetDateByDayOfMonth(beginDate.Year, beginDate.Month, dayOfWeek, indexOfDay);
+        var resolver = MonthlyDateResolver.ByDayOfWeek(dayOfWeek, indexOfDay);
         var canStart = MonthlyRecurrenceHelper.TryGetStartDate(
             beginDate,
             fromDate,
-            date.Day,
+            resolver,
             interval,
             out var startDate);
 
-        if (!canStart) return EmptyEnumerator;
+        if (!canStart) return MonthlyEnumerator.Empty;
 
         var stopDate = DateOnlyMin(toDate, endDate);
 
-        return new MonthlyEnumeratorLimitByDate(
+        var (_, safeCount) = MonthlyRecurrenceHelper.GetEndDateAndCount(
             startDate,
-            stopDate,
+            resolver,
             interval,
-            GetNextDate);
+            stopDate);
 
-        DateOnly GetNextDate(int year, int month)
-        {
-            return DateHelper.GetDateByDayOfMonth(year, month, dayOfWeek, indexOfDay);
-        }
+        return new MonthlyEnumerator(
+            startDate,
+            safeCount,
+            interval,
+            resolver);
     }
 }

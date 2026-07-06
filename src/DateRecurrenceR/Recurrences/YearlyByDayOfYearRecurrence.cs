@@ -1,0 +1,183 @@
+using DateRecurrenceR.Collections;
+using DateRecurrenceR.Core;
+using DateRecurrenceR.Helpers;
+using DateRecurrenceR.Internals;
+
+namespace DateRecurrenceR.Recurrences;
+
+/// <summary>
+/// Represents a yearly recurrence based on a specific day of the year.
+/// </summary>
+public readonly struct YearlyByDayOfYearRecurrence : IRecurrence<YearlyByDayOfYearRecurrence, YearlyEnumerator>
+{
+    private readonly YearlyByDayOfYearPattern _pattern;
+    private readonly DateOnly _startDate;
+    private readonly DateOnly _stopDate;
+    private readonly int _count;
+
+    /// <summary>
+    /// Creates a new <see cref="YearlyByDayOfYearRecurrence"/> from the specified range and pattern.
+    /// </summary>
+    /// <param name="dateRange">The date range for the recurrence.</param>
+    /// <param name="pattern">The yearly recurrence pattern.</param>
+    /// <returns>A new <see cref="YearlyByDayOfYearRecurrence"/> instance.</returns>
+    public static YearlyByDayOfYearRecurrence New(DateRange dateRange, YearlyByDayOfYearPattern pattern)
+    {
+        if (dateRange.Count is not null)
+        {
+            return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.Count.Value, pattern);
+        }
+
+        if (dateRange.EndDate is not null)
+        {
+            return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.EndDate.Value, pattern);
+        }
+
+        return new YearlyByDayOfYearRecurrence(dateRange.BeginDate, 0, pattern);
+    }
+
+    private static YearlyByDayOfYearRecurrence New(DateOnly beginDate, DateOnly fromDate, DateOnly toDate,
+        YearlyByDayOfYearPattern pattern)
+    {
+        var canStart = YearlyRecurrenceHelper.TryGetStartDate(
+            beginDate,
+            fromDate,
+            YearlyDateResolver.ByDayOfYear(pattern.DayOfYear),
+            pattern.Interval,
+            out var startDate);
+
+        if (!canStart)
+        {
+            return new YearlyByDayOfYearRecurrence(beginDate, 0, pattern);
+        }
+
+        return new YearlyByDayOfYearRecurrence(startDate, toDate, pattern);
+    }
+
+    private static YearlyByDayOfYearRecurrence New(DateOnly beginDate, DateOnly fromDate, int count,
+        YearlyByDayOfYearPattern pattern)
+    {
+        var canStart = YearlyRecurrenceHelper.TryGetStartDate(
+            beginDate,
+            fromDate,
+            YearlyDateResolver.ByDayOfYear(pattern.DayOfYear),
+            pattern.Interval,
+            out var startDate);
+
+        if (!canStart)
+        {
+            return new YearlyByDayOfYearRecurrence(beginDate, 0, pattern);
+        }
+
+        return new YearlyByDayOfYearRecurrence(startDate, count, pattern);
+    }
+
+    private YearlyByDayOfYearRecurrence(DateOnly startDate, int count, YearlyByDayOfYearPattern pattern)
+    {
+        _pattern = pattern;
+
+        if (count < 1)
+        {
+            _startDate = DateOnly.MaxValue;
+            _stopDate = DateOnly.MinValue;
+            _count = 0;
+            return;
+        }
+
+        _startDate = startDate;
+
+        (_stopDate, _count) = YearlyRecurrenceHelper.GetEndDateAndCount(
+            _startDate,
+            YearlyDateResolver.ByDayOfYear(_pattern.DayOfYear),
+            _pattern.Interval,
+            count);
+    }
+
+    private YearlyByDayOfYearRecurrence(DateOnly startDate, DateOnly endDate, YearlyByDayOfYearPattern pattern)
+    {
+        _startDate = startDate;
+        _pattern = pattern;
+
+        (_stopDate, _count) = YearlyRecurrenceHelper.GetEndDateAndCount(
+            _startDate,
+            YearlyDateResolver.ByDayOfYear(_pattern.DayOfYear),
+            _pattern.Interval,
+            endDate);
+    }
+
+    /// <inheritdoc />
+    public DateOnly StartDate => _startDate;
+
+    /// <inheritdoc />
+    public DateOnly StopDate => _stopDate;
+
+    /// <inheritdoc />
+    public int Count => _count;
+
+    /// <inheritdoc />
+    public bool Contains(DateOnly dateToCheck)
+    {
+        var dayOfYear = (int)_pattern.DayOfYear;
+        if (dayOfYear > 365 && !DateTime.IsLeapYear(dateToCheck.Year)) dayOfYear = 365;
+
+        if (dateToCheck.DayOfYear != dayOfYear) return false;
+
+        if (dateToCheck < _startDate || _stopDate < dateToCheck) return false;
+
+        return (dateToCheck.Year - _startDate.Year) % _pattern.Interval == 0;
+    }
+
+    /// <inheritdoc />
+    public YearlyByDayOfYearRecurrence GetSubRange(int takeCount)
+    {
+        if (_count == 0) return this;
+
+        return new YearlyByDayOfYearRecurrence(_startDate, takeCount, _pattern);
+    }
+
+    /// <inheritdoc />
+    public YearlyByDayOfYearRecurrence GetSubRange(DateOnly fromDate, int takeCount)
+    {
+        if (_count == 0) return this;
+
+        return New(_startDate, fromDate, takeCount, _pattern);
+    }
+
+    /// <inheritdoc />
+    public YearlyByDayOfYearRecurrence GetSubRange(DateOnly fromDate, DateOnly toDate)
+    {
+        if (_count == 0) return this;
+
+        return New(_startDate, fromDate, toDate, _pattern);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(int takeCount)
+    {
+        return GetSubRange(takeCount);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(DateOnly fromDate, int takeCount)
+    {
+        return GetSubRange(fromDate, takeCount);
+    }
+
+    IRecurrence IRecurrence.GetSubRange(DateOnly fromDate, DateOnly toDate)
+    {
+        return GetSubRange(fromDate, toDate);
+    }
+
+    /// <inheritdoc />
+    public YearlyEnumerator GetEnumerator()
+    {
+        return new YearlyEnumerator(
+            _startDate.Year,
+            _count,
+            _pattern.Interval,
+            YearlyDateResolver.ByDayOfYear(_pattern.DayOfYear));
+    }
+
+    IEnumerator<DateOnly> IRecurrence.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+}

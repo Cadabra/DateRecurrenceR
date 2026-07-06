@@ -1,0 +1,4 @@
+[*.cs]
+# Underscores are the intended unit-test naming convention (Method_Scenario_Expected).
+# Mirrors dotnet/runtime, which disables CA1707 for test projects.
+dotnet_diagnostic.CA1707.severity = none

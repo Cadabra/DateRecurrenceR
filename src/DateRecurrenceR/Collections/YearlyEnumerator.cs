@@ -1,0 +1,63 @@
+using DateRecurrenceR.Internals;
+using System.Collections;
+
+namespace DateRecurrenceR.Collections;
+
+/// <summary>
+/// Enumerates dates in a yearly recurrence pattern.
+/// </summary>
+public struct YearlyEnumerator : IEnumerator<DateOnly>
+{
+    private readonly YearlyDateResolver _resolver;
+    private readonly int _interval;
+    private readonly int _takeCount;
+    private bool _canMoveNext = true;
+    private int _count = 0;
+    private int _iterator = 0;
+
+    internal YearlyEnumerator(int year, int takeCount, int interval, YearlyDateResolver resolver)
+    {
+        _iterator = year;
+        _takeCount = takeCount;
+        _interval = interval;
+        _resolver = resolver;
+    }
+
+    /// <inheritdoc />
+    public bool MoveNext()
+    {
+        if (!_canMoveNext || _count >= _takeCount)
+        {
+            Current = default;
+            return false;
+        }
+
+        Current = _resolver.GetDate(_iterator);
+        _count++;
+
+        if (DateOnly.MaxValue.Year - _iterator < _interval)
+            _canMoveNext = false;
+        else
+            _iterator += _interval;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public void Reset()
+    {
+        throw new NotSupportedException();
+    }
+
+    /// <inheritdoc />
+    public DateOnly Current { get; private set; }
+
+    object IEnumerator.Current => Current;
+
+    internal static readonly YearlyEnumerator Empty = new(0, 0, 0, default);
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+    }
+}

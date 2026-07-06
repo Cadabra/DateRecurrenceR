@@ -28,6 +28,9 @@ jobs:
       - name: Publish Blazor WASM
         run: dotnet publish docs/site/DateRecurrenceR.Docs.csproj -c Release -o output
 
+      - name: Set base href for GitHub Pages
+        run: sed -i 's|<base href="/" />|<base href="/DateRecurrenceR/" />|' output/wwwroot/index.html
+
       - name: Add .nojekyll
         run: touch output/wwwroot/.nojekyll
 
