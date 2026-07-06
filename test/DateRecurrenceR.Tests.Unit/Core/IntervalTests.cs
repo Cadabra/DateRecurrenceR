@@ -19,6 +19,14 @@ public class IntervalTests : Int32BasedContractTests<Interval>
         //Assert
         sut.Should().Be(Interval.MinValue);
     }
+
+    [Fact]
+    public void Default_instance_equals_minValue()
+    {
+        // default bypasses the constructor; the biased storage must still yield a valid interval
+        default(Interval).Should().Be(Interval.MinValue);
+        ((int)default(Interval)).Should().Be(1);
+    }
     
     [Fact]
     public void Ctor_creates_specified_value()

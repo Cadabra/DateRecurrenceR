@@ -4,7 +4,7 @@ using DateRecurrenceR.Helpers;
 
 namespace DateRecurrenceR;
 
-public partial struct Recurrence
+public static partial class Recurrence
 {
     /// <summary>
     ///     Returns an enumerator for daily period for first <c>n</c> contiguous dates.

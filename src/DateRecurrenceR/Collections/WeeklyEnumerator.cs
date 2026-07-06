@@ -60,7 +60,7 @@ public struct WeeklyEnumerator : IEnumerator<DateOnly>
 
     object IEnumerator.Current => Current;
 
-    internal static WeeklyEnumerator Empty = new(default, 0, default);
+    internal static readonly WeeklyEnumerator Empty = new(default, 0, default);
 
     /// <inheritdoc />
     public void Dispose()

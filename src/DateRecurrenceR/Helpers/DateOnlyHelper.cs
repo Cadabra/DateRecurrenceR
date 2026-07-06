@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 
 namespace DateRecurrenceR.Helpers;
 
-internal struct DateOnlyHelper
+internal static class DateOnlyHelper
 {
     [Pure]
     public static DateOnly GetDateByDayOfMonth(int year, int month, DayOfWeek dayOfWeek, IndexOfDay indexOfDay)

@@ -62,6 +62,50 @@ public class WeekDaysTests
         byBools.Should().Be(byDays);
     }
 
+    [Theory]
+    [InlineData(6, 7)]
+    [InlineData(3, 4)]
+    [InlineData(-1, 0)]
+    public void GetCountOfSelected_counts_days_up_to_max_index_for_all_days(int maxDayIndex, int expected)
+    {
+        var sut = new WeekDays(true, true, true, true, true, true, true);
+
+        sut.GetCountOfSelected(maxDayIndex, DayOfWeek.Sunday).Should().Be(expected);
+    }
+
+    [Fact]
+    public void GetCountOfSelected_counts_only_selected_days_shifted_by_first_day()
+    {
+        var monFri = new WeekDays(DayOfWeek.Monday, DayOfWeek.Friday);
+        // from Monday, Friday has index 4
+        monFri.GetCountOfSelected(3, DayOfWeek.Monday).Should().Be(1);
+        monFri.GetCountOfSelected(4, DayOfWeek.Monday).Should().Be(2);
+
+        var tuesday = new WeekDays(DayOfWeek.Tuesday);
+        tuesday.GetCountOfSelected(6, DayOfWeek.Monday).Should().Be(1);
+    }
+
+    [Fact]
+    public void TryGet_returns_the_day_at_the_selected_index_and_false_past_the_end()
+    {
+        var sut = new WeekDays(true, true, true, true, true, true, true);
+
+        sut.TryGet(6, DayOfWeek.Sunday, out var last).Should().BeTrue();
+        last.Should().Be(DayOfWeek.Saturday);
+
+        sut.TryGet(7, DayOfWeek.Sunday, out _).Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(DayOfWeek.Monday, DayOfWeek.Thursday)]
+    [InlineData(DayOfWeek.Monday, DayOfWeek.Friday)]
+    public void GetMinByFirstDayOfWeek_returns_first_selected_day_from_first_day(DayOfWeek firstDay, DayOfWeek expected)
+    {
+        var sut = new WeekDays(expected);
+
+        sut.GetMinByFirstDayOfWeek(firstDay).Should().Be(expected);
+    }
+
     /// <summary>
     /// Regression: <see cref="WeekDays"/> did not override <c>Equals</c>/<c>GetHashCode</c>, so the
     /// built-in <c>ValueType</c> implementation threw <see cref="NotSupportedException"/> because the

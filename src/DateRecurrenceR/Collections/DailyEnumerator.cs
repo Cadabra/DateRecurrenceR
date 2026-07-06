@@ -52,7 +52,7 @@ public struct DailyEnumerator : IEnumerator<DateOnly>
 
     object IEnumerator.Current => Current;
 
-    internal static DailyEnumerator Empty = new(default, 0, 0);
+    internal static readonly DailyEnumerator Empty = new(default, 0, 0);
 
     /// <inheritdoc />
     public void Dispose()

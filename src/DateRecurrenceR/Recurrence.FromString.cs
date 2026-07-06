@@ -5,7 +5,7 @@ using DateRecurrenceR.Recurrences;
 
 namespace DateRecurrenceR;
 
-public readonly partial struct Recurrence
+public static partial class Recurrence
 {
     /// <summary>
     /// Creates a recurrence from a full recurrence string produced by a pattern's

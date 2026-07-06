@@ -2,7 +2,7 @@ using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR.Helpers;
 
-internal struct MonthlyRecurrenceHelper
+internal static class MonthlyRecurrenceHelper
 {
     public static bool TryGetStartDate(DateOnly beginDate,
         DateOnly fromDate,

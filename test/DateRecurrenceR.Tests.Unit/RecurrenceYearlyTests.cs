@@ -33,6 +33,16 @@ public sealed class RecurrenceYearlyTests
     }
 
     [Fact]
+    public void Yearly_ByCount_returns_empty_when_count_is_negative()
+    {
+        var begin = new DateOnly(2025, 1, 1);
+
+        Collect(Recurrence.Yearly(begin, -5, new DayOfYear(100), new Interval(1))).Should().BeEmpty();
+        Collect(Recurrence.Yearly(begin, -5, new DayOfMonth(10), new MonthOfYear(3), new Interval(1))).Should().BeEmpty();
+        Collect(Recurrence.Yearly(begin, -5, DayOfWeek.Monday, IndexOfDay.First, new MonthOfYear(3), new Interval(1))).Should().BeEmpty();
+    }
+
+    [Fact]
     public void Yearly_ByDayOfYear_ByCount_jan1_every_year()
     {
         var dates = Collect(Recurrence.Yearly(

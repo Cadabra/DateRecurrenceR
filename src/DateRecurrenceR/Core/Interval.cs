@@ -14,6 +14,8 @@ public readonly struct Interval : IEquatable<Interval>
     private const int MinVal = 1;
     private const int MaxVal = int.MaxValue;
 
+    // Stored biased by -1 so that default(Interval), which bypasses the constructor,
+    // equals MinValue instead of holding the invalid value 0.
     private readonly int _value;
 
     /// <summary>
@@ -31,7 +33,7 @@ public readonly struct Interval : IEquatable<Interval>
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(value, MinVal);
 
-        _value = value;
+        _value = value - 1;
     }
 
     /// <summary>Represents the smallest possible value of <see cref="Interval" />.</summary>
@@ -68,7 +70,7 @@ public readonly struct Interval : IEquatable<Interval>
     /// <returns>The string representation of the value of this instance, consisting of a sequence of digits ranging from 0 to 9 with no leading zeroes.</returns>
     public override string ToString()
     {
-        return _value.ToString(CultureInfo.InvariantCulture);
+        return (_value + 1).ToString(CultureInfo.InvariantCulture);
     }
 
     /// <summary>
@@ -78,7 +80,7 @@ public readonly struct Interval : IEquatable<Interval>
     /// <returns><see cref="Interval" /> representation of the value</returns>
     public static implicit operator int(Interval interval)
     {
-        return interval._value;
+        return interval._value + 1;
     }
 
     /// <inheritdoc />

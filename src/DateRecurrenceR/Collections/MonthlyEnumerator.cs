@@ -64,7 +64,7 @@ public struct MonthlyEnumerator : IEnumerator<DateOnly>
 
     object IEnumerator.Current => Current;
 
-    internal static MonthlyEnumerator Empty = new(default, 0, 0, default);
+    internal static readonly MonthlyEnumerator Empty = new(default, 0, 0, default);
 
     /// <inheritdoc />
     public void Dispose()

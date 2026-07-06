@@ -41,6 +41,28 @@ public class DailyRecurrenceTests : RecurrenceContractTests<DailyRecurrence>
     }
 
     /// <summary>
+    /// Regression: <c>default(DailyPattern)</c> bypasses the <see cref="Interval"/> constructor
+    /// and carried a zero interval, so <see cref="DailyRecurrence.New(DateRange, DailyPattern)"/>
+    /// threw <see cref="DivideByZeroException"/> for end-date ranges.
+    /// </summary>
+    [Fact]
+    public void New_with_default_pattern_behaves_as_interval_1()
+    {
+        // Arrange
+        var sut = DailyRecurrence.New(
+            new DateRange(new DateOnly(2026, 1, 1), new DateOnly(2026, 1, 5)), default);
+
+        // Assert
+        sut.Count.Should().Be(5);
+        Collect(sut).Should().Equal(
+            new DateOnly(2026, 1, 1),
+            new DateOnly(2026, 1, 2),
+            new DateOnly(2026, 1, 3),
+            new DateOnly(2026, 1, 4),
+            new DateOnly(2026, 1, 5));
+    }
+
+    /// <summary>
     /// Regression: <see cref="DailyRecurrence.GetSubRange(DateOnly, DateOnly)"/> ignored
     /// <c>fromDate</c> and returned a sub-range starting at the original start date.
     /// </summary>

@@ -4,7 +4,7 @@ using DateRecurrenceR.Helpers;
 
 namespace DateRecurrenceR;
 
-public partial struct Recurrence
+public static partial class Recurrence
 {
     /// <summary>
     ///     Returns an enumerator for weekly period for first <c>n</c> contiguous dates.
@@ -45,6 +45,8 @@ public partial struct Recurrence
         DayOfWeek firstDayOfWeek,
         Interval interval)
     {
+        if (count < 1 || weekDays.CountOfSelected == 0) return WeeklyEnumerator.Empty;
+
         var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, firstDayOfWeek);
 
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(
@@ -111,6 +113,8 @@ public partial struct Recurrence
         DayOfWeek firstDayOfWeek,
         Interval interval)
     {
+        if (weekDays.CountOfSelected == 0) return WeeklyEnumerator.Empty;
+
         var patternHash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, interval, firstDayOfWeek);
 
         var canStart = WeeklyRecurrenceHelper.TryGetStartDate(

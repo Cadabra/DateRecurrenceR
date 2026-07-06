@@ -40,10 +40,13 @@ public abstract class Int32BasedContractTests<T> where T : struct, IInt32Based<T
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [SkippableFact]
     public void Constructor_throws_above_maximum()
     {
-        if (MaxAllowed == int.MaxValue) return; // a larger value is not representable
+        // When the maximum is int.MaxValue a larger value is not representable, so this fact is
+        // impossible; report it as an explicit skip instead of letting it pass silently
+        // (unchecked MaxAllowed + 1 would wrap and test the wrong bound).
+        Skip.If(MaxAllowed == int.MaxValue, "a value above int.MaxValue is not representable");
 
         var act = () => Create(MaxAllowed + 1);
 

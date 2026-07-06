@@ -5,7 +5,7 @@ using DateRecurrenceR.Internals;
 
 namespace DateRecurrenceR;
 
-public partial struct Recurrence
+public static partial class Recurrence
 {
     /// <summary>
     ///     Returns an enumerator for yearly period for first <c>n</c> contiguous dates.<br/>
@@ -54,6 +54,8 @@ public partial struct Recurrence
         MonthOfYear numberOfMonth,
         Interval interval)
     {
+        if (count < 1) return YearlyEnumerator.Empty;
+
         var resolver = YearlyDateResolver.ByDayOfMonth(numberOfMonth, dayOfMonth);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
@@ -122,6 +124,8 @@ public partial struct Recurrence
         MonthOfYear numberOfMonth,
         Interval interval)
     {
+        if (count < 1) return YearlyEnumerator.Empty;
+
         var resolver = YearlyDateResolver.ByDayOfWeek(numberOfMonth, dayOfWeek, indexOfDay);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,
@@ -179,6 +183,8 @@ public partial struct Recurrence
         DayOfYear dayOfYear,
         Interval interval)
     {
+        if (count < 1) return YearlyEnumerator.Empty;
+
         var resolver = YearlyDateResolver.ByDayOfYear(dayOfYear);
         var canStart = YearlyRecurrenceHelper.TryGetStartDate(
             beginDate,

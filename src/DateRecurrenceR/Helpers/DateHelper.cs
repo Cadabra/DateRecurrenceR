@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 
 namespace DateRecurrenceR.Helpers;
 
-internal struct DateHelper
+internal static class DateHelper
 {
     [Pure]
     public static bool TryGetDateOfDayOfWeek(DateOnly dateInSameWeek,

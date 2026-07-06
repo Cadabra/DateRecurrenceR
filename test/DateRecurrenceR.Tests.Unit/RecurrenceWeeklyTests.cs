@@ -25,6 +25,42 @@ public sealed class RecurrenceWeeklyTests
         dates.Should().BeEmpty();
     }
 
+    /// <summary>
+    /// Regression: a negative count near the calendar start produced a negative day number
+    /// and threw <see cref="ArgumentOutOfRangeException"/> instead of yielding nothing.
+    /// </summary>
+    [Fact]
+    public void Weekly_ByCount_returns_empty_when_count_is_negative()
+    {
+        var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Friday);
+        var dates = Collect(Recurrence.Weekly(new DateOnly(1, 1, 1), -5, weekDays, DayOfWeek.Sunday, new Interval(1)));
+
+        dates.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// Regression: an empty <see cref="WeekDays"/> (reachable via <c>default</c> or the all-false
+    /// constructor) reached the weekly helpers, which divide by the number of selected days,
+    /// and threw <see cref="DivideByZeroException"/>.
+    /// </summary>
+    [Fact]
+    public void Weekly_ByCount_returns_empty_when_weekDays_is_empty()
+    {
+        var dates = Collect(Recurrence.Weekly(new DateOnly(2025, 1, 6), 5, default(WeekDays), DayOfWeek.Monday, new Interval(1)));
+
+        dates.Should().BeEmpty();
+    }
+
+    /// <inheritdoc cref="Weekly_ByCount_returns_empty_when_weekDays_is_empty"/>
+    [Fact]
+    public void Weekly_ByEndDate_returns_empty_when_weekDays_is_empty()
+    {
+        var weekDays = new WeekDays(false, false, false, false, false, false, false);
+        var dates = Collect(Recurrence.Weekly(new DateOnly(2025, 1, 6), new DateOnly(2025, 3, 1), weekDays, DayOfWeek.Monday, new Interval(1)));
+
+        dates.Should().BeEmpty();
+    }
+
     [Fact]
     public void Weekly_ByCount_single_day_every_week()
     {

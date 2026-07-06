@@ -24,6 +24,13 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
     /// <returns>A new <see cref="WeeklyByWeekDaysRecurrence"/> instance.</returns>
     public static WeeklyByWeekDaysRecurrence New(DateRange dateRange, WeeklyByWeekDaysPattern pattern)
     {
+        // A pattern with no selected days yields nothing; the weekly helpers divide by the
+        // number of selected days, so it must not reach them.
+        if (pattern.WeekDays.CountOfSelected == 0)
+        {
+            return new WeeklyByWeekDaysRecurrence(dateRange.BeginDate, 0, default, pattern);
+        }
+
         if (dateRange.Count is not null)
         {
             return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.Count.Value, pattern);

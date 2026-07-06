@@ -1,6 +1,6 @@
 namespace DateRecurrenceR.Helpers;
 
-internal struct DailyRecurrenceHelper
+internal static class DailyRecurrenceHelper
 {
     public static bool TryGetStartDate(DateOnly beginDate, DateOnly fromDate, int interval, out DateOnly startDate)
     {

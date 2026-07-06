@@ -54,7 +54,7 @@ public struct YearlyEnumerator : IEnumerator<DateOnly>
 
     object IEnumerator.Current => Current;
 
-    internal static YearlyEnumerator Empty = new(0, 0, 0, default);
+    internal static readonly YearlyEnumerator Empty = new(0, 0, 0, default);
 
     /// <inheritdoc />
     public void Dispose()

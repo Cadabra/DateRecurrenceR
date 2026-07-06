@@ -33,6 +33,15 @@ public sealed class RecurrenceMonthlyTests
     }
 
     [Fact]
+    public void Monthly_ByDayOfWeek_ByCount_returns_empty_when_count_is_negative()
+    {
+        var dates = Collect(Recurrence.Monthly(
+            new DateOnly(2025, 1, 1), -5, DayOfWeek.Monday, IndexOfDay.First, new Interval(1)));
+
+        dates.Should().BeEmpty();
+    }
+
+    [Fact]
     public void Monthly_ByDayOfMonth_ByCount_returns_single_date()
     {
         var dates = Collect(Recurrence.Monthly(

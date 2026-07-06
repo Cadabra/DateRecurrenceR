@@ -3,7 +3,7 @@ namespace DateRecurrenceR;
 /// <summary>
 /// Provides static methods for recurrence dates
 /// </summary>
-public readonly partial struct Recurrence
+public static partial class Recurrence
 {
     private static DateOnly DateOnlyMin(DateOnly val1, DateOnly val2)
     {

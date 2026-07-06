@@ -18,6 +18,29 @@ public class WeeklyByWeekDaysRecurrenceTests : RecurrenceContractTests<WeeklyByW
     }
 
     /// <summary>
+    /// Regression: a pattern with no selected days reached the weekly helpers, which divide by
+    /// the number of selected days, and threw <see cref="DivideByZeroException"/>.
+    /// </summary>
+    [Fact]
+    public void New_with_empty_weekDays_returns_empty_recurrence()
+    {
+        // Arrange
+        var pattern = new WeeklyByWeekDaysPattern(new Interval(1), default, DayOfWeek.Monday);
+
+        // Act
+        var byCount = WeeklyByWeekDaysRecurrence.New(new DateRange(new DateOnly(2026, 1, 1), 5), pattern);
+        var byEndDate = WeeklyByWeekDaysRecurrence.New(
+            new DateRange(new DateOnly(2026, 1, 1), new DateOnly(2026, 3, 1)), pattern);
+
+        // Assert
+        byCount.Count.Should().Be(0);
+        Collect(byCount).Should().BeEmpty();
+        byCount.Contains(new DateOnly(2026, 1, 1)).Should().BeFalse();
+        byEndDate.Count.Should().Be(0);
+        Collect(byEndDate).Should().BeEmpty();
+    }
+
+    /// <summary>
     /// Regression: the count-based end date landed in an off-grid week when the last occurrence
     /// wraps past the end of the week with interval &gt; 1.
     /// </summary>

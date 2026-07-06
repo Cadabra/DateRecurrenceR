@@ -2,7 +2,9 @@ using System.Collections;
 
 namespace DateRecurrenceR.Collections;
 
-internal struct UnionEnumerator : IEnumerator<DateOnly>
+// A class rather than a struct: every public entry point hands it out as IEnumerator<DateOnly>,
+// so it would be boxed anyway.
+internal sealed class UnionEnumerator : IEnumerator<DateOnly>
 {
     private readonly EWrapper[] _enumerators;
     private DateOnly? _current = null;
@@ -113,6 +115,7 @@ internal struct UnionEnumerator : IEnumerator<DateOnly>
 
         if (nextIndex < 0)
         {
+            Current = default;
             return false;
         }
 

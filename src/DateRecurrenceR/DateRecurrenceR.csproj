@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Authors>Sergey Olshanskiy</Authors>
-        <Description>Library for represents a recurrence pattern of date.</Description>
+        <Description>A .NET library for representing date recurrence patterns.</Description>
         <Copyright>Copyright Sergey Olshanskiy</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>recurring-dates;date-interval;date-recurrence;date-repeat;date-patterns</PackageTags>
@@ -12,14 +12,12 @@
         <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <WarningsAsErrors>Nullable</WarningsAsErrors>
-        <Optimize>true</Optimize>
         <Title>DateRecurrenceR</Title>
         <PackageId>DateRecurrenceR</PackageId>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
