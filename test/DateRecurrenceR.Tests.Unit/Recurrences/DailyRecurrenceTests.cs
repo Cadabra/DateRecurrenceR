@@ -1,4 +1,5 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -6,7 +7,7 @@ using JetBrains.Annotations;
 namespace DateRecurrenceR.Tests.Unit.Recurrences;
 
 [TestSubject(typeof(DailyRecurrence))]
-public class DailyRecurrenceTest
+public class DailyRecurrenceTests : RecurrenceContractTests<DailyRecurrence>
 {
     private static List<DateOnly> Collect(DailyRecurrence recurrence)
     {
@@ -14,6 +15,29 @@ public class DailyRecurrenceTest
         var enumerator = recurrence.GetEnumerator();
         while (enumerator.MoveNext()) list.Add(enumerator.Current);
         return list;
+    }
+
+    /// <summary>
+    /// Regression: <see cref="DailyRecurrence.New(DateRange, DailyPattern)"/> returned a
+    /// default-initialized instance for a <see cref="DateRange"/> with no end date and no count,
+    /// discarding the pattern. The resulting zero interval made <see cref="DailyRecurrence.Contains"/>
+    /// throw <see cref="DivideByZeroException"/> for <see cref="DateOnly.MinValue"/> and made
+    /// every date-based sub-range throw as well.
+    /// </summary>
+    [Fact]
+    public void New_with_default_DateRange_returns_empty_recurrence_that_never_throws()
+    {
+        // Arrange
+        var sut = DailyRecurrence.New(default, new DailyPattern(new Interval(2)));
+
+        // Assert
+        sut.Count.Should().Be(0);
+        Collect(sut).Should().BeEmpty();
+        sut.Contains(DateOnly.MinValue).Should().BeFalse();
+        sut.Contains(new DateOnly(2026, 1, 1)).Should().BeFalse();
+        Collect(sut.GetSubRange(new DateOnly(2026, 1, 1), 3)).Should().BeEmpty(
+            "a sub-range of an empty recurrence must be empty");
+        Collect(sut.GetSubRange(3)).Should().BeEmpty();
     }
 
     /// <summary>
@@ -141,5 +165,15 @@ public class DailyRecurrenceTest
         sut.StopDate.Should().Be(list.Last());
         sut.Count.Should().Be(list.Count);
         allContained.Should().BeTrue();
+    }
+
+    protected override DailyRecurrence CreateByCount(DateOnly beginDate, int count)
+    {
+        return DailyRecurrence.New(new DateRange(beginDate, count), new DailyPattern(new Interval(2)));
+    }
+
+    protected override DailyRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    {
+        return DailyRecurrence.New(new DateRange(beginDate, endDate), new DailyPattern(new Interval(2)));
     }
 }

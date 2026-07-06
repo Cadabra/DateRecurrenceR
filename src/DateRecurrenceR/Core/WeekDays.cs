@@ -5,7 +5,7 @@ namespace DateRecurrenceR.Core;
 /// <summary>
 /// Represents weekdays for one week.
 /// </summary>
-public readonly struct WeekDays
+public readonly struct WeekDays : IEquatable<WeekDays>
 {
 #if NET8_0_OR_GREATER
     private readonly WeekDaysArray _ds;
@@ -360,5 +360,39 @@ public readonly struct WeekDays
         result = default;
 
         return false;
+    }
+
+    /// <summary>
+    ///     Indicates whether this instance and a specified other instance select the same days.
+    /// </summary>
+    /// <param name="other">The other instance to compare with the current instance.</param>
+    /// <returns>true if both instances select the same days of the week; otherwise, false.</returns>
+    public bool Equals(WeekDays other)
+    {
+        return ToFlag() == other.ToFlag();
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        return obj is WeekDays other && Equals(other);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        return ToFlag();
+    }
+
+    /// <inheritdoc cref="Equals(WeekDays)" />
+    public static bool operator ==(WeekDays left, WeekDays right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <inheritdoc cref="Equals(WeekDays)" />
+    public static bool operator !=(WeekDays left, WeekDays right)
+    {
+        return !(left == right);
     }
 }

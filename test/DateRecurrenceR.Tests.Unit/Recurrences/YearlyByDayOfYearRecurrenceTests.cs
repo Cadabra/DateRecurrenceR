@@ -1,4 +1,5 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -6,7 +7,7 @@ using JetBrains.Annotations;
 namespace DateRecurrenceR.Tests.Unit.Recurrences;
 
 [TestSubject(typeof(YearlyByDayOfYearRecurrence))]
-public class YearlyByDayOfYearRecurrenceTest
+public class YearlyByDayOfYearRecurrenceTests : RecurrenceContractTests<YearlyByDayOfYearRecurrence>
 {
     private static List<DateOnly> Collect(YearlyByDayOfYearRecurrence recurrence)
     {
@@ -58,5 +59,15 @@ public class YearlyByDayOfYearRecurrenceTest
         sut.Count.Should().Be(0);
         Collect(sut).Should().BeEmpty();
         sut.Contains(sut.StartDate).Should().BeFalse("an empty recurrence contains no dates");
+    }
+
+    protected override YearlyByDayOfYearRecurrence CreateByCount(DateOnly beginDate, int count)
+    {
+        return YearlyByDayOfYearRecurrence.New(new DateRange(beginDate, count), new YearlyByDayOfYearPattern(new Interval(1), new DayOfYear(100)));
+    }
+
+    protected override YearlyByDayOfYearRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    {
+        return YearlyByDayOfYearRecurrence.New(new DateRange(beginDate, endDate), new YearlyByDayOfYearPattern(new Interval(1), new DayOfYear(100)));
     }
 }

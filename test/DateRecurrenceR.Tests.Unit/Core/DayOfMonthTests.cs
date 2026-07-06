@@ -1,11 +1,12 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using FluentAssertions;
 using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit.Core;
 
 [TestSubject(typeof(DayOfMonth))]
-public class DayOfMonthTest
+public class DayOfMonthTests : Int32BasedContractTests<DayOfMonth>
 {
     [Fact]
     public void Empty_ctor_creates_minValue()
@@ -44,5 +45,19 @@ public class DayOfMonthTest
 
         //Assert
         sut.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    protected override int MinAllowed => 1;
+
+    protected override int MaxAllowed => 31;
+
+    protected override DayOfMonth Create(int value)
+    {
+        return new DayOfMonth(value);
+    }
+
+    protected override int ToInt32(DayOfMonth value)
+    {
+        return value;
     }
 }

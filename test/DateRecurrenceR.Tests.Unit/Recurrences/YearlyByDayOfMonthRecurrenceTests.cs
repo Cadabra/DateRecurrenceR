@@ -1,4 +1,5 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -6,7 +7,7 @@ using JetBrains.Annotations;
 namespace DateRecurrenceR.Tests.Unit.Recurrences;
 
 [TestSubject(typeof(YearlyByDayOfMonthRecurrence))]
-public class YearlyByDayOfMonthRecurrenceTest
+public class YearlyByDayOfMonthRecurrenceTests : RecurrenceContractTests<YearlyByDayOfMonthRecurrence>
 {
     private static List<DateOnly> Collect(YearlyByDayOfMonthRecurrence recurrence)
     {
@@ -39,5 +40,15 @@ public class YearlyByDayOfMonthRecurrenceTest
             new DateOnly(2029, 3, 10),
             new DateOnly(2030, 3, 10));
         sut.StartDate.Should().Be(new DateOnly(2028, 3, 10), "StartDate must be the first occurrence");
+    }
+
+    protected override YearlyByDayOfMonthRecurrence CreateByCount(DateOnly beginDate, int count)
+    {
+        return YearlyByDayOfMonthRecurrence.New(new DateRange(beginDate, count), new YearlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(10), new MonthOfYear(3)));
+    }
+
+    protected override YearlyByDayOfMonthRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    {
+        return YearlyByDayOfMonthRecurrence.New(new DateRange(beginDate, endDate), new YearlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(10), new MonthOfYear(3)));
     }
 }

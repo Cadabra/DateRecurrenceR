@@ -34,7 +34,7 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
             return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.EndDate.Value, pattern);
         }
 
-        return new WeeklyByWeekDaysRecurrence();
+        return new WeeklyByWeekDaysRecurrence(dateRange.BeginDate, 0, default, pattern);
     }
 
     private static WeeklyByWeekDaysRecurrence New(DateOnly beginDate, DateOnly fromDate, DateOnly toDate,
@@ -54,7 +54,7 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
 
         if (!canStart)
         {
-            return new WeeklyByWeekDaysRecurrence();
+            return new WeeklyByWeekDaysRecurrence(beginDate, 0, patternHash, pattern);
         }
 
         return new WeeklyByWeekDaysRecurrence(startDate, toDate, patternHash, pattern);
@@ -77,7 +77,7 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
 
         if (!canStart)
         {
-            return new WeeklyByWeekDaysRecurrence();
+            return new WeeklyByWeekDaysRecurrence(beginDate, 0, patternHash, pattern);
         }
 
         return new WeeklyByWeekDaysRecurrence(startDate, count, patternHash, pattern);
@@ -86,9 +86,18 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
     private WeeklyByWeekDaysRecurrence(DateOnly startDate, int count, WeeklyHash weeklyHash,
         WeeklyByWeekDaysPattern pattern)
     {
-        _startDate = startDate;
         _weeklyHash = weeklyHash;
         _pattern = pattern;
+
+        if (count < 1)
+        {
+            _startDate = DateOnly.MaxValue;
+            _stopDate = DateOnly.MinValue;
+            _count = 0;
+            return;
+        }
+
+        _startDate = startDate;
 
         (_stopDate, _count) = WeeklyRecurrenceHelper.GetEndDateAndCount(
             _startDate,
@@ -139,18 +148,24 @@ public readonly struct WeeklyByWeekDaysRecurrence : IRecurrence<WeeklyByWeekDays
     /// <inheritdoc />
     public WeeklyByWeekDaysRecurrence GetSubRange(int takeCount)
     {
+        if (_count == 0) return this;
+
         return new WeeklyByWeekDaysRecurrence(_startDate, takeCount, _weeklyHash, _pattern);
     }
 
     /// <inheritdoc />
     public WeeklyByWeekDaysRecurrence GetSubRange(DateOnly fromDate, int takeCount)
     {
+        if (_count == 0) return this;
+
         return New(_startDate, fromDate, takeCount, _pattern);
     }
 
     /// <inheritdoc />
     public WeeklyByWeekDaysRecurrence GetSubRange(DateOnly fromDate, DateOnly toDate)
     {
+        if (_count == 0) return this;
+
         return New(_startDate, fromDate, toDate, _pattern);
     }
 

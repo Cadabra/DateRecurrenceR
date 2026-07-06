@@ -1,4 +1,5 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -6,7 +7,7 @@ using JetBrains.Annotations;
 namespace DateRecurrenceR.Tests.Unit.Recurrences;
 
 [TestSubject(typeof(YearlyByDayOfWeekRecurrence))]
-public class YearlyByDayOfWeekRecurrenceTest
+public class YearlyByDayOfWeekRecurrenceTests : RecurrenceContractTests<YearlyByDayOfWeekRecurrence>
 {
     private static List<DateOnly> Collect(YearlyByDayOfWeekRecurrence recurrence)
     {
@@ -75,5 +76,15 @@ public class YearlyByDayOfWeekRecurrenceTest
         {
             sut.Contains(date).Should().Be(expected.Contains(date), $"Contains({date:yyyy-MM-dd}) must agree with the enumerator");
         }
+    }
+
+    protected override YearlyByDayOfWeekRecurrence CreateByCount(DateOnly beginDate, int count)
+    {
+        return YearlyByDayOfWeekRecurrence.New(new DateRange(beginDate, count), new YearlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second, new MonthOfYear(3)));
+    }
+
+    protected override YearlyByDayOfWeekRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    {
+        return YearlyByDayOfWeekRecurrence.New(new DateRange(beginDate, endDate), new YearlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second, new MonthOfYear(3)));
     }
 }

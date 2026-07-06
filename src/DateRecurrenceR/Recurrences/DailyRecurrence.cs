@@ -29,7 +29,7 @@ public readonly struct DailyRecurrence : IRecurrence<DailyRecurrence, DailyEnume
             return new DailyRecurrence(dateRange.BeginDate, dateRange.EndDate.Value, pattern);
         }
 
-        return new DailyRecurrence();
+        return new DailyRecurrence(dateRange.BeginDate, 0, pattern);
     }
 
     private DailyRecurrence(DateOnly startDate, DateOnly endDate, DailyPattern pattern)
@@ -92,12 +92,16 @@ public readonly struct DailyRecurrence : IRecurrence<DailyRecurrence, DailyEnume
     /// <inheritdoc />
     public DailyRecurrence GetSubRange(int takeCount)
     {
+        if (_count == 0) return this;
+
         return new DailyRecurrence(_startDate, takeCount, _pattern);
     }
 
     /// <inheritdoc />
     public DailyRecurrence GetSubRange(DateOnly fromDate, int takeCount)
     {
+        if (_count == 0) return this;
+
         if (!TryAlignToGrid(fromDate, out var startDate))
         {
             return new DailyRecurrence(DateOnly.MaxValue, 0, _pattern);
@@ -109,6 +113,8 @@ public readonly struct DailyRecurrence : IRecurrence<DailyRecurrence, DailyEnume
     /// <inheritdoc />
     public DailyRecurrence GetSubRange(DateOnly fromDate, DateOnly toDate)
     {
+        if (_count == 0) return this;
+
         if (!TryAlignToGrid(fromDate, out var startDate))
         {
             return new DailyRecurrence(DateOnly.MaxValue, 0, _pattern);

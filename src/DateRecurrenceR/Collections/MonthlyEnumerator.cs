@@ -12,6 +12,7 @@ public struct MonthlyEnumerator : IEnumerator<DateOnly>
     private readonly MonthlyDateResolver _resolver;
     private readonly int _takeCount;
     private readonly int _interval = 0;
+    private bool _canMoveNext = true;
     private int _count = 0;
 
     internal MonthlyEnumerator(DateOnly startDate, int takeCount, int interval, MonthlyDateResolver resolver)
@@ -25,7 +26,7 @@ public struct MonthlyEnumerator : IEnumerator<DateOnly>
     /// <inheritdoc />
     public bool MoveNext()
     {
-        if (_count >= _takeCount)
+        if (!_canMoveNext || _count >= _takeCount)
         {
             Current = default;
             return false;
@@ -42,6 +43,12 @@ public struct MonthlyEnumerator : IEnumerator<DateOnly>
         }
 
         _count++;
+
+        if (MonthsInYear * (DateOnly.MaxValue.Year - Current.Year) + DateOnly.MaxValue.Month - Current.Month <
+            _interval)
+        {
+            _canMoveNext = false;
+        }
 
         return true;
     }

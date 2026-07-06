@@ -1,8 +1,10 @@
 using DateRecurrenceR.Core;
 using FluentAssertions;
+using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit;
 
+[TestSubject(typeof(Recurrence))]
 public sealed class RecurrenceWeeklyTests
 {
     private static List<DateOnly> Collect(IEnumerator<DateOnly> e)

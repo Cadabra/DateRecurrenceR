@@ -1,11 +1,12 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using FluentAssertions;
 using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit.Core;
 
 [TestSubject(typeof(MonthOfYear))]
-public class MonthOfYearTest
+public class MonthOfYearTests : Int32BasedContractTests<MonthOfYear>
 {
     [Fact]
     public void Empty_ctor_creates_minValue()
@@ -44,5 +45,19 @@ public class MonthOfYearTest
 
         //Assert
         sut.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    protected override int MinAllowed => 1;
+
+    protected override int MaxAllowed => 12;
+
+    protected override MonthOfYear Create(int value)
+    {
+        return new MonthOfYear(value);
+    }
+
+    protected override int ToInt32(MonthOfYear value)
+    {
+        return value;
     }
 }

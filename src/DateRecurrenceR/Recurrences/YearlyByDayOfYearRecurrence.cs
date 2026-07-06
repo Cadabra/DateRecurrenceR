@@ -33,7 +33,7 @@ public readonly struct YearlyByDayOfYearRecurrence : IRecurrence<YearlyByDayOfYe
             return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.EndDate.Value, pattern);
         }
 
-        return new YearlyByDayOfYearRecurrence();
+        return new YearlyByDayOfYearRecurrence(dateRange.BeginDate, 0, pattern);
     }
 
     private static YearlyByDayOfYearRecurrence New(DateOnly beginDate, DateOnly fromDate, DateOnly toDate,
@@ -48,7 +48,7 @@ public readonly struct YearlyByDayOfYearRecurrence : IRecurrence<YearlyByDayOfYe
 
         if (!canStart)
         {
-            return new YearlyByDayOfYearRecurrence();
+            return new YearlyByDayOfYearRecurrence(beginDate, 0, pattern);
         }
 
         return new YearlyByDayOfYearRecurrence(startDate, toDate, pattern);
@@ -66,7 +66,7 @@ public readonly struct YearlyByDayOfYearRecurrence : IRecurrence<YearlyByDayOfYe
 
         if (!canStart)
         {
-            return new YearlyByDayOfYearRecurrence();
+            return new YearlyByDayOfYearRecurrence(beginDate, 0, pattern);
         }
 
         return new YearlyByDayOfYearRecurrence(startDate, count, pattern);
@@ -130,18 +130,24 @@ public readonly struct YearlyByDayOfYearRecurrence : IRecurrence<YearlyByDayOfYe
     /// <inheritdoc />
     public YearlyByDayOfYearRecurrence GetSubRange(int takeCount)
     {
+        if (_count == 0) return this;
+
         return new YearlyByDayOfYearRecurrence(_startDate, takeCount, _pattern);
     }
 
     /// <inheritdoc />
     public YearlyByDayOfYearRecurrence GetSubRange(DateOnly fromDate, int takeCount)
     {
+        if (_count == 0) return this;
+
         return New(_startDate, fromDate, takeCount, _pattern);
     }
 
     /// <inheritdoc />
     public YearlyByDayOfYearRecurrence GetSubRange(DateOnly fromDate, DateOnly toDate)
     {
+        if (_count == 0) return this;
+
         return New(_startDate, fromDate, toDate, _pattern);
     }
 

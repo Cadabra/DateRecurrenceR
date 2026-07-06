@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 namespace DateRecurrenceR.Tests.Unit.Collections;
 
 [TestSubject(typeof(UnionEnumerator))]
-public class UnionEnumeratorTest
+public class UnionEnumeratorTests
 {
     [Fact]
     public void Union_two_recurrences()

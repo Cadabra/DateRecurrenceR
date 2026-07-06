@@ -1,5 +1,6 @@
 using DateRecurrenceR.Core;
 using FluentAssertions;
+using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit;
 
@@ -8,6 +9,7 @@ namespace DateRecurrenceR.Tests.Unit;
 /// Covers both by-dayOfMonth and by-dayOfWeek+indexOfDay variants,
 /// with both by-count and by-endDate overloads.
 /// </summary>
+[TestSubject(typeof(Recurrence))]
 public sealed class RecurrenceMonthlyTests
 {
     private static List<DateOnly> Collect(IEnumerator<DateOnly> e)

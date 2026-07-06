@@ -1,8 +1,10 @@
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
+using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit.Helpers;
 
+[TestSubject(typeof(DateHelper))]
 public sealed class DateHelperTests
 {
     [Fact]

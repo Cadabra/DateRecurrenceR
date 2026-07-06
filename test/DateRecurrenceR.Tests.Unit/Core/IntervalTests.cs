@@ -1,11 +1,12 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using FluentAssertions;
 using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit.Core;
 
 [TestSubject(typeof(Interval))]
-public class IntervalTest
+public class IntervalTests : Int32BasedContractTests<Interval>
 {
     [Fact]
     public void Empty_ctor_creates_minValue()
@@ -43,5 +44,19 @@ public class IntervalTest
 
         //Assert
         sut.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    protected override int MinAllowed => 1;
+
+    protected override int MaxAllowed => int.MaxValue;
+
+    protected override Interval Create(int value)
+    {
+        return new Interval(value);
+    }
+
+    protected override int ToInt32(Interval value)
+    {
+        return value;
     }
 }

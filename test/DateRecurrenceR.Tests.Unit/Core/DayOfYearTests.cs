@@ -1,11 +1,12 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using FluentAssertions;
 using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit.Core;
 
 [TestSubject(typeof(DayOfYear))]
-public class DayOfYearTest
+public class DayOfYearTests : Int32BasedContractTests<DayOfYear>
 {
     [Fact]
     public void Empty_ctor_creates_minValue()
@@ -44,5 +45,19 @@ public class DayOfYearTest
 
         //Assert
         sut.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    protected override int MinAllowed => 1;
+
+    protected override int MaxAllowed => 366;
+
+    protected override DayOfYear Create(int value)
+    {
+        return new DayOfYear(value);
+    }
+
+    protected override int ToInt32(DayOfYear value)
+    {
+        return value;
     }
 }

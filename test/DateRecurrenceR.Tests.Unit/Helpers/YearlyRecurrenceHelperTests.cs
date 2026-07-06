@@ -2,9 +2,11 @@ using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
 using DateRecurrenceR.Internals;
 using FluentAssertions;
+using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit.Helpers;
 
+[TestSubject(typeof(YearlyRecurrenceHelper))]
 public sealed class YearlyRecurrenceHelperTests
 {
     // ========================================================================

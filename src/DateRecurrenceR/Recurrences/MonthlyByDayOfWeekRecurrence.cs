@@ -33,7 +33,7 @@ public readonly struct MonthlyByDayOfWeekRecurrence : IRecurrence<MonthlyByDayOf
             return New(dateRange.BeginDate, dateRange.BeginDate, dateRange.EndDate.Value, pattern);
         }
 
-        return new MonthlyByDayOfWeekRecurrence();
+        return new MonthlyByDayOfWeekRecurrence(dateRange.BeginDate, 0, pattern);
     }
 
     private static MonthlyByDayOfWeekRecurrence New(DateOnly beginDate, DateOnly fromDate, DateOnly toDate,
@@ -48,7 +48,7 @@ public readonly struct MonthlyByDayOfWeekRecurrence : IRecurrence<MonthlyByDayOf
 
         if (!canStart)
         {
-            return new MonthlyByDayOfWeekRecurrence();
+            return new MonthlyByDayOfWeekRecurrence(beginDate, 0, pattern);
         }
 
         return new MonthlyByDayOfWeekRecurrence(startDate, toDate, pattern);
@@ -66,7 +66,7 @@ public readonly struct MonthlyByDayOfWeekRecurrence : IRecurrence<MonthlyByDayOf
 
         if (!canStart)
         {
-            return new MonthlyByDayOfWeekRecurrence();
+            return new MonthlyByDayOfWeekRecurrence(beginDate, 0, pattern);
         }
 
         return new MonthlyByDayOfWeekRecurrence(startDate, count, pattern);
@@ -135,18 +135,24 @@ public readonly struct MonthlyByDayOfWeekRecurrence : IRecurrence<MonthlyByDayOf
     /// <inheritdoc />
     public MonthlyByDayOfWeekRecurrence GetSubRange(int takeCount)
     {
+        if (_count == 0) return this;
+
         return new MonthlyByDayOfWeekRecurrence(_startDate, takeCount, _pattern);
     }
 
     /// <inheritdoc />
     public MonthlyByDayOfWeekRecurrence GetSubRange(DateOnly fromDate, int takeCount)
     {
+        if (_count == 0) return this;
+
         return New(_startDate, fromDate, takeCount, _pattern);
     }
 
     /// <inheritdoc />
     public MonthlyByDayOfWeekRecurrence GetSubRange(DateOnly fromDate, DateOnly toDate)
     {
+        if (_count == 0) return this;
+
         return New(_startDate, fromDate, toDate, _pattern);
     }
 

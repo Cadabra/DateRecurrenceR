@@ -1,8 +1,10 @@
 using DateRecurrenceR.Internals;
 using FluentAssertions;
+using JetBrains.Annotations;
 
-namespace DateRecurrenceR.Tests.Unit;
+namespace DateRecurrenceR.Tests.Unit.Internals;
 
+[TestSubject(typeof(DateRecurrenceR.Internals.WeeklyHash))]
 public sealed class WeeklyHashTests
 {
     [Fact]

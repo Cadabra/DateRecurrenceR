@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 namespace DateRecurrenceR.Tests.Unit.Helpers;
 
 [TestSubject(typeof(DateOnlyHelper))]
-public class DateOnlyHelperTest
+public class DateOnlyHelperTests
 {
     [Fact]
     public void Method_GetDateByDayOfMonth()

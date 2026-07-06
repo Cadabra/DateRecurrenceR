@@ -1,4 +1,5 @@
 using DateRecurrenceR.Core;
+using DateRecurrenceR.Tests.Common;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -6,7 +7,7 @@ using JetBrains.Annotations;
 namespace DateRecurrenceR.Tests.Unit.Recurrences;
 
 [TestSubject(typeof(MonthlyByDayOfWeekRecurrence))]
-public class MonthlyByDayOfWeekRecurrenceTest
+public class MonthlyByDayOfWeekRecurrenceTests : RecurrenceContractTests<MonthlyByDayOfWeekRecurrence>
 {
     private static List<DateOnly> Collect(MonthlyByDayOfWeekRecurrence recurrence)
     {
@@ -98,5 +99,15 @@ public class MonthlyByDayOfWeekRecurrenceTest
             sut.Contains(date).Should().Be(expected.Contains(date),
                 $"Contains({date:yyyy-MM-dd}) must agree with the enumerator");
         }
+    }
+
+    protected override MonthlyByDayOfWeekRecurrence CreateByCount(DateOnly beginDate, int count)
+    {
+        return MonthlyByDayOfWeekRecurrence.New(new DateRange(beginDate, count), new MonthlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second));
+    }
+
+    protected override MonthlyByDayOfWeekRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    {
+        return MonthlyByDayOfWeekRecurrence.New(new DateRange(beginDate, endDate), new MonthlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second));
     }
 }
