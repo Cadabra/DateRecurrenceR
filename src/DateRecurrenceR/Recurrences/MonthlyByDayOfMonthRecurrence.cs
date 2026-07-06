@@ -122,9 +122,8 @@ public readonly struct MonthlyByDayOfMonthRecurrence : IRecurrence<MonthlyByDayO
         if (dateToCheck.Day != Math.Min(DateTime.DaysInMonth(dateToCheck.Year, dateToCheck.Month), _pattern.DayOfMonth))
             return false;
 
-        if (((dateToCheck.Year * 12 + dateToCheck.Month) - (_startDate.Year * 12 + _startDate.Month)) % _pattern.Interval <=
-            0) return true;
-        return false;
+        return (((dateToCheck.Year * 12 + dateToCheck.Month) - (_startDate.Year * 12 + _startDate.Month))
+            % _pattern.Interval) == 0;
     }
 
     /// <inheritdoc />
