@@ -21,9 +21,10 @@ public class WeekDaysArrayTests
     [InlineData(4)]
     [InlineData(5)]
     [InlineData(6)]
-    public void Indexer_stores_and_returns_the_value(int index)
+    public void Element_access_stores_and_returns_the_value(int index)
     {
-        var sut = new WeekDaysArray { [index] = true };
+        var sut = new WeekDaysArray();
+        sut[index] = true;
 
         sut[index].Should().BeTrue();
         sut.GetCountOfSelected().Should().Be(1);
@@ -40,10 +41,8 @@ public class WeekDaysArrayTests
     [Fact]
     public void GetCountOfSelected_counts_all_days()
     {
-        var sut = new WeekDaysArray
-        {
-            [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true
-        };
+        var sut = new WeekDaysArray();
+        for (var i = 0; i < WeekDaysArray.Length; i++) sut[i] = true;
 
         sut.GetCountOfSelected().Should().Be(7);
     }

@@ -161,7 +161,9 @@ internal sealed class UnionEnumerator : IEnumerator<DateOnly>
 
         public readonly bool Equals(EWrapper other)
         {
-            return Enum.Equals(other.Enum) && CanMoveNext == other.CanMoveNext;
+            // Deduplication key: the underlying enumerator only. CanMoveNext is mutable
+            // iteration state and must not affect identity (GetHashCode already ignores it).
+            return Enum.Equals(other.Enum);
         }
 
         public override bool Equals(object? obj)

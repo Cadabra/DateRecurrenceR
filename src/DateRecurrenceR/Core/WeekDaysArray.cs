@@ -9,17 +9,9 @@ namespace DateRecurrenceR.Core;
 [InlineArray(DaysInWeek)]
 public struct WeekDaysArray
 {
+    // Element access (daysArray[i]) is provided by the compiler for [InlineArray] types;
+    // a declared indexer would be ignored for element access expressions (CS9181).
     private bool _item;
-
-    /// <summary>Gets or sets the element at the specified index.</summary>
-    /// <param name="i">The zero-based index of the element.</param>
-#pragma warning disable CS9181 // Inline array indexer will not be used for element access expression
-    public bool this[int i]
-    {
-        get => this[i];
-        internal set => this[i] = value;
-    }
-#pragma warning restore CS9181
 
     /// <summary>Gets the number of elements in the array.</summary>
     public static int Length => DaysInWeek;

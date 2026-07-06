@@ -55,7 +55,8 @@ public class AllocationBenchmark
         return sum;
     }
 
-    // assigning the struct to the interface boxes it — one 40 B box on the heap
+    // assigning the struct to the interface boxes it; runtimes without escape analysis show
+    // a ~40 B box here, while .NET 10's JIT stack-allocates the box and reports 0 B
     [Benchmark]
     public long DailyBoxed()
     {

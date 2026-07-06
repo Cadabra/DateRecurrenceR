@@ -51,21 +51,25 @@ jobs:
         MIN_LINE: "95"
         MIN_BRANCH: "90"
       run: |
-        report=$(find ./coverage -name 'coverage.cobertura.xml' | head -1)
-        if [ -z "$report" ]; then echo "No coverage report found"; exit 1; fi
-        python3 - "$report" <<'PY'
+        reports=$(find ./coverage -name 'coverage.cobertura.xml')
+        if [ -z "$reports" ]; then echo "No coverage report found"; exit 1; fi
+        # The test project is multi-targeted, so every target framework produces its own
+        # report; enforce the thresholds on each one instead of an arbitrary first match.
+        python3 - $reports <<'PY'
         import sys, os, xml.etree.ElementTree as ET
-        root = ET.parse(sys.argv[1]).getroot()
-        line = float(root.get("line-rate", 0)) * 100
-        branch = float(root.get("branch-rate", 0)) * 100
         min_line = float(os.environ["MIN_LINE"])
         min_branch = float(os.environ["MIN_BRANCH"])
-        print(f"line coverage:   {line:.1f}% (min {min_line:.0f}%)")
-        print(f"branch coverage: {branch:.1f}% (min {min_branch:.0f}%)")
         failed = False
-        if line < min_line:
-            print(f"::error::Line coverage {line:.1f}% is below the {min_line:.0f}% threshold"); failed = True
-        if branch < min_branch:
-            print(f"::error::Branch coverage {branch:.1f}% is below the {min_branch:.0f}% threshold"); failed = True
+        for path in sys.argv[1:]:
+            root = ET.parse(path).getroot()
+            line = float(root.get("line-rate", 0)) * 100
+            branch = float(root.get("branch-rate", 0)) * 100
+            print(f"{path}")
+            print(f"  line coverage:   {line:.1f}% (min {min_line:.0f}%)")
+            print(f"  branch coverage: {branch:.1f}% (min {min_branch:.0f}%)")
+            if line < min_line:
+                print(f"::error::Line coverage {line:.1f}% is below the {min_line:.0f}% threshold in {path}"); failed = True
+            if branch < min_branch:
+                print(f"::error::Branch coverage {branch:.1f}% is below the {min_branch:.0f}% threshold in {path}"); failed = True
         sys.exit(1 if failed else 0)
         PY
