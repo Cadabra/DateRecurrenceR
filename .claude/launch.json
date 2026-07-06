@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "docs",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "docs/site", "-c", "Debug", "--urls", "http://localhost:5111"],
+      "port": 5111,
+      "autoPort": false
+    }
+  ]
+}

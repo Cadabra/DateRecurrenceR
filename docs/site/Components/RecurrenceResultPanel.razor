@@ -96,7 +96,7 @@ else
         @if (!string.IsNullOrEmpty(Result.CSharpSnippet))
         {
             <div class="result-snippet">
-                <CodeSnippetBox Code="@Result.CSharpSnippet" />
+                <CodeSnippetBox Code="@Result.CSharpSnippet" PatternCode="@Result.PatternSnippet" />
             </div>
         }
     }

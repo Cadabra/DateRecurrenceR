@@ -1,20 +1,56 @@
 @inject IJSRuntime JS
+@inject DateRecurrenceR.Docs.Services.CodeStyleState CodeStyle
+@implements IDisposable
 
 <div class="code-snippet-wrapper">
     <div class="code-snippet-header">
-        <span class="code-snippet-lang">C#</span>
+        @if (HasPattern)
+        {
+            <div class="code-snippet-toggle" role="group" aria-label="Code style">
+                <button class="@ToggleClass(Models.CodeStyle.Enumerator)"
+                        @onclick="() => SetStyle(Models.CodeStyle.Enumerator)">enumerator</button>
+                <button class="@ToggleClass(Models.CodeStyle.Pattern)"
+                        @onclick="() => SetStyle(Models.CodeStyle.Pattern)">pattern</button>
+            </div>
+        }
+        else
+        {
+            <span class="code-snippet-lang">C#</span>
+        }
         <button class="code-snippet-copy @(_copied ? "copied" : "")" @onclick="Copy">
             @(_copied ? "✓ Copied" : "Copy")
         </button>
     </div>
-    <pre class="code-block"><code id="@_elementId" class="language-csharp">@Code</code></pre>
+    <pre class="code-block"><code id="@_elementId" class="language-csharp" @key="Displayed">@Displayed</code></pre>
 </div>
 
 @code {
     [Parameter, EditorRequired] public string Code { get; set; } = string.Empty;
 
+    /// <summary>Optional pattern-API variant. When set, a style toggle is shown.</summary>
+    [Parameter] public string? PatternCode { get; set; }
+
     private string _elementId = $"code-{Guid.NewGuid():N}";
     private bool _copied;
+
+    private bool HasPattern => !string.IsNullOrEmpty(PatternCode);
+
+    private Models.CodeStyle EffectiveStyle =>
+        HasPattern ? CodeStyle.Current : Models.CodeStyle.Enumerator;
+
+    private string Displayed =>
+        EffectiveStyle == Models.CodeStyle.Pattern ? PatternCode! : Code;
+
+    protected override void OnInitialized() => CodeStyle.Changed += OnStyleChanged;
+
+    public void Dispose() => CodeStyle.Changed -= OnStyleChanged;
+
+    private void OnStyleChanged() => InvokeAsync(StateHasChanged);
+
+    private void SetStyle(Models.CodeStyle style) => CodeStyle.Current = style;
+
+    private string ToggleClass(Models.CodeStyle style) =>
+        CodeStyle.Current == style ? "code-snippet-toggle-btn active" : "code-snippet-toggle-btn";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -23,7 +59,7 @@
 
     private async Task Copy()
     {
-        await JS.InvokeVoidAsync("copyToClipboard", Code);
+        await JS.InvokeVoidAsync("copyToClipboard", Displayed);
         _copied = true;
         StateHasChanged();
         await Task.Delay(2000);

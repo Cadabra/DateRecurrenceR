@@ -608,6 +608,25 @@ html, body {
 .code-snippet-copy:hover { background: var(--bg-active); color: var(--text-primary); }
 .code-snippet-copy.copied { color: var(--accent-green); border-color: rgba(16,185,129,0.3); }
 
+.code-snippet-toggle {
+    display: inline-flex;
+    border: 1px solid var(--border);
+}
+
+.code-snippet-toggle-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    background: none;
+    border: none;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.code-snippet-toggle-btn:hover { color: var(--text-primary); }
+.code-snippet-toggle-btn.active { color: var(--accent-green); background: var(--bg-active); }
+
 pre.code-block {
     margin: 0;
     padding: 16px;

@@ -10,5 +10,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddMudServices();
 builder.Services.AddScoped<RecurrenceService>();
+builder.Services.AddSingleton<CodeStyleState>();
 
 await builder.Build().RunAsync();
