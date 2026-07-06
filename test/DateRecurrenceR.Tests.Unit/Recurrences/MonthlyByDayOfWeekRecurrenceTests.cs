@@ -101,13 +101,8 @@ public class MonthlyByDayOfWeekRecurrenceTests : RecurrenceContractTests<Monthly
         }
     }
 
-    protected override MonthlyByDayOfWeekRecurrence CreateByCount(DateOnly beginDate, int count)
+    protected override MonthlyByDayOfWeekRecurrence Create(DateRange range)
     {
-        return MonthlyByDayOfWeekRecurrence.New(new DateRange(beginDate, count), new MonthlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second));
-    }
-
-    protected override MonthlyByDayOfWeekRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
-    {
-        return MonthlyByDayOfWeekRecurrence.New(new DateRange(beginDate, endDate), new MonthlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second));
+        return MonthlyByDayOfWeekRecurrence.New(range, new MonthlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second));
     }
 }

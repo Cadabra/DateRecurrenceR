@@ -42,13 +42,8 @@ public class YearlyByDayOfMonthRecurrenceTests : RecurrenceContractTests<YearlyB
         sut.StartDate.Should().Be(new DateOnly(2028, 3, 10), "StartDate must be the first occurrence");
     }
 
-    protected override YearlyByDayOfMonthRecurrence CreateByCount(DateOnly beginDate, int count)
+    protected override YearlyByDayOfMonthRecurrence Create(DateRange range)
     {
-        return YearlyByDayOfMonthRecurrence.New(new DateRange(beginDate, count), new YearlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(10), new MonthOfYear(3)));
-    }
-
-    protected override YearlyByDayOfMonthRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
-    {
-        return YearlyByDayOfMonthRecurrence.New(new DateRange(beginDate, endDate), new YearlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(10), new MonthOfYear(3)));
+        return YearlyByDayOfMonthRecurrence.New(range, new YearlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(10), new MonthOfYear(3)));
     }
 }

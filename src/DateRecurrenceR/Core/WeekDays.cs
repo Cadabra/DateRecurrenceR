@@ -197,33 +197,6 @@ public readonly struct WeekDays : IEquatable<WeekDays>
     }
 
     /// <summary>
-    /// Returns a maximum defined day of the week. 
-    /// </summary>
-    public DayOfWeek GetMaxDay(DayOfWeek firstDayOfWeek)
-    {
-        var shift = (7 + (int)firstDayOfWeek + 6) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 5) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 4) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 3) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 2) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek + 1) % 7;
-        if (_ds[shift]) return (DayOfWeek)shift;
-
-        shift = (7 + (int)firstDayOfWeek) % 7;
-        return (DayOfWeek)shift;
-    }
-
-    /// <summary>
     /// Gets the total number of selected days in the week.
     /// </summary>
     public int CountOfSelected { get; }
@@ -237,25 +210,6 @@ public readonly struct WeekDays : IEquatable<WeekDays>
                + (_ds[4] ? 1 : 0)
                + (_ds[5] ? 1 : 0)
                + (_ds[6] ? 1 : 0);
-    }
-
-    /// <summary>
-    /// Returns the count of selected days up to and including the specified maximum day.
-    /// </summary>
-    /// <param name="maxDay">The maximum day of the week to count up to.</param>
-    /// <param name="firstDayOfWeek">The first day of the week.</param>
-    /// <returns>The count of selected days within the range.</returns>
-    public int GetCountOfSelected(DayOfWeek maxDay, DayOfWeek firstDayOfWeek)
-    {
-        var fdwIndex = (int)firstDayOfWeek;
-        var maxDayIndex = (7 + (int)maxDay - (int)firstDayOfWeek) % 7;
-        return (_ds[(7 + fdwIndex) % 7] ? (7 + 0) % 7 <= maxDayIndex ? 1 : 0 : 0)
-               + (_ds[(7 + fdwIndex + 1) % 7] ? (7 + 1) % 7 <= maxDayIndex ? 1 : 0 : 0)
-               + (_ds[(7 + fdwIndex + 2) % 7] ? (7 + 2) % 7 <= maxDayIndex ? 1 : 0 : 0)
-               + (_ds[(7 + fdwIndex + 3) % 7] ? (7 + 3) % 7 <= maxDayIndex ? 1 : 0 : 0)
-               + (_ds[(7 + fdwIndex + 4) % 7] ? (7 + 4) % 7 <= maxDayIndex ? 1 : 0 : 0)
-               + (_ds[(7 + fdwIndex + 5) % 7] ? (7 + 5) % 7 <= maxDayIndex ? 1 : 0 : 0)
-               + (_ds[(7 + fdwIndex + 6) % 7] ? (7 + 6) % 7 <= maxDayIndex ? 1 : 0 : 0);
     }
 
     /// <summary>

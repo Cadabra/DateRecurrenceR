@@ -337,13 +337,22 @@ public class WeeklyByWeekDaysRecurrenceTests : RecurrenceContractTests<WeeklyByW
         allContained.Should().BeTrue();
     }
 
-    protected override WeeklyByWeekDaysRecurrence CreateByCount(DateOnly beginDate, int count)
+    protected override WeeklyByWeekDaysRecurrence Create(DateRange range)
     {
-        return WeeklyByWeekDaysRecurrence.New(new DateRange(beginDate, count), new WeeklyByWeekDaysPattern(new Interval(2), new WeekDays(DayOfWeek.Monday, DayOfWeek.Friday), DayOfWeek.Monday));
+        return WeeklyByWeekDaysRecurrence.New(range, new WeeklyByWeekDaysPattern(new Interval(2), new WeekDays(DayOfWeek.Monday, DayOfWeek.Friday), DayOfWeek.Monday));
     }
 
-    protected override WeeklyByWeekDaysRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    /// <summary>When no selected weekday fits before the calendar end, the recurrence is empty.</summary>
+    [Fact]
+    public void New_that_cannot_start_before_the_calendar_end_is_empty()
     {
-        return WeeklyByWeekDaysRecurrence.New(new DateRange(beginDate, endDate), new WeeklyByWeekDaysPattern(new Interval(2), new WeekDays(DayOfWeek.Monday, DayOfWeek.Friday), DayOfWeek.Monday));
+        var end = new DateOnly(9999, 12, 31);
+        var otherDay = (DayOfWeek)(((int)end.DayOfWeek + 1) % 7);
+        var pattern = new WeeklyByWeekDaysPattern(new Interval(1), new WeekDays(otherDay), DayOfWeek.Monday);
+
+        var sut = WeeklyByWeekDaysRecurrence.New(new DateRange(end, 5), pattern);
+
+        sut.Count.Should().Be(0);
+        Collect(sut).Should().BeEmpty();
     }
 }

@@ -443,4 +443,19 @@ public sealed class RecurrenceYearlyTests
             new DateOnly(2028, 3, 10),
             new DateOnly(2029, 3, 10));
     }
+
+    /// <summary>The by-dates overload clips to the earlier of toDate and endDate.</summary>
+    [Fact]
+    public void Yearly_ByDates_clips_to_the_earlier_of_toDate_and_endDate()
+    {
+        var byTo = Collect(Recurrence.Yearly(
+            new DateOnly(2020, 1, 1), new DateOnly(2030, 12, 31),
+            new DateOnly(2022, 1, 1), new DateOnly(2025, 12, 31), new DayOfYear(100), new Interval(1)));
+        var byEnd = Collect(Recurrence.Yearly(
+            new DateOnly(2020, 1, 1), new DateOnly(2025, 12, 31),
+            new DateOnly(2022, 1, 1), new DateOnly(2030, 12, 31), new DayOfYear(100), new Interval(1)));
+
+        byTo.Select(d => d.Year).Should().Equal(2022, 2023, 2024, 2025);
+        byEnd.Should().Equal(byTo);
+    }
 }

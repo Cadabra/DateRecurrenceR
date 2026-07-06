@@ -157,4 +157,22 @@ public sealed class RecurrenceWeeklyTests
 
         dates.Should().BeInAscendingOrder();
     }
+
+    /// <summary>The by-dates overload clips to the earlier of toDate and endDate.</summary>
+    [Fact]
+    public void Weekly_ByDates_clips_to_the_earlier_of_toDate_and_endDate()
+    {
+        var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Friday);
+        // toDate before endDate: stop at toDate.
+        var byTo = Collect(Recurrence.Weekly(
+            new DateOnly(2026, 1, 1), new DateOnly(2026, 3, 31),
+            new DateOnly(2026, 1, 12), new DateOnly(2026, 1, 23), weekDays, DayOfWeek.Monday, new Interval(1)));
+        // toDate after endDate: stop at endDate (same window).
+        var byEnd = Collect(Recurrence.Weekly(
+            new DateOnly(2026, 1, 1), new DateOnly(2026, 1, 23),
+            new DateOnly(2026, 1, 12), new DateOnly(2026, 3, 31), weekDays, DayOfWeek.Monday, new Interval(1)));
+
+        byTo.Should().Equal(byEnd).And.OnlyContain(d => d >= new DateOnly(2026, 1, 12) && d <= new DateOnly(2026, 1, 23));
+        byTo.Should().NotBeEmpty();
+    }
 }

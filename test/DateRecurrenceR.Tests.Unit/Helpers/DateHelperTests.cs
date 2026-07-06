@@ -1,5 +1,7 @@
 using DateRecurrenceR.Core;
 using DateRecurrenceR.Helpers;
+using DateRecurrenceR.Internals;
+using FluentAssertions;
 using JetBrains.Annotations;
 
 namespace DateRecurrenceR.Tests.Unit.Helpers;
@@ -136,5 +138,38 @@ public sealed class DateHelperTests
 
         //Assert
         Assert.Equal(expectedDate.DayNumber - startDate.DayNumber, res);
+    }
+
+    /// <summary>
+    /// Drives the seven unrolled early-return branches of CalculateDaysToNextInterval by
+    /// stepping fromDay across a full interval-week with an all-days pattern (each hop is one day).
+    /// </summary>
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 1)]
+    [InlineData(2, 2)]
+    [InlineData(3, 3)]
+    [InlineData(4, 4)]
+    [InlineData(5, 5)]
+    [InlineData(6, 6)]
+    [InlineData(7, 7)]
+    public void CalculateDaysToNextInterval_returns_days_to_the_next_occurrence(int offset, int expected)
+    {
+        var allDays = new WeekDays(true, true, true, true, true, true, true);
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(allDays, 1, DayOfWeek.Monday);
+        var start = new DateOnly(2026, 1, 5).DayNumber; // Monday
+
+        DateHelper.CalculateDaysToNextInterval(start, start + offset, 1, hash).Should().Be(expected);
+    }
+
+    [Fact]
+    public void CalculateDaysToNextInterval_with_sparse_pattern_skips_unselected_days()
+    {
+        // Monday and Thursday only; from Tuesday the next selected day is Thursday (2 days on).
+        var weekDays = new WeekDays(DayOfWeek.Monday, DayOfWeek.Thursday);
+        var hash = WeeklyRecurrenceHelper.GetPatternHash(weekDays, 1, DayOfWeek.Monday);
+        var start = new DateOnly(2026, 1, 5).DayNumber; // Monday
+
+        DateHelper.CalculateDaysToNextInterval(start, start + 2, 1, hash).Should().Be(3); // Thursday
     }
 }

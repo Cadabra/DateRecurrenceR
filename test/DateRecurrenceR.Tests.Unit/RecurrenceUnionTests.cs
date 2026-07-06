@@ -90,4 +90,57 @@ public sealed class RecurrenceUnionTests
 
         Collector.Collect(union).Should().BeEmpty();
     }
+
+    [Fact]
+    public void Union_accepts_an_enumerable_of_enumerators()
+    {
+        // Typed as IEnumerable to bind the enumerable overload, not the params-array one.
+        IEnumerable<IEnumerator<DateOnly>> enumerators =
+        [
+            Daily(new DateOnly(2026, 1, 1), 2, 1),
+            Daily(new DateOnly(2026, 2, 1), 2, 1),
+            Daily(new DateOnly(2026, 3, 1), 2, 1)
+        ];
+
+        var union = Recurrence.Union(enumerators);
+
+        Collector.Collect(union).Should().HaveCount(6).And.BeInAscendingOrder();
+    }
+
+    [Fact]
+    public void Union_enumerable_flattens_nested_unions()
+    {
+        var inner = Recurrence.Union(
+            Daily(new DateOnly(2026, 1, 1), 2, 2),
+            Daily(new DateOnly(2026, 1, 2), 2, 2));
+        IEnumerable<IEnumerator<DateOnly>> enumerators = [inner, Daily(new DateOnly(2026, 1, 5), 2, 1)];
+
+        var union = Recurrence.Union(enumerators);
+
+        Collector.Collect(union).Should().HaveCount(6).And.BeInAscendingOrder();
+    }
+
+    [Fact]
+    public void Union_enumerator_does_not_support_Reset()
+    {
+        var union = Recurrence.Union(
+            Daily(new DateOnly(2026, 1, 1), 2, 1),
+            Daily(new DateOnly(2026, 1, 2), 2, 1));
+
+        var act = () => union.Reset();
+
+        act.Should().Throw<NotSupportedException>();
+    }
+
+    [Fact]
+    public void Union_enumerator_can_be_disposed()
+    {
+        var union = Recurrence.Union(
+            Daily(new DateOnly(2026, 1, 1), 2, 1),
+            Daily(new DateOnly(2026, 1, 2), 2, 1));
+
+        var act = () => union.Dispose();
+
+        act.Should().NotThrow();
+    }
 }

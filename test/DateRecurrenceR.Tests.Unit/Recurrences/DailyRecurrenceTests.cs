@@ -167,13 +167,37 @@ public class DailyRecurrenceTests : RecurrenceContractTests<DailyRecurrence>
         allContained.Should().BeTrue();
     }
 
-    protected override DailyRecurrence CreateByCount(DateOnly beginDate, int count)
+    protected override DailyRecurrence Create(DateRange range)
     {
-        return DailyRecurrence.New(new DateRange(beginDate, count), new DailyPattern(new Interval(2)));
+        return DailyRecurrence.New(range, new DailyPattern(new Interval(2)));
     }
 
-    protected override DailyRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    /// <summary>Overflow guard: an end date before the start date yields an empty recurrence.</summary>
+    [Fact]
+    public void New_with_end_date_before_begin_date_is_empty()
     {
-        return DailyRecurrence.New(new DateRange(beginDate, endDate), new DailyPattern(new Interval(2)));
+        var sut = DailyRecurrence.New(
+            new DateRange(new DateOnly(2026, 1, 10), new DateOnly(2026, 1, 5)),
+            new DailyPattern(new Interval(2)));
+
+        sut.Count.Should().Be(0);
+        Collect(sut).Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// TryAlignToGrid returns false when the aligned date would run past DateOnly.MaxValue,
+    /// so the sub-range is empty.
+    /// </summary>
+    [Fact]
+    public void GetSubRange_from_date_past_the_calendar_end_is_empty()
+    {
+        // Start one day before the calendar end with a five-day interval; aligning any later
+        // fromDate to the grid overflows past DateOnly.MaxValue.
+        var sut = DailyRecurrence.New(
+            new DateRange(new DateOnly(9999, 12, 30), 1),
+            new DailyPattern(new Interval(5)));
+
+        Collect(sut.GetSubRange(new DateOnly(9999, 12, 31), 3)).Should().BeEmpty();
+        Collect(sut.GetSubRange(new DateOnly(9999, 12, 31), new DateOnly(9999, 12, 31))).Should().BeEmpty();
     }
 }

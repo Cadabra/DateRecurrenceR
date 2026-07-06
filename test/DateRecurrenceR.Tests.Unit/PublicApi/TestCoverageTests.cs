@@ -32,6 +32,9 @@ public sealed class TestCoverageTests
             .ToHashSet();
 
         var uncovered = sourceAssembly.GetTypes()
+            // Scope to the library's own namespaces; excludes coverage-instrumentation
+            // trackers that are injected into the assembly during a coverage run.
+            .Where(type => type.Namespace?.StartsWith("DateRecurrenceR", StringComparison.Ordinal) == true)
             .Where(type => !type.IsNested)
             .Where(type => !type.IsInterface)
             .Where(type => !type.IsSubclassOf(typeof(Delegate)))

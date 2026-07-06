@@ -40,5 +40,32 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Test with coverage
+      run: >-
+        dotnet test --no-build --verbosity normal
+        --settings coverlet.runsettings
+        --results-directory ./coverage
+    - name: Enforce coverage thresholds
+      shell: bash
+      env:
+        MIN_LINE: "95"
+        MIN_BRANCH: "90"
+      run: |
+        report=$(find ./coverage -name 'coverage.cobertura.xml' | head -1)
+        if [ -z "$report" ]; then echo "No coverage report found"; exit 1; fi
+        python3 - "$report" <<'PY'
+        import sys, os, xml.etree.ElementTree as ET
+        root = ET.parse(sys.argv[1]).getroot()
+        line = float(root.get("line-rate", 0)) * 100
+        branch = float(root.get("branch-rate", 0)) * 100
+        min_line = float(os.environ["MIN_LINE"])
+        min_branch = float(os.environ["MIN_BRANCH"])
+        print(f"line coverage:   {line:.1f}% (min {min_line:.0f}%)")
+        print(f"branch coverage: {branch:.1f}% (min {min_branch:.0f}%)")
+        failed = False
+        if line < min_line:
+            print(f"::error::Line coverage {line:.1f}% is below the {min_line:.0f}% threshold"); failed = True
+        if branch < min_branch:
+            print(f"::error::Branch coverage {branch:.1f}% is below the {min_branch:.0f}% threshold"); failed = True
+        sys.exit(1 if failed else 0)
+        PY

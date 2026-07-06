@@ -1,3 +1,4 @@
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Recurrences;
 using FluentAssertions;
 using Xunit;
@@ -8,16 +9,23 @@ namespace DateRecurrenceR.Tests.Common;
 /// Contract tests for the invariants every <see cref="IRecurrence"/> implementation must hold:
 /// the precomputed bounds match the enumerator, <c>Contains</c> agrees with the enumerator,
 /// empty recurrences contain nothing, and sub-ranges contain only original occurrences.
-/// Derive per recurrence type and supply the two factories.
+/// Derive per recurrence type and supply the single range factory.
 /// </summary>
 /// <typeparam name="TRecurrence">The recurrence type under test.</typeparam>
 public abstract class RecurrenceContractTests<TRecurrence> where TRecurrence : struct, IRecurrence
 {
-    /// <summary>Creates a recurrence from a begin date and an occurrence count.</summary>
-    protected abstract TRecurrence CreateByCount(DateOnly beginDate, int count);
+    /// <summary>Creates a recurrence from the specified range and the type's sample pattern.</summary>
+    protected abstract TRecurrence Create(DateRange range);
 
-    /// <summary>Creates a recurrence from a begin date and an end date.</summary>
-    protected abstract TRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate);
+    private TRecurrence CreateByCount(DateOnly beginDate, int count)
+    {
+        return Create(new DateRange(beginDate, count));
+    }
+
+    private TRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    {
+        return Create(new DateRange(beginDate, endDate));
+    }
 
     /// <summary>The begin date used by the contract facts.</summary>
     protected virtual DateOnly BeginDate => new(2026, 1, 15);
@@ -81,6 +89,7 @@ public abstract class RecurrenceContractTests<TRecurrence> where TRecurrence : s
         sut.Contains(BeginDate).Should().BeFalse();
         Collector.Collect(sut.GetSubRange(3)).Should().BeEmpty();
         Collector.Collect(sut.GetSubRange(BeginDate, 3)).Should().BeEmpty();
+        Collector.Collect(sut.GetSubRange(BeginDate, BeginDate.AddDays(30))).Should().BeEmpty();
     }
 
     [Fact]
@@ -103,5 +112,38 @@ public abstract class RecurrenceContractTests<TRecurrence> where TRecurrence : s
         var subRange = sut.GetSubRange(dates[2].AddDays(1), 3);
 
         Collector.Collect(subRange).Should().Equal(dates.Skip(3).Take(3));
+    }
+
+    [Fact]
+    public void SubRange_by_dates_yields_the_occurrences_within_the_bounds()
+    {
+        var sut = CreateByCount(BeginDate, 8);
+
+        var dates = Collector.Collect(sut);
+        var subRange = sut.GetSubRange(dates[2], dates[5]);
+
+        Collector.Collect(subRange).Should().Equal(dates.Skip(2).Take(4));
+    }
+
+    [Fact]
+    public void SubRange_by_dates_on_the_boxed_interface_yields_the_same_occurrences()
+    {
+        IRecurrence sut = CreateByCount(BeginDate, 8);
+
+        var dates = Collector.Collect(sut);
+        var subRange = sut.GetSubRange(dates[2], dates[5]);
+
+        Collector.Collect(subRange).Should().Equal(dates.Skip(2).Take(4));
+    }
+
+    [Fact]
+    public void Open_ended_range_without_count_or_end_date_creates_an_empty_recurrence()
+    {
+        // default(DateRange) has neither a count nor an end date, exercising the New(...) fallback.
+        var sut = Create(default);
+
+        sut.Count.Should().Be(0);
+        Collector.Collect(sut).Should().BeEmpty();
+        sut.Contains(sut.StartDate).Should().BeFalse();
     }
 }

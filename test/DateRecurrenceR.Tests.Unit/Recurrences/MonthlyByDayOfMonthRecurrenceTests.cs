@@ -101,13 +101,31 @@ public class MonthlyByDayOfMonthRecurrenceTests : RecurrenceContractTests<Monthl
         allContained.Should().BeTrue();
     }
 
-    protected override MonthlyByDayOfMonthRecurrence CreateByCount(DateOnly beginDate, int count)
+    protected override MonthlyByDayOfMonthRecurrence Create(DateRange range)
     {
-        return MonthlyByDayOfMonthRecurrence.New(new DateRange(beginDate, count), new MonthlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(15)));
+        return MonthlyByDayOfMonthRecurrence.New(range, new MonthlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(15)));
     }
 
-    protected override MonthlyByDayOfMonthRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    [Fact]
+    public void New_that_cannot_start_before_the_calendar_end_is_empty()
     {
-        return MonthlyByDayOfMonthRecurrence.New(new DateRange(beginDate, endDate), new MonthlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(15)));
+        // Day 15 requested from Dec 20 9999: the next occurrence is in year 10000.
+        var pattern = new MonthlyByDayOfMonthPattern(new Interval(1), new DayOfMonth(15));
+        var sut = MonthlyByDayOfMonthRecurrence.New(new DateRange(new DateOnly(9999, 12, 20), 5), pattern);
+
+        sut.Count.Should().Be(0);
+        Collector.Collect(sut).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Contains_rejects_a_matching_day_in_an_off_interval_month()
+    {
+        // Every 2nd month on the 15th from Jan 2026: Jan, Mar, May, ... Feb 15 is off-interval.
+        var pattern = new MonthlyByDayOfMonthPattern(new Interval(2), new DayOfMonth(15));
+        var sut = MonthlyByDayOfMonthRecurrence.New(new DateRange(new DateOnly(2026, 1, 15), 6), pattern);
+
+        sut.Contains(new DateOnly(2026, 1, 15)).Should().BeTrue();
+        sut.Contains(new DateOnly(2026, 3, 15)).Should().BeTrue();
+        sut.Contains(new DateOnly(2026, 2, 15)).Should().BeFalse("February is an off-interval month");
     }
 }

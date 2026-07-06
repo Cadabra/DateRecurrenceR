@@ -61,13 +61,19 @@ public class YearlyByDayOfYearRecurrenceTests : RecurrenceContractTests<YearlyBy
         sut.Contains(sut.StartDate).Should().BeFalse("an empty recurrence contains no dates");
     }
 
-    protected override YearlyByDayOfYearRecurrence CreateByCount(DateOnly beginDate, int count)
+    protected override YearlyByDayOfYearRecurrence Create(DateRange range)
     {
-        return YearlyByDayOfYearRecurrence.New(new DateRange(beginDate, count), new YearlyByDayOfYearPattern(new Interval(1), new DayOfYear(100)));
+        return YearlyByDayOfYearRecurrence.New(range, new YearlyByDayOfYearPattern(new Interval(1), new DayOfYear(100)));
     }
 
-    protected override YearlyByDayOfYearRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
+    [Fact]
+    public void New_that_cannot_start_before_the_calendar_end_is_empty()
     {
-        return YearlyByDayOfYearRecurrence.New(new DateRange(beginDate, endDate), new YearlyByDayOfYearPattern(new Interval(1), new DayOfYear(100)));
+        // Day 1 requested from mid-9999: the next occurrence is Jan 1 of year 10000.
+        var pattern = new YearlyByDayOfYearPattern(new Interval(1), new DayOfYear(1));
+        var sut = YearlyByDayOfYearRecurrence.New(new DateRange(new DateOnly(9999, 6, 1), 5), pattern);
+
+        sut.Count.Should().Be(0);
+        Collect(sut).Should().BeEmpty();
     }
 }

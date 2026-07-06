@@ -178,4 +178,24 @@ public sealed class RecurrenceDailyTests
             (dates[i].DayNumber - dates[i - 1].DayNumber).Should().Be(interval);
         }
     }
+
+    /// <summary>
+    /// The by-dates overload returns the intersection of [beginDate, endDate] and [fromDate, toDate].
+    /// When toDate is before endDate the series stops at toDate (DateOnlyMin picks toDate).
+    /// </summary>
+    [Fact]
+    public void Daily_ByDates_clips_to_the_earlier_of_toDate_and_endDate()
+    {
+        // toDate (Jan 20) is before endDate (Jan 31): stop at toDate.
+        var clippedByTo = Collect(Recurrence.Daily(
+            new DateOnly(2026, 1, 1), new DateOnly(2026, 1, 31),
+            new DateOnly(2026, 1, 10), new DateOnly(2026, 1, 20), new Interval(1)));
+        clippedByTo.Should().Equal(Enumerable.Range(10, 11).Select(d => new DateOnly(2026, 1, d)));
+
+        // toDate (Jan 31) is after endDate (Jan 20): stop at endDate.
+        var clippedByEnd = Collect(Recurrence.Daily(
+            new DateOnly(2026, 1, 1), new DateOnly(2026, 1, 20),
+            new DateOnly(2026, 1, 10), new DateOnly(2026, 1, 31), new Interval(1)));
+        clippedByEnd.Should().Equal(Enumerable.Range(10, 11).Select(d => new DateOnly(2026, 1, d)));
+    }
 }

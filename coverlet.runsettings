@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <!-- Emit Cobertura so both line and branch coverage are reported. -->
+          <Format>cobertura</Format>
+          <!-- Only measure the library under test, not the test assemblies. -->
+          <Include>[DateRecurrenceR]*</Include>
+          <ExcludeByAttribute>CompilerGeneratedAttribute,GeneratedCodeAttribute</ExcludeByAttribute>
+          <SkipAutoProps>true</SkipAutoProps>
+          <UseSourceLink>true</UseSourceLink>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

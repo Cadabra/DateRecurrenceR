@@ -78,13 +78,8 @@ public class YearlyByDayOfWeekRecurrenceTests : RecurrenceContractTests<YearlyBy
         }
     }
 
-    protected override YearlyByDayOfWeekRecurrence CreateByCount(DateOnly beginDate, int count)
+    protected override YearlyByDayOfWeekRecurrence Create(DateRange range)
     {
-        return YearlyByDayOfWeekRecurrence.New(new DateRange(beginDate, count), new YearlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second, new MonthOfYear(3)));
-    }
-
-    protected override YearlyByDayOfWeekRecurrence CreateByEndDate(DateOnly beginDate, DateOnly endDate)
-    {
-        return YearlyByDayOfWeekRecurrence.New(new DateRange(beginDate, endDate), new YearlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second, new MonthOfYear(3)));
+        return YearlyByDayOfWeekRecurrence.New(range, new YearlyByDayOfWeekPattern(new Interval(1), DayOfWeek.Tuesday, IndexOfDay.Second, new MonthOfYear(3)));
     }
 }

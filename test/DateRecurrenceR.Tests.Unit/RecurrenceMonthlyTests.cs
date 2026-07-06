@@ -407,4 +407,21 @@ public sealed class RecurrenceMonthlyTests
             new DateOnly(2026, 3, 10),
             new DateOnly(2026, 4, 14));
     }
+
+    /// <summary>The by-dates overload clips to the earlier of toDate and endDate.</summary>
+    [Fact]
+    public void Monthly_ByDates_clips_to_the_earlier_of_toDate_and_endDate()
+    {
+        var byTo = Collect(Recurrence.Monthly(
+            new DateOnly(2026, 1, 1), new DateOnly(2026, 12, 31),
+            new DateOnly(2026, 3, 1), new DateOnly(2026, 6, 30), new DayOfMonth(15), new Interval(1)));
+        var byEnd = Collect(Recurrence.Monthly(
+            new DateOnly(2026, 1, 1), new DateOnly(2026, 6, 30),
+            new DateOnly(2026, 3, 1), new DateOnly(2026, 12, 31), new DayOfMonth(15), new Interval(1)));
+
+        byTo.Should().Equal(
+            new DateOnly(2026, 3, 15), new DateOnly(2026, 4, 15),
+            new DateOnly(2026, 5, 15), new DateOnly(2026, 6, 15));
+        byEnd.Should().Equal(byTo);
+    }
 }
