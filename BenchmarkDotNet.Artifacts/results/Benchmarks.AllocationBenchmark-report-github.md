@@ -8,10 +8,10 @@ Apple M1 Pro, 1 CPU, 8 logical and 8 physical cores
 Toolchain=InProcessEmitToolchain  
 
 ```
-| Method        | Mean        | Error    | StdDev   | Allocated |
-|-------------- |------------:|---------:|---------:|----------:|
-| DailyStruct   |    25.47 ns | 0.060 ns | 0.050 ns |         - |
-| WeeklyStruct  |   119.58 ns | 0.066 ns | 0.059 ns |         - |
-| MonthlyStruct | 1,079.47 ns | 0.677 ns | 0.566 ns |         - |
-| YearlyStruct  |   106.12 ns | 0.264 ns | 0.206 ns |         - |
-| DailyBoxed    |    25.38 ns | 0.057 ns | 0.051 ns |         - |
+| Method        | Mean      | Error    | StdDev   | Median    | Allocated |
+|-------------- |----------:|---------:|---------:|----------:|----------:|
+| DailyStruct   |  24.46 ns | 0.041 ns | 0.034 ns |  24.45 ns |         - |
+| WeeklyStruct  | 135.53 ns | 0.606 ns | 0.567 ns | 135.26 ns |         - |
+| MonthlyStruct | 180.44 ns | 2.012 ns | 1.882 ns | 179.80 ns |         - |
+| YearlyStruct  | 111.70 ns | 3.308 ns | 9.110 ns | 106.93 ns |         - |
+| DailyBoxed    |  25.18 ns | 0.083 ns | 0.078 ns |  25.16 ns |         - |

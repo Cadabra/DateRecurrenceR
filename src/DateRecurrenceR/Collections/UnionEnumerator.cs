@@ -7,7 +7,7 @@ namespace DateRecurrenceR.Collections;
 internal sealed class UnionEnumerator : IEnumerator<DateOnly>
 {
     private readonly EWrapper[] _enumerators;
-    private DateOnly? _current = null;
+    private DateOnly? _current;
 
     public UnionEnumerator(IEnumerator<DateOnly> e1, IEnumerator<DateOnly> e2)
     {

@@ -13,6 +13,7 @@ public struct WeeklyEnumerator : IEnumerator<DateOnly>
     private readonly WeeklyHash _hash;
     private bool _canMoveNext = true;
     private int _count = 0;
+    private int _nextIncrement = 0;
 
     internal WeeklyEnumerator(DateOnly start, int takeCount, WeeklyHash hash)
     {
@@ -36,12 +37,14 @@ public struct WeeklyEnumerator : IEnumerator<DateOnly>
         }
         else
         {
-            Current = Current.AddDays(_hash[Current.DayOfWeek]);
+            Current = Current.AddDays(_nextIncrement);
         }
 
         _count++;
 
-        if (DateOnly.MaxValue.DayNumber - Current.DayNumber < _hash[Current.DayOfWeek])
+        _nextIncrement = _hash[Current.DayOfWeek];
+
+        if (DateOnly.MaxValue.DayNumber - Current.DayNumber < _nextIncrement)
         {
             _canMoveNext = false;
         }
